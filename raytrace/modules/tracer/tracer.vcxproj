@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C3E5D20C-C2D4-4DA2-A8FB-E5D8A29AF7AA}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>tracer</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)export\</OutDir>
+    <IncludePath>$(SolutionDir)\..\nodix\vec3;$(SolutionDir)\..\nodix\libbase\include;$(SolutionDir)\..\nodix\libcon;$(SolutionDir)\..\nodix\libcon\include;$(SolutionDir)\..\nodix\libcon\zlib-1.2.8\;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\..\nodix\export;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;TRACER_EXPORTS;PNG_SETJMP_NOT_SUPPORTED;PNG_NO_FLOATING_POINT_SUPPORTED;PNG_NO_STDIO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\vec3;$(SolutionDir)\libbase\include;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;$(SolutionDir)\libcon\zlib-1.2.8;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
+      <StructMemberAlignment>1Byte</StructMemberAlignment>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)export;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libcon.lib;libbase.lib;vec3.lib;block_adx.lib;</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+    </Link>
+    <PostBuildEvent>
+      <Command>$(SolutionDir)export\mod_maker.exe $(SolutionDir)export\$(TargetFileName)  $(SolutionDir)export\modz\</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="libpng-1.2.18\png.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pnggccrd.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pngget.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pngmem.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pngpread.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pngread.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pngrio.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pngrtran.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pngrutil.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pngset.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pngtrans.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pngvcrd.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pngwio.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pngwrite.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pngwtran.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="libpng-1.2.18\pngwutil.c">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\vec3;$(SolutionDir)\libcon\win32\include;$(SolutionDir)\libcon\include;;$(SolutionDir)\libcon;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="main.c">
+      <AssemblerOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NoListing</AssemblerOutput>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="tracer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\export\rt\raytrace.html" />
+    <None Include="..\export\rt\raytrace.site" />
+    <None Include="..\export\rt\scenes.html" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

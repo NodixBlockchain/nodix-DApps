@@ -1,0 +1,48 @@
+
+<style>
+
+    .blog_cat {
+        height: 42px;
+        padding:8px;
+        margin:4px;
+        text-align: center;
+        float: left;
+        cursor:pointer;
+        border:1px solid;
+    }
+
+</style>
+
+
+<div id="content" colspan="2">
+
+    <div class="container">
+        <section>
+        <h1>categories</h1>
+        <div id="cats"></div>
+        <br style="clear:both;" />
+        </section>
+    </div>  
+
+    <div class="container">
+        <section>
+            <h1>post</h1>
+            <form class="form" action="dopost" enctype="multipart/form-data" method="POST">
+                <div class="row">
+                    <div class="col-md-2">categories</div><div class="col-md-8"><input type="text" id="postCats" name="postCats" size="128" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">title</div><div class="col-md-8"><input type="text" id="blog_title" name="blog_title" size="128" /></div>
+                </div>
+                <div class="row">
+                    <textarea id="blog_content" name="blog_content"></textarea>
+                </div>
+                <div class="row">
+                    <input type="submit" value="POST" />
+                </div>
+            </form>
+            <div id="app_error"></div>
+        </section>
+    </div>
+   
+</div>

@@ -1,0 +1,2069 @@
+<style>
+    .code_example p
+    {
+        margin:2px;
+        padding:2px;
+        color:darkgreen;
+        font-size:0.8em;
+        line-height:12px;
+    }
+    #mem_funcs,#net_funcs,#str_funcs,#io_funcs,#mod_funcs
+    {
+        display:none;
+    }
+
+</style>
+<div class="container">
+    <section>
+        <p>libcon provide the low level functions to deal with memory allocation, strings, sockets, zlib compression, simple XML parsing, and module dynamic loading.</p>
+
+        <p>Together with the binary module system, it acts as an abstraction layer for the operating system, allowing to quickly build safe, lightweight, performant and portable distributed applications.</p>
+
+        <p>The full source code for libcon is on the github <a target="_blank" href="https://github.com/NodixBlockchain/nodix/tree/master/libcon">libcon</a> </p>
+        
+        <br/><br />
+
+       <div class="container-fluid">
+           <div class="row">
+               <div class="col-md-3"><h4 id="mem_anchor"><a href="#mem_funcs" onclick="$('#mem_funcs').toggle();"> Memory allocation</a></h4></div>
+               <div class="col-md-8">
+                   <p>Memory allocation is based on area that represent application's thread heap, host memory is statically allocated for each thread in the pool when the application initialize, and the internal allocator give the application a reference to a zone in its area, and manage garbage collection.</p>
+                   <p>Each thread have their own heap, and manage it locally, which make the multi thread memory management entierely lockless.</p>
+                   <p>The API to allocate new memory and get a reference to the allocated pointer is found in <a target="_blank" href="https://github.com/NodixBlockchain/nodix/blob/master/libcon/base/mem_base.h">libcon/base/mem_base.h</a></p>
+               </div>
+           </div>
+           <hr/>
+           <div id="mem_funcs">
+           <div class="row">
+               <div class="col-md-1"></div>
+               <div class="col-md-8">
+
+                   <h5><a target="_blank" href="https://github.com/NodixBlockchain/nodix/blob/master/libcon/base/mem_base.c">libcon/base/mem_base.c</a></h5>
+                   <hr />
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>void			init_default_mem_area	(unsigned int size);</p></div></div>
+                       <div class="row"><div class="col">Initalize the default memory area for the current thread to the specified size.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>init_default_mem_area	(4*1024*1024); </p></div></div>
+                   </div>
+                   <hr/>
+                   <div class="container">
+                       <div class="row"><div class="col"><p>unsigned int	allocate_new_zone		(unsigned int area_id,	mem_size zone_size,	mem_zone_ref *zone_ref);</p></div></div>
+                       <div class="row"><div class="col">Allocate a new zone with the specified size in the specified area, and return the reference to it in zone_ref. <br/> If 0 is specified for area id, it will allocate the memory from the default memory area for the thread.</div></div>
+                       <br/>
+                       <div class="row"><div class="col code_example"><p>mem_zone_ref myref={PTR_NULL}; </p><p>allocate_new_zone	( get_mem_area_id() ,256, &myref); </p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>mem_ptr		 get_zone_ptr				(mem_zone_ref_const_ptr ref,mem_size ofset);</p></div></div>
+                       <div class="row"><div class="col">Get the memory address of the area referenced by the reference.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>mem_zone_ref myref={PTR_NULL};<br/> mem_ptr my_ptr; </p><p>allocate_new_zone	(get_mem_area_id(), 256, &myref); </p><p>my_ptr = get_zone_ptr(&myref, 0);</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>mem_size    get_zone_size			(mem_zone_ref_const_ptr ref);</p></div></div>
+                       <div class="row"><div class="col">Get the allocated size of the memory area referenced by the reference</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>mem_zone_ref myref={PTR_NULL}; mem_size my_size;</p><p>allocate_new_zone	(get_mem_area_id(), 256, &myref); </p><p>my_size = get_zone_size(&myref);</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>unsigned int get_zone_numref (mem_zone_ref *zone_ref);</p></div></div>
+                       <div class="row"><div class="col">Get the number of reference for this area</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>mem_zone_ref myref={PTR_NULL}; unsigned int n_refs;</p><p>allocate_new_zone (get_mem_area_id(), 256, &myref); </p><p>n_refs = get_zone_numref(&myref);</p></div></div>
+                   </div>
+                   <hr />
+                   
+                   <div class="container">
+                       <div class="row"><div class="col"><p>void	release_zone_ref	        (mem_zone_ref_ptr zone_ref);</p></div></div>
+                       <div class="row"><div class="col">Release reference to a memory area, free the memory if the reference count reach zero, and set the reference to null. Unused when the heap use Mark and Sweep garbage collection.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>mem_zone_ref myref={PTR_NULL}; </p><p>allocate_new_zone	(get_mem_area_id(), 256, &myref); </p><p>release_zone_ref(&myref);</p> </div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int 	realloc_zone				(mem_zone_ref *zone_ref,mem_size new_size);</p></div></div>
+                       <div class="row"><div class="col">Reallocate the zone to the specified size. The allocator will always try to allocate adjacent free zone to avoid memory relocation when possible.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>mem_zone_ref myref={PTR_NULL}; </p><p>allocate_new_zone	(get_mem_area_id(), 256, &myref);</p><p> realloc_zone(&myref, 512); </p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container"> 
+                       <div class="row"><div class="col"><p>int		expand_zone				(mem_zone_ref *ref,mem_size new_size);</p></div></div>
+                       <div class="row"><div class="col">Expand the zone to the minimum specified size, and expand logarithmically the memory until it fit the required size.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>mem_zone_ref myref={PTR_NULL}; </p><p>allocate_new_zone	(get_mem_area_id(), 256, &myref);</p><p>expand_zone(&myref,512);</p> </div></div>
+                   </div>
+                   <hr />
+
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>void	copy_zone_ref			(mem_zone_ref_ptr dest_zone_ref,mem_zone_ref_const_ptr zone_ref);</p></div></div>
+                       <div class="row"><div class="col">Copy the reference to another reference and manage atomic reference count when the heap use reference counting.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>mem_zone_ref myref={PTR_NULL}, myrefcopy={PTR_NULL}; </p><p>allocate_new_zone	(get_mem_area_id(), 256, &myref); </p><p> copy_zone_ref(&myrefcopy, &myref);</p><p> release_zone_ref(&myref); // (myref memory is not freed until the myrefcopy reference is released.) </p></div></div>
+                   </div>
+                   <hr />
+
+    
+                   <p>Equivalent to the standard LIBC API to allocate direct pointer is defined in <a target="_blank" href="https://github.com/NodixBlockchain/nodix/blob/master/libcon/base/std_mem.h">libcon/base/std_mem.h</a></p>
+
+                   <p>LIBC_API mem_ptr		C_API_FUNC malloc_c				(mem_size sz);</p>
+                   <p>LIBC_API mem_ptr		C_API_FUNC calloc_c				(mem_size sz,mem_size blk);</p>
+                   <p>LIBC_API mem_ptr		C_API_FUNC realloc_c			(mem_ptr ptr,mem_size sz);</p>
+                   <p>LIBC_API void		    C_API_FUNC free_c				(mem_ptr ptr);</p>
+               </div>
+           </div>
+           </div>
+
+            
+           <div class="row">
+               <div class="col-md-3"><h4><a href="#str_funcs" onclick="$('#str_funcs').toggle();">Strings</a></h4></div>
+               <div class="col-md-8"><p>The base api to manipulate strings is found in <a target="_blank" href="https://github.com/NodixBlockchain/nodix/blob/master/libcon/include/strs.h">libcon/include/strs.h</a></p></div>
+           </div>
+           <hr />
+           <div id="str_funcs">
+            <div class="row">
+               <div class="col-md-1"></div>
+               <div class="col-md-8">
+                   <h5><a target="_blank" href="https://github.com/NodixBlockchain/nodix/blob/master/libcon/strs.c">libcon/strs.c</a></h5>
+                   <hr />
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>void   init_string			(struct string *str);</p></div></div>
+                       <div class="row"><div class="col"> Initialize string structure</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring;</p><p>init_string(&string); ( equivalent to struct string mystring={PTR_NULL}; )</p></div></div>
+                   </div>
+                   <hr/>
+                   <div class="container">
+                       <div class="row"><div class="col"><p>void    free_string			(struct string *str);</p></div></div>
+                       <div class="row"><div class="col">Free string memory</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>make_string(&mystring,"hello world");</p><p>free_string(&mystring);</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int   prepare_new_data		(struct string *str, size_t len);</p></div></div>
+                       <div class="row"><div class="col">Preallocate string memory</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>prepare_new_data(&string, 64);</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int   make_string			(struct string *str, const char *toto);</p></div></div>
+                       <div class="row"><div class="col">Create string from C string. Free target string memory if not null.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>make_string(&mystring,"hello world");</p><p>log_output(mystring.str); => "hello world"</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>make_cstring			(const struct string *str, char *toto, size_t len);</p></div></div>
+                       <div class="row"><div class="col">Output string to C string.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL}; char mycstring[64];</p><p>make_string(&mystring,"hello world");</p>make_cstring(&mystring,mycstring,64);<p>log_output(mycstring); => "hello world"</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int   make_string_l		(struct string *str, const char *toto, size_t len);</p></div></div>
+                       <div class="row"><div class="col">Create string with max n chars from C string. Free target string memory if not null.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>make_string_l(&mystring,"hello world",4);</p><p>log_output(mystring.str); => "hell"</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int   make_string_url		(struct string *str, const char *toto, size_t len);</p></div></div>
+                       <div class="row"><div class="col">Create url encoded string with n chars from C string. Free target string memory if not null.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>make_string_url(&mystring,"hello world",8);</p><p>log_output(mystring.str); => "hello%20wo"</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int   make_string_from_url	(struct string *str, const char *toto, size_t len);</p></div></div>
+                       <div class="row"><div class="col">Create string with n chars from url encoded C string. Free target string memory if not null.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>make_string_from_url(&mystring,"hello%20world",8);</p><p>log_output(mystring.str); => "hello wo"</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>struct host_def *make_host_def(const char *host, unsigned short port);</p></div></div>
+                       <div class="row"><div class="col">Create an host def structure from the host name and port. Return PTR_NULL in case of failure. Returned pointer must be freed by caller.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct host_def *myhost=PTR_NULL;</p><p>myhost=make_host_def("google.com",80);</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>void free_host_def		(struct host_def *host);</p></div></div>
+                       <div class="row"><div class="col">free host def structure memory.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct host_def *myhost=PTR_NULL;</p><p>myhost=make_host_def("google.com",80);</p><p>free_host_dest(myhost)</p></div></div>
+                   </div>
+                   <hr />
+                   
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int   clone_string			(struct string *str, const struct string *str1);</p></div></div>
+                       <div class="row"><div class="col">Clone input string to target (do not free target string)</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>struct string myclonedstring={PTR_NULL};</p><p>make_string(&mystring,"hello world");</p><p>clone_string(&myclonedstring,&mystring);</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int    make_string_from_uint(struct string *str, size_t i);</p></div></div>
+                       <div class="row"><div class="col">Create base 10 string from unsigned int</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>make_string_from_uint(&mystring,42);</p><p>log_output(mystring.str); => "42"</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>cat_string			(struct string *str, const struct string *src);</p></div></div>
+                       <div class="row"><div class="col">Create base 10 string from unsigned int</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>struct string myotherstring={PTR_NULL};</p><p>make_string(&mystring,"hello ");</p><p>make_string(&myotherstring,"world");</p><p>cat_string(&mystring,&myotherstring);</p><p>log_output(mystring.str); => "hello world"</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>cat_cstring			(struct string *str, const char *src);</p></div></div>
+                       <div class="row"><div class="col">Concatenate input C string to target </div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>make_string(&mystring,"hello ");</p><p>cat_cstring(&mystring,"world");</p><p>log_output(mystring.str); => "hello world"</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>cat_ncstring			(struct string *str, const char *src, size_t src_len);</p></div></div>
+                       <div class="row"><div class="col">Concatenate input n chars from C string to target</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>make_string(&mystring,"hello ");</p><p>cat_ncstring(&mystring,"world",3);</p><p>log_output(mystring.str); => "hello wor"</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p> cat_cstring_p		(struct string *str, const char *src);</p></div></div>
+                       <div class="row"><div class="col"> Concatenate path seperator and input from C string to target</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>make_string(&mystring,"hello");</p><p>cat_cstring_p(&mystring,"world");</p><p>log_output(mystring.str); => "hello/world" or "hello\world"</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>cat_ncstring_p		(struct string *str, const char *src, size_t src_len);</p></div></div>
+                       <div class="row"><div class="col">Concatenate path seperator and input n chars from C string to target </div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>make_string(&mystring,"hello");</p><p>cat_ncstring_p(&mystring,"world",3);</p><p>log_output(mystring.str); => "hello/wor" or "hello\wor"</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>strcat_uint			(struct string *str, size_t i);</p></div></div>
+                       <div class="row"><div class="col">Concatenate input unsigned integer to base 10 string in target </div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>make_string(&mystring,"hello ");</p><p>strcat_uint(&mystring,42);</p><p>log_output(mystring.str); => "hello 42"</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>strcat_int			(struct string *str, int i);</p></div></div>
+                       <div class="row"><div class="col">Concatenate input signed integer to target </div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>make_string(&mystring,"hello ");</p><p>strcat_int(&mystring,-42);</p><p>log_output(mystring.str); => "hello -42"</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>strcat_float			(struct string *str, double f);</p></div></div>
+                       <div class="row"><div class="col"> Concatenate input float to target</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string mystring={PTR_NULL};</p><p>make_string(&mystring,"hello ");</p><p>strcat_float(&mystring,3.1459);</p><p>log_output(mystring.str); => "hello 3.1459"</p></div></div>
+                   </div>
+                   <hr />
+               </div>
+            </div>
+          </div>
+
+          <div class="row">
+               <div class="col-md-3"><h4><a href="#io_funcs" onclick="$('#io_funcs').toggle();">File I/O</a></h4></div>
+               <div class="col-md-8"><p>The base api to manipulate files is found in <a target="_blank" href="https://github.com/NodixBlockchain/nodix/blob/master/libcon/include/fsio.h">libcon/include/fsio.h</a></p></div>
+          </div>
+           <hr />
+          <div id="io_funcs">
+            <div class="row">
+               <div class="col-md-1"></div>
+               <div class="col-md-8">
+
+                   <h5><a target="_blank" href="https://github.com/NodixBlockchain/nodix/blob/master/libcon/win32/stat_file.c">libcon/win32/stat_file.c</a>&nbsp;and&nbsp;<a target="_blank" href="https://github.com/NodixBlockchain/nodix/blob/master/libcon/unix/stat_file.c">libcon/unix/stat_file.c</a></h5>
+                   <hr />
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int stat_file(const char *path);</p></div></div>
+                       <div class="row"><div class="col">Return 0 if file system entry exist, non zero if not.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>if(stat_file("myfile.txt")==0)</p><p>log_output("entry exist in the file system.");</p></div></div>
+                   </div>
+                   <hr/>
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int get_file(const char *path, unsigned char **data, size_t *data_len);</p></div></div>
+                       <div class="row"><div class="col">Read whole file into a buffer. Caller need to free the buffer.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>unsigned char *data; size_t size;</p><p>if(get_file("myfile.txt",&data,&size)>0)</p><p>{</p><p>log_output(data);</p><p>free_c(data);</p><p>}</p></div></div>
+                   </div>
+                   <hr/>
+
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int put_file(const char *path, void *data, size_t data_len);</p></div></div>
+                       <div class="row"><div class="col">Write the whole buffer into the file.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>put_file("myfile.txt", "hello world", 12);</p></div></div>
+                   </div>
+                   <hr />
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>size_t file_size(const char *path);</p></div></div>
+                       <div class="row"><div class="col"><p>Return size of the file.</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>size_t size;</p><p>size=file_size("myfile.txt");</p></div></div>
+                   </div>
+                   <hr />
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int  append_file(const char *path, const void *data, size_t data_len);</p></div></div>
+                       <div class="row"><div class="col"><p>Return size of the file.</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>put_file("myfile.txt","hello ",6);</p><p>append_file("myfile.txt","world",5);</p></div></div>
+                   </div>
+                   <hr />
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int  truncate_file(const char *path, size_t ofset, const void *data, size_t data_len);</p></div></div>
+                       <div class="row"><div class="col"><p>Truncate file to specified length, and optionally append new data at this position.</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>put_file("myfile.txt","hello ",6);</p><p>truncate_file("myfile.txt",4," world",3)</p><p>"myfile.txt" => "hell wor"</p><p>truncate_file("myfile.txt",4,PTR_NULL,0)</p><p>"myfile.txt" => "hell"</p></div></div>
+                   </div>
+                   <hr />
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int move_file(const char *ipath,const char *opath);</p></div></div>
+                       <div class="row"><div class="col"><p>Move file from source path to destination path.</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>move_file("myfile.txt","myotherfile.txt");</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int del_file(const char *path);</p></div></div>
+                       <div class="row"><div class="col"><p>Remove file from file system.</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>del_file("myfile.txt");</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>ctime_t get_time_c(void);</p></div></div>
+                       <div class="row"><div class="col"><p>Get current time as unix timestamp in second.</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>ctime_t mytime;</p><p>mytime=get_time_c();</p></div></div>
+                   </div>
+                   <hr />
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>ctime_t get_system_time_c(void);</p></div></div>
+                       <div class="row"><div class="col"><p>Get system high precision timer as millisec elapsed since boot.</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>ctime_t mytime;</p><p>get_system_time_c(&mytime);</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int set_ftime(const char *path, ctime_t time);</p></div></div>
+                       <div class="row"><div class="col"><p>Set file time</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>ctime_t mytime;</p><p> mytime=gettime_c(); </p><p>set_ftime("myfile.txt",mytime);</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int set_ftime(const char *path, ctime_t *time);</p></div></div>
+                       <div class="row"><div class="col"><p>Set file time</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>ctime_t mytime;</p><p>get_ftime("myfile.txt",&mytime);</p></div></div>
+                   </div>
+                   <hr />
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int  create_dir(const char *path);</p></div></div>
+                       <div class="row"><div class="col"><p>Create new directory on the local file system</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>create_dir("mynewdir");</p></div></div>
+                   </div>
+                   <hr />
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int  del_dir(const char *path);</p></div></div>
+                       <div class="row"><div class="col"><p>Remove empty directory from the local file system</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>del_dir("mynewdir");</p></div></div>
+                   </div>
+                   <hr />
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int rm_dir(const char *dir);</p></div></div>
+                       <div class="row"><div class="col"><p>Remove directory and sub files / empty directory from the local file system</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>rm_dir("mynewdir");</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int   get_sub_dirs(const char *path, struct string *dir_list);</p></div></div>
+                       <div class="row"><div class="col"><p>Get list of subdirectory from a specified path.</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string dir_list={PTR_NULL};</p><p>get_sub_dirs("mynewdir",&dir_list);</p><p>free_string(&dir_list);</p></div></div>
+                   </div>
+                   <hr />
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int  get_sub_files(const char *path, struct string *file_list);</p></div></div>
+                       <div class="row"><div class="col"><p>Get list of file in the directory at specified path.</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string file_list={PTR_NULL};</p><p>get_sub_files("mynewdir",&file_list);</p><p>free_string(&file_list);</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>set_cwd(const char *path);</p></div></div>
+                       <div class="row"><div class="col"><p>Set current working directory.</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>set_cwd("mynewdir");</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>get_cwd (char *path, size_t len);</p></div></div>
+                       <div class="row"><div class="col"><p>Get current working directory.</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>char mycwd[256];</p><p>get_cwd(mycwd,256);</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>void console_print(const char *msg);</p></div></div>
+                       <div class="row"><div class="col"><p>Output string to stdio/console</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>console_print("hello world");</p></div></div>
+                   </div>
+                   <hr />
+                   <div class="container">
+                       <div class="row"><div class="col"><p>int log_output(const char *data);</p></div></div>
+                       <div class="row"><div class="col"><p>Output string to log</p></div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>log_output("hello world");</p></div></div>
+                   </div>
+                   <hr />
+               </div>
+            </div>
+           </div>
+
+           <div class="row">
+               <div class="col-md-3"><h4><a href="#net_funcs" onclick="$('#net_funcs').toggle();">Sockets</a></h4></div>
+               <div class="col-md-8"><p>The base api to manipulate sockect is found in <a target="_blank" href="https://github.com/NodixBlockchain/nodix/blob/master/libcon/include/connect.h">libcon/include/connect.h</a></p><p>It support both blocking and non blocking io, and uPnp. </p></div>
+           </div>
+           <div id="net_funcs">
+
+             <div class="row">
+               <div class="col-md-1"></div>
+             
+                <div class="col-md-8">
+                    <h5><a target="_blank" href="https://github.com/NodixBlockchain/nodix/blob/master/libcon/win32/connect.c">libcon/win32/connect.c</a>&nbsp;and&nbsp;<a target="_blank" href="https://github.com/NodixBlockchain/nodix/blob/master/libcon/unix/connect.c">libcon/unix/connect.c</a></h5>
+                    <hr/>
+
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p> int network_init		();</p></div></div>
+                       <div class="row"><div class="col">Initialize network API.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>network_init();</p></div></div>
+                   </div>
+                   <hr/>
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p> int network_free();</p></div></div>
+                       <div class="row"><div class="col">Free resources used by the network API.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>network_free();</p></div></div>
+                   </div>
+                    <hr/>
+                   <div class="container">
+                       <div class="row"><div class="col"><p> get_if(const char *gw_ip, struct string *name, struct string *ip);</p></div></div>
+                       <div class="row"><div class="col">Get the name and ip of the local interface connected to the speciefied gateway.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct string if_name={PTR_NULL},if_ip={PTR_NULL};;</p><p>get_if("192.168.1.1", &if_name, &if_ip);</p></div></div>
+                   </div>
+                   <hr/>
+
+                    
+                   <div class="container">
+                       <div class="row"><div class="col"><p>struct con *do_connect(const struct host_def *host);</p></div></div>
+                       <div class="row"><div class="col">Open connection to the specified host.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct host_def *myhost=PTR_NULL;</p><p>struct con *mycon;</p><p>myhost=make_host_def("google.com",80);</p><p>mycon=do_connect(myhost);</p></div></div>
+                   </div>
+                   <hr/>
+
+                   <div class="container">
+                       <div class="row"><div class="col"><p>char *readline(struct con *Con, ctime_t timeout);</p></div></div>
+                       <div class="row"><div class="col">Read a line from the opened connection, and block until the specified timeout.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct host_def *myhost=PTR_NULL;</p><p>struct con *mycon;</p><p>myhost=make_host_def("google.com",80);</p><p>mycon=do_connect(myhost);</p><p>readline(mycon,10);</p></div></div>
+                  </div>
+                  <hr/>
+
+
+                  <div class="container">
+                       <div class="row"><div class="col"><p>int	read_data(struct con *Con, size_t max);</p></div></div>
+                       <div class="row"><div class="col">Syncrhonously read 'max' bytes from the opened connection. Return number of byte read, or -1 in case of error.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct host_def *myhost=PTR_NULL;</p><p>struct con *mycon;</p><p>int size;</p><p>myhost=make_host_def("google.com",80);</p><p>mycon=do_connect(myhost);</p><p>size=read_data(mycon,4096);</p></div></div>
+                  </div>
+                  <hr/>
+                   
+                  <div class="container">
+                       <div class="row"><div class="col"><p>int read_av_data(struct con *Con, size_t max);</p></div></div>
+                       <div class="row"><div class="col">Read 'max' bytes from the opened connection using non blocking i/o. Return number of byte read, or -1 in case of error.</div></div>
+                       <br />
+                        <div class="row"><div class="col code_example"><p>struct host_def *myhost=PTR_NULL;</p><p>struct con *mycon;</p><p>int size;</p><p>myhost=make_host_def("google.com",80);</p><p>mycon=do_connect(myhost);</p><p>size=read_av_data(mycon,4096);</p></div></div>
+                  </div>
+                  <hr/>
+
+                  <div class="container">
+                       <div class="row"><div class="col"><p>int send_data(struct con *Con, unsigned char *data, size_t len);</p></div></div>
+                       <div class="row"><div class="col">Synchronously write 'max' bytes to the opened connection. Return number of byte wrote, or -1 in case of error.</div></div>
+                       <br />
+                       <div class="row"><div class="col code_example"><p>struct host_def *myhost=PTR_NULL;</p><p>struct con *mycon;</p><p>int size;</p><p>struct mystring={PTR_NUL};</p><p>myhost=make_host_def("google.com",80);</p><p>mycon=do_connect(myhost);</p><p>make_string(&mystring,"hello world");</p><p>size=send_data(mycon,mystring.str,mystring.len);</p></div></div>
+                  </div>
+                  <hr/>
+                   
+                  <div class="container">
+                       <div class="row"><div class="col"><p>int send_data_av(struct con *Con, unsigned char *data, size_t len);</p></div></div>
+                       <div class="row"><div class="col">Write 'max' bytes to the opened connection using non blocking i/o. Return number of byte wrote, or -1 in case of error.</div></div>
+                       <br />
+                        <div class="row"><div class="col code_example"><p>struct host_def *myhost=PTR_NULL;</p><p>struct con *mycon;</p><p>int size;</p><p>struct mystring={PTR_NUL};</p><p>myhost=make_host_def("google.com",80);</p><p>mycon=do_connect(myhost);</p><p>make_string(&mystring,"hello world");</p><p>size=send_data_av(mycon,mystring.str,mystring.len);</p></div></div>
+                  </div>
+                  <hr/>
+
+                    <div class="container">
+                        <div class="row"><div class="col"><p> const struct string*	 get_con_error(struct con *Con);</p></div></div>
+                        <div class="row"><div class="col">Return a constant pointer to the connection error string.</div></div>
+                        <br />
+                        <div class="row"><div class="col code_example"><p>struct host_def *myhost=PTR_NULL;</p><p>struct con *mycon;</p><p>struct string *error=PTR_NUL;</p><p>myhost=make_host_def("google.com",80);</p><p>mycon=do_connect(myhost);</p><p>error=get_con_error(mycon);</p></div></div>
+                    </div>
+                    <hr />
+
+
+                    <div class="container">
+                        <div class="row"><div class="col"><p>int	 con_consume_data(struct con *Con, size_t mov_len);</p></div></div>
+                        <div class="row"><div class="col">Shift the connection data buffer of the specified amount of byte. This function is not thread safe.</div></div>
+                        <br />
+                        <div class="row"><div class="col code_example"><p>struct host_def *myhost=PTR_NULL;</p><p>struct con *mycon;</p><p>struct string *data=PTR_NUL;</p><p>myhost=make_host_def("google.com",80);</p><p>mycon=do_connect(myhost);</p><p>readline(mycon,10);</p><p>data=get_con_lastline(mycon);</p><p>con_consume_data(mycon,data->len);</p></div></div>
+                    </div>
+                    <hr />
+
+
+
+                    <div class="container">
+                        <div class="row"><div class="col"><p>int	reconnect(struct con *mycon);</p></div></div>
+                        <div class="row"><div class="col">Attempt to reconnect the host, when read or write operation return an error.</div></div>
+                        <br />
+                        <div class="row"><div class="col code_example"><p>struct host_def *myhost=PTR_NULL;</p><p>struct con *mycon;</p><p>int size;</p><p>myhost=make_host_def("google.com",80);</p><p>mycon=do_connect(myhost);</p><p>size=send_data(mycon,"hello",5);</p><p>if(size&lt;0){reconnect(mycon);}</p></div></div>
+                    </div>
+                    <hr />
+
+
+
+                    <div class="container">
+                        <div class="row"><div class="col"><p>struct con * open_port(const char *my_addr, unsigned short port);</p></div></div>
+                        <div class="row"><div class="col">Open a port on the local system using the specified address, and return the connection.</div></div>
+                        <br />
+                        <div class="row"><div class="col code_example"><p>struct con *mycon;</p><p>int size;</p><p>mycon=open_port("127.0.0.1",80);</p></div></div>
+                    </div>
+                    <hr />
+
+                    <div class="container">
+                        <div class="row"><div class="col"><p>struct con *do_get_incoming(struct con *listen_con, unsigned int time_out);</p></div></div>
+                        <div class="row"><div class="col">Return newly opened connection, or PTR_NULL if there is no new connection.</div></div>
+                        <br />
+                        <div class="row"><div class="col code_example"><p>struct con *mycon;</p>><p>struct con *netcon;</p><p>int size;</p><p>mycon=open_port("127.0.0.1",80);</p><p>netcon=do_get_incoming(mycon,10)</p></div></div>
+                    </div>
+                    <hr />
+
+                    <div class="container">
+                        <div class="row"><div class="col"><p>void	con_close(struct con *Con);</p></div></div>
+                        <div class="row"><div class="col">Close the connection and free the memory.</div></div>
+                        <br />
+                        <div class="row"><div class="col code_example"><p>struct con *mycon;</p><p>struct con *netcon;</p><p>int size;</p><p>mycon=open_port("127.0.0.1",80);</p><p>netcon=do_get_incoming(mycon,10)</p><p>size=read_data(netcon,1024);</p><p>con_close(netcon);</p></div></div>
+                    </div>
+                    <hr />
+                    
+               </div>
+             </div>
+           </div>
+                
+           <div class="row">
+               <div class="col-md-3"><h4 id="mod_anchor"><a href="#mod_funcs" onclick="$('#mod_funcs').toggle();">Modules</a></h4></div>
+               <div class="col-md-8"><p>The base api to manipulate modules is found in <a target="_blank" href="https://github.com/NodixBlockchain/nodix/blob/master/libcon/include/tpo_mod.h">libcon/include/tpo_mod.h</a></p></div>
+            </div>
+
+            <div id="mod_funcs">
+                
+             <div class="row">
+             <div class="col-md-1"></div>
+             <div class="col-md-8">
+                <h5><a target="_blank" href="https://github.com/NodixBlockchain/nodix/blob/master/libcon/tpo_mod.c">libcon/tpo_mod.c</a></h5>
+                <hr/>
+                <div class="container">
+                    <div class="row"><div class="col"><p>void tpo_mod_init(tpo_mod_file *driver);</p></div></div>
+                    <div class="row"><div class="col">Initialize tpo module memory.</div></div>
+                    <br />
+                    <div class="row"><div class="col code_example"><p>tpo_mod_file mod;</p><p>tpo_mod_init(&mod);</p></div></div>
+                </div>
+                <hr/>
+
+                <div class="container">
+                    <div class="row"><div class="col"><p>int tpo_mod_load_tpo(mem_stream *file_stream, tpo_mod_file *tpo_file, unsigned int imp_func_addr);</p></div></div>
+                    <div class="row"><div class="col">Initialize the module from the binary image.</div></div>
+                    <br />
+                    <div class="row"><div class="col code_example"><p>tpo_mod_file mod;</p><p>struct mem_stream modstrm;</p<p></p><p>get_file_to_memstream("modz/libbase.tpo", &modstrm);</p><p>tpo_mod_init(&mod);</p><p>tpo_mod_load_tpo(&modstrm,&mod, 0);</p><p>mem_stream_close(&modstrm);</p></div></div>
+                </div>
+                <hr/>
+
+                <div class="container">
+                    <div class="row"><div class="col"><p>void_func_ptr	tpo_mod_get_exp_addr(mem_stream *file_stream, const char *sym)</p></div></div>
+                    <div class="row"><div class="col">Get the address of exported function from the module in the binary image.</div></div>
+                    <br />
+                    <div class="row"><div class="col code_example"><p>struct mem_stream modstrm;</p><p>void_func_ptr my_func;</p><p></p><p>get_file_to_memstream("modz/libbase.tpo", &modstrm);</p><p>my_func=tpo_mod_get_exp_addr(&modstrm,"my_func");</p></div></div>
+                </div>
+                <hr/>
+
+                <div class="container">
+                    <div class="row"><div class="col"><p>void register_tpo_exports(tpo_mod_file *tpo_mod, const char *mod_name);</p></div></div>
+                    <div class="row"><div class="col">Make the exported symbols visible to the dynamic linker. Other module can then import the symbol based on linker definition.</div></div>
+                    <br />
+                    <div class="row"><div class="col code_example"><p>struct mem_stream modstrm;</p><p>get_file_to_memstream("modz/libbase.tpo", &modstrm);</p><p>tpo_mod_init(&mod);</p><p>tpo_mod_load_tpo(&modstrm,&mod, 0);</p><p>mem_stream_close(&modstrm);</p><p>register_tpo_exports(&mod,"my_mod");</p></div></div>
+                </div>
+                <hr/>      
+
+                <div class="container">
+                    <div class="row"><div class="col"><p>int load_module(const char *file, const char *mod_name, tpo_mod_file *mod);</p></div></div>
+                    <div class="row"><div class="col">Initialize the module from file system image, and make its exported symbol visible to the linker.</div></div>
+                    <br />
+                    <div class="row"><div class="col code_example"><p>tpo_mod_file mod;</p><p>load_module("modz/libbase.tpo","libbase",&mod);</p></div></div>
+                </div>
+                <hr/>
+
+                <div class="container">
+                    <div class="row"><div class="col"><p>void_func_ptr get_tpo_mod_exp_addr_name(const tpo_mod_file *tpo_mod, const char *name, unsigned int deco_type);</p></div></div>
+                    <div class="row"><div class="col">Get the address of exported function from the module in memory.</div></div>
+                    <br />
+                    <div class="row"><div class="col code_example"><p>tpo_mod_file mod;</p><p>void_func_ptr my_func;</p><p>tpo_mod_init(&mod);</p><p>load_module("modz/libbase.tpo", &mod);</p><p>my_func=tpo_mod_get_exp_addr(&mod,"my_func",0);</p></div></div>
+                </div>
+                <hr/>           
+
+     
+                <div class="container">
+                    <div class="row"><div class="col"><p>int execute_script_mod_call(tpo_mod_file		*tpo_mod, const char *method);</p></div></div>
+                    <div class="row"><div class="col">Execute the module function with no arguments. Return 0 if the function return failure state, 1 if the function return success state, -1 if the function call didn't happen.</div></div>
+                    <br />
+                    <div class="row"><div class="col code_example"><p>tpo_mod_file mod;</p><p>tpo_mod_init(&mod);</p><p>load_module("modz/libbase.tpo", &mod);</p><p>execute_script_mod_call(&mod,"my_func");</p></div></div>
+                </div>
+                <hr/>     
+
+                <div class="container">
+                    <div class="row"><div class="col"><p>execute_script_mod_rcall(tpo_mod_file		*tpo_mod, const char *method, mem_zone_ref_ptr input);</p></div></div>
+                    <div class="row"><div class="col">Execute the module function with one argument. Return 0 if the function return failure state, 1 if the function return success state, -1 if the function call didn't happen.</div></div>
+                    <br />
+                    <div class="row"><div class="col code_example"><p>tpo_mod_file mod;</p><p>mem_zone_ref input={PTR_NULL}</p><p>tpo_mod_init(&mod);</p><p>load_module("modz/libbase.tpo", &mod);</p><p>tree_manager_create_node("param",NODE_GFX_INT,&input);</p><p>tree_manager_write_node_dword(&input,0,42);</p><p>execute_script_mod_rcall(&mod,"my_func",&input);</p></div></div>
+                </div>
+                <hr/>                
+
+                <div class="container">
+                    <div class="row"><div class="col"><p>execute_script_mod_rcall(tpo_mod_file		*tpo_mod, const char *method, mem_zone_ref_ptr input, mem_zone_ref_ptr output);</p></div></div>
+                    <div class="row"><div class="col">Execute the module function with two arguments. Return 0 if the function return failure state, 1 if the function return success state, -1 if the function call didn't happen.</div></div>
+                    <br />
+                    <div class="row"><div class="col code_example"><p>tpo_mod_file mod;</p><p>mem_zone_ref input={PTR_NULL},output={PTR_NULL};</p><p>tpo_mod_init(&mod);</p><p>load_module("modz/libbase.tpo", &mod);</p><p>tree_manager_create_node("param",NODE_GFX_INT,&input);</p><p>tree_manager_write_node_dword(&input,0,42);</p><p>execute_script_mod_rwcall(&mod,"my_func",&input,&output);</p></div></div>
+                </div>
+                <hr/>        
+             </div>
+           </div>
+           </div>
+
+
+           <div class="row">
+                <div class="col-md-3"><h4>Launcher</h4></div>
+                <div class="col-md-8">
+                   <p>The source code of the nodix blockchain launcher loading the nodix.node script is on the github <a target="_blank" href="https://github.com/NodixBlockchain/nodix/tree/master/launcher">Nodix launcher on github</a></p>
+                    <div class="container">
+                    <section>
+                      <h3>Example C code using libcon to run an application.</h3>
+                      <div class="row">
+                          
+                          <div class="col-md-10 code_example">
+
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">#include</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&lt;base/std_def.h&gt;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">#include</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&lt;base/std_mem.h&gt;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">#include</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&lt;base/mem_base.h&gt;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">#include</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&lt;base/std_str.h&gt;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">#include</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&lt;strs.h&gt;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">#include</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&lt;connect.h&gt;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">#include</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&lt;mem_stream.h&gt;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">#include</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&lt;tpo_mod.h&gt;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">#include</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&lt;fsio.h&gt;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">typedef</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">int</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">C_API_FUNC</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">app_func</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">(</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_zone_ref_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              params);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">typedef</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">void</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">C_API_FUNC</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">tree_manager_init_func</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">(</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">size_t</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              size);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">typedef</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">int</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">C_API_FUNC</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">load_script_func</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">(</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">const</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">char</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              *file,
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_zone_ref_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              script_vars,
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">unsigned</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">int</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              opt);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">typedef</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">int</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">C_API_FUNC</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">resolve_script_var_func</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">(</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_zone_ref_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              script_vars,
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_zone_ref_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              script_proc,
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">const</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">char</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              *var_path,
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">unsigned</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">int</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              var_type,
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_zone_ref_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              out_var,
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_zone_ref_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              pout_var);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">typedef</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">int</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">C_API_FUNC</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">get_script_var_value_str_func</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">(</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_zone_ref_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              global_vars,
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">const</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">char</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              *var_path,
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">struct</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">string</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              *out,
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">unsigned</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">int</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              radix);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">typedef</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">int</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">C_API_FUNC</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">get_script_var_value_ptr_func</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">(</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_zone_ref_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              global_vars,
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">const</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">char</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              *var_path,
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              *out);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">typedef</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">int</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">C_API_FUNC</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">execute_script_proc_func</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">(</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_zone_ref_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              global_vars,
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_zone_ref_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              proc);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">typedef</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">app_func</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">			*</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">app_func_ptr</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">typedef</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">load_script_func</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		*</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">load_script_func_ptr</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">typedef</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">resolve_script_var_func</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		*</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">resolve_script_var_func_ptr</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">typedef</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">get_script_var_value_str_func</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	*</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">get_script_var_value_str_func_ptr</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">typedef</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">get_script_var_value_ptr_func</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	*</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">get_script_var_value_ptr_func_ptr</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">typedef</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">execute_script_proc_func</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		*</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">execute_script_proc_func_ptr</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">typedef</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">tree_manager_init_func</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		*</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">tree_manager_init_func_ptr</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">load_script_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              load_script
+                                              =
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_INVALID</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">resolve_script_var_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              resolve_script_var
+                                              =
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_INVALID</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">get_script_var_value_str_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              get_script_var_value_str
+                                              =
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_INVALID</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">get_script_var_value_ptr_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              get_script_var_value_ptr
+                                              =
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_INVALID</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">execute_script_proc_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              execute_script_proc
+                                              =
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_INVALID</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">tree_manager_init_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              tree_manager_init
+                                              =
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_INVALID</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">app_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              app_init
+                                              =
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_INVALID</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              app_start =
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_INVALID</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              app_loop =
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_INVALID</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              app_stop =
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_INVALID</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">tpo_mod_file</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              libbase_mod = { 0xDEF00FED };
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">int</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              main(
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">int</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#808080"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">argc</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">const</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">char</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              **
+                                          </font>
+                                      </font>
+                                  </font><font color="#808080"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">argv</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">)</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">{</font></font></font></p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">struct</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">string</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              node_name
+                                              = {
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_NULL</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              },data_dir={
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_NULL</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">};</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_zone_ref</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              params = {
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_NULL</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              }, script_vars = {
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_NULL</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              }, init_node_proc = {
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_NULL</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              };
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">const_mem_ptr</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">			*params_ptr;</font></font></font></p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">tpo_mod_file</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">			*nodix_mod;</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">int</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              done = 0,n;
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	init_mem_system			();</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              init_default_mem_area	(24
+                                              * 1024 * 1024);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	set_exe_path			();</font></font></font></p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	network_init			();</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	create_def();</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	tpo_mod_init		(&amp;libbase_mod);</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	load_module		(</font></font></font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;modz/libbase.tpo&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;libbase&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              &amp;libbase_mod);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              load_script
+                                              =
+                                              (
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">load_script_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              )get_tpo_mod_exp_addr_name(&amp;libbase_mod,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;load_script&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              0);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              resolve_script_var
+                                              =
+                                              (
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">resolve_script_var_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              )get_tpo_mod_exp_addr_name(&amp;libbase_mod,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;resolve_script_var&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              0);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              get_script_var_value_str
+                                              =
+                                              (
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">get_script_var_value_str_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              )get_tpo_mod_exp_addr_name(&amp;libbase_mod,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;get_script_var_value_str&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              0);;
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              get_script_var_value_ptr
+                                              =
+                                              (
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">get_script_var_value_ptr_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              )get_tpo_mod_exp_addr_name(&amp;libbase_mod,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;get_script_var_value_ptr&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              0);;
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              execute_script_proc
+                                              =
+                                              (
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">execute_script_proc_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              )get_tpo_mod_exp_addr_name(&amp;libbase_mod,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;execute_script_proc&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              0);;
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              tree_manager_init
+                                              =
+                                              (
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">tree_manager_init_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              )get_tpo_mod_exp_addr_name(&amp;libbase_mod,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;tree_manager_init&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              0);;
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              tree_manager_init		(16
+                                              * 1024 * 1024);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              load_script
+                                              (
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;nodix.node&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              &amp;script_vars,3);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">if</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              (!get_script_var_value_str(&amp;script_vars,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;configuration.name&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              &amp;node_name, 0))
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              make_string(&amp;node_name,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;nodix&quot;</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">);</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">if</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              (get_script_var_value_str(&amp;script_vars,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;SelfNode.data_dir&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              &amp;data_dir, 0))
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	{</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              set_data_dir  (&amp;data_dir,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;nodix&quot;</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">);</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              free_string   (&amp;data_dir);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	}</font></font></font></p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">else</font></font></font></p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	{</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">if</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              (!set_home_path(node_name.str))
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              {
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		console_print(</font></font></font><font color="#a31515">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              &quot;could
+                                              not set home dir 'nodix' \n&quot;
+                                          </font>
+                                      </font>
+                                  </font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">);</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">return</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              0;
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              }
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	}</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              get_script_var_value_ptr(&amp;script_vars,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;nodix.mod_ptr&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              (
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              *)&amp;nodix_mod);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              resolve_script_var
+                                              (&amp;script_vars,
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_NULL</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;init_node&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              0xFFFFFFFF, &amp;init_node_proc,
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_NULL</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">);</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              app_init
+                                              = (
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">app_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              )get_tpo_mod_exp_addr_name(nodix_mod,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;app_init&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              0);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              app_start
+                                              = (
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">app_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              )get_tpo_mod_exp_addr_name(nodix_mod,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;app_start&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              0);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              app_loop
+                                              = (
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">app_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              )get_tpo_mod_exp_addr_name(nodix_mod,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;app_loop&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              0);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              app_stop
+                                              = (
+                                          </font>
+                                      </font>
+                                  </font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">app_func_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              )get_tpo_mod_exp_addr_name(nodix_mod,
+                                          </font>
+                                      </font>
+                                  </font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;app_stop&quot;</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ,
+                                              0);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">if</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              (!app_init(&amp;script_vars))
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	{</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		console_print(</font></font></font><font color="#a31515">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              &quot;could
+                                              not initialize app &quot;
+                                          </font>
+                                      </font>
+                                  </font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">);</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		console_print(nodix_mod-&gt;name);</font></font></font></p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		console_print(</font></font></font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;\n&quot;</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">);	</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">return</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              0;
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	}</font></font></font></p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">if</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              (!execute_script_proc(&amp;script_vars, &amp;init_node_proc))
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	{</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		console_print(</font></font></font><font color="#a31515">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              &quot;could
+                                              not execute script initialization routine.&quot;
+                                          </font>
+                                      </font>
+                                  </font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">);</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">return</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              0;
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	}</font></font></font></p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">if</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              (daemonize(node_name.str) &lt;= 0)
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	{</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		console_print(</font></font></font><font color="#a31515">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              &quot;daemonize
+                                              failed \n&quot;
+                                          </font>
+                                      </font>
+                                  </font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">);</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">return</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              0;
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	}</font></font></font></p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">if</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              (
+                                          </font>
+                                      </font>
+                                  </font><font color="#808080"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">argc</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              &gt; 1)
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	{</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              allocate_new_zone(0,
+                                          </font>
+                                      </font>
+                                  </font><font color="#808080"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">argc</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">*</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">sizeof</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">(</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_ptr</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              ),
+                                              &amp;params);
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">for</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              (n = 0; n &lt; (
+                                          </font>
+                                      </font>
+                                  </font><font color="#808080"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">argc</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              -1);
+                                              n++)
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		{</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              params_ptr		=
+                                              get_zone_ptr(&amp;params, n*
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">sizeof</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">(</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_ptr</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">));</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              (*params_ptr)	=
+                                          </font>
+                                      </font>
+                                  </font><font color="#808080"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">argv</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">[n+1];</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		}</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              params_ptr		=
+                                              get_zone_ptr(&amp;params, n*
+                                          </font>
+                                      </font>
+                                  </font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">sizeof</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">(</font></font></font><font color="#2b91af"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">mem_ptr</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">));</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              (*params_ptr)	=
+                                          </font>
+                                      </font>
+                                  </font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_NULL</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">;</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	}</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">if</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              (!app_start(&amp;params))
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	{</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		console_print(</font></font></font><font color="#a31515">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              &quot;could
+                                              not start app &quot;
+                                          </font>
+                                      </font>
+                                  </font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">);</font></font></font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		console_print(nodix_mod-&gt;name);</font></font></font></p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		console_print(</font></font></font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">&quot;\n&quot;</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">);</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">return</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              0;
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	}</font></font></font></p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	</font></font></font><font color="#0000ff"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">while</font></font></font><font color="#000000">
+                                      <font face="Consolas, sans-serif">
+                                          <font size=2 style="font-size: 9pt">
+                                              (isRunning())
+                                          </font>
+                                      </font>
+                                  </font>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	{</font></font></font></p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">		app_loop(</font></font></font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_NULL</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">);</font></font></font></p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	}</font></font></font></p>
+                              <p style="margin-bottom: 0in">
+                                  <br>
+                              </p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">	app_stop(</font></font></font><font color="#6f008a"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">PTR_NULL</font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">);</font></font></font></p>
+                              <p style="margin-bottom: 0in"><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt">}</font></font></font></p>
+                          </div>
+                  </section>
+              </div>
+            </div>
+        </div>
+    </section>
+</div>

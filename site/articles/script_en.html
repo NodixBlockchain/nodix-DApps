@@ -1,0 +1,208 @@
+<style>
+    .code{
+        font-size:0.8em;
+        color:#000;
+    }
+
+    .doc
+    {
+        font-size:1.1em;
+    }
+    .doc .row
+    {
+        margin:12px 2px 12px 2px;
+        border-bottom:3px  dotted  #000;
+    }
+</style>
+<div class="container">
+    <h1>Nodix script language</h1>
+
+    <p>Nodix feature a unique script language, allowing easy programing of network message handler, with a synthax close to javascript, and variable convertible to javascript objects.</p>
+
+    <p>Script code is oriented around event handler definition to facilitate asynchronous and/or parallel execution.</p>
+
+    <p>There can be two types of scripts.</p>
+
+    <p>Application script allow to define initial configuration, module dependencies, and event handlers associated to a message list.</p>
+    <p>Web page script allow to generate dynamic and interactive html5 pages using application modules, allowing embeding of script variable into javascript code and generating javascript based on dynamic data. It supports query string parsing, cookies, html forms and rpc/json.</p>
+
+    <h3>declarative statements</h3>
+    <p>Declarative statement are executed once when the script is loaded, and correspond to script global variables.</p>
+
+    <div class="container doc">
+    <div class="row">
+        <div class="col-md-4"><h6>let variable = value</h6></div>
+        <div class="col-md-6">declare and initialize a new global variable.</div>
+    </div>
+    <div class="row">
+        <div class="col-md-4"><h6>proc&nbsp;name&nbsp;(arg1, arg2) = &acute; code &acute;</h6></div>
+        <div class="col-md-6">declare a script procedure.</div>
+    </div>
+    <div class="row">
+        <div class="col-md-4"><h6>handler&nbsp;name&nbsp;(node,payload) = ` code `</h6></div>
+        <div class="col-md-6">declare a script event handler for blockchain protocol.</div>
+    </div>
+    <div class="row">
+        <div class="col-md-4"><h6>page&nbsp;name(arg1,arg2)&nbsp;= ` code `</h6></div>
+        <div class="col-md-6">declare an HTML page generation procedure.</div>
+    </div>
+    <div class="row">
+        <div class="col-md-4"><h6>json&nbsp;name(arg1,arg2)&nbsp;= ` code `</h6></div>
+        <div class="col-md-6">declare a http/json generation procedure.</div>
+    </div>
+    <div class="row">
+        <div class="col-md-4"><h6>accumulator</h6></div>
+        <div class="col-md-6">declare an accumulator procedure.</div>
+    </div>
+    <hr/>
+    </div>
+
+    <h3>Code statements</h3>
+    <p>Code statement are used inside of script procedures, event handlers or web pages.</p>
+    <div class="container doc">
+        <div class="row"><div class="col-md-2"><h6>error</h6></div><div class="col-md-6">Terminate the procedure with error state.</div></div>
+        <div class="row"><div class="col-md-2"><h6>success</h6></div><div class="col-md-6">Terminate the procedure with success state.</div></div>
+        <div class="row"><div class="col-md-2"><h6>loadmod</h6></div><div class="col-md-6">Load a module file from module definition.</div></div>
+        <div class="row"><div class="col-md-2"><h6>push</h6></div><div class="col-md-6">Add the variable or expression into the target's children.</div></div>
+        <div class="row"><div class="col-md-2"><h6>set</h6></div><div class="col-md-6">Assign the right side expression to left side variable.<br /><span style="font-size:0.8em;">A new key is automically added to target objects if it doesn't exist.</span></div></div>
+        <div class="row"><div class="col-md-2"><h6>add</h6></div><div class="col-md-6">Arithmetic add on arg1 with arg2. If they are both strings they are concatenated.</div></div>
+        <div class="row"><div class="col-md-2"><h6>sub</h6></div><div class="col-md-6">Arithmetic sub on arg1 with arg2.</div></div>
+        <div class="row"><div class="col-md-2"><h6>gettime</h6></div><div class="col-md-6">Get milleconds elapsed since boot.</div></div>
+        <div class="row"><div class="col-md-2"><h6>sethandler</h6></div><div class="col-md-6">Assign an handler to the message list for messages matching the expression.</div></div>
+        <div class="row"><div class="col-md-2"><h6>foreach</h6></div><div class="col-md-6">Execute a procedure on each element of the list.</div></div>
+        <div class="row"><div class="col-md-2"><h6>accumulate</h6></div><div class="col-md-6">Execute a procedure on each element of the list and accumulate the result.</div></div>
+        <div class="row"><div class="col-md-2"><h6>accum</h6></div><div class="col-md-6">Used in accumulator to accumulate the value.</div></div>
+        <div class="row"><div class="col-md-2"><h6>log</h6></div><div class="col-md-6">Log the specified string or variable.</div></div>
+        <div class="row"><div class="col-md-2"><h6>if</h6></div><div class="col-md-6">Skip all the code until the matching endif if the expression evaluate to false.</div></div>
+        <div class="row"><div class="col-md-2"><h6>endif</h6></div><div class="col-md-6">Mark the end of conditional execution block.</div></div>
+        <div class="row"><div class="col-md-2"><h6>mod.proc(arg1,arg2) [?|:]</h6></div><div class="col-md-6">If 'mod' resolve to a module definition, call the module function with the specified argument(s) (max 2). <br/><br /> '?' or ':' Following the statement mark conditional execution block based on return value.</div></div>
+        <div class="row"><div class="col-md-2"><h6>endor</h6></div><div class="col-md-6">mark the end of conditional execution block following module procedure call.</div></div>
+    </div>
+    <br/>
+<p>Statements used in page script</p>
+
+    <div class="container doc">
+        <div class="row"><div class="col-md-2"><h6>html_head</h6></div><div class="col-md-6">output the html header with the specified page title,stylesheets and meta tags.</div></div>
+        <div class="row"><div class="col-md-2"><h6>html_block</h6></div><div class="col-md-6">output a raw html block from a file.</div></div>
+        <div class="row"><div class="col-md-2"><h6>html_layout</h6></div><div class="col-md-6">output a raw html block from the blockchain application.</div></div>
+        <div class="row"><div class="col-md-2"><h6>html_scripts</h6></div><div class="col-md-6">output the javascript files.</div></div>
+        <div class="row"><div class="col-md-2"><h6>html_var</h6></div><div class="col-md-6">copy a script variable to javascript variable in json format.</div></div>
+        <div class="row"><div class="col-md-2"><h6>html_js</h6></div><div class="col-md-6">generate javascript block using script variables.</div></div>
+    </div>
+
+    <hr />
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3"><h4>Application script</h4></div>
+            <div class="col-md-8"><p>The script language allow to declare variable using a variant of json object declaration, as well as messages handler and initilization function.<br /> All variable but function parameters are global to the whole script scope.</p></div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-8"><p class="code">let NODE_GFX_OBJECT my_object = ` {"name":"myobject",(NODE_BITCORE_MSG_LIST) "msg_queue" : []} ` </p></div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-8"><p class="code"> let NODE_MODULE_DEF	node_adx     = ` { "file" : "modz/node_adx.tpo","order":0} ` </p></div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-8"><p class="code">handler on_msg(node, msg) = ` node_adx.process_msg(node,msg);  ` </p></div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-8"><p class="code">proc init_node = ` sethandler my_object.msg_queue{ "cmd=msg" } = on_msg; ` </p></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-8">Messages can then be queued asynchronously from the application or other module into the message list to trigger the handler.</div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-8">
+                <p><h3>Example C code to load a script from a file and send a message to it.</h3></p>
+                <p class="code">
+                    mem_zone_ref vars={PTR_NULL},&nbsp;proc={PTR_NULL};<br /><br />
+                    if(ret)ret = load_script("nodix.node", &vars,3);<br />
+                    if(ret)ret = resolve_script_var ( &vars, PTR_NULL, "init_node", NODE_SCRIPT_PROC, &proc);<br />
+                    if(ret)ret = execute_script_proc (&vars, &proc); <br />
+                    if(resolve_script_var(&vars, PTR_NULL, "my_object.msg_queue", NODE_BITCORE_MSG_LIST, &msg_list)) {
+                </p>
+                <p class="code">
+                    if(ret)ret=tree_manager_set_child_value_str(msg,"cmd","msg");<br />
+                    if(ret)ret=tree_manager_node_add_child(&msg_list, msg);<br />
+                    release_zone_ref(&msg_list);<br />
+                    </p>
+                <p class="code">}<br />if (!ret)log_output("could not emit message \n");</p>
+            </div>
+        </div>
+    </div>
+    <hr/>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3"><h4>Web pages scripts.</h4></div>
+            <div class="col-md-8"><p>The script language used for webpage is identical to the language used for application, but all function have additional built in parameters to handle the http protocol.</p><p>The built in webserver allow automatic execution of function defined in a script with url in for the form <br/> "/script_file.site/page_function/param1/param2" <br />to execute the procedure page_function defined in the script 'script_file.site' at the root of the webfolder.</p></div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-8"><h3>script_file.site</h3></div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-8"><p class="code"> let NODE_JSON_ARRAY stylesheets = `["/assets/plugins/bootstrap/css/bootstrap.min.css","/assets/css/style.css"]` </p></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-8"><p class="code">let NODE_JSON_ARRAY scripts = `["/assets/plugins/jquery/jquery.min.js","/assets/plugins/bootstrap/js/bootstrap.min.js","/assets/js/custom.js"]` </p></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-8"><p class="code">let NODE_JSON_ARRAY metas = `[{"viewport":"width=device-width, initial-scale=1.0"},{"description":""},{"author":""}]` </p></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-8">
+                page index = `<br />
+                <div style="padding-left:4px;">
+                    <p class="code">
+                        push scripts,"/assets/js/blocks.js"<br />
+                        html_head "NodiX INDEX PAGE" <br />
+                        html_block "templates/menu.html"<br />
+                        html_block "templates/node.html"<br />
+                        html_scripts<br />
+                        html_var SelfNode;<br />
+                        html_js<br />
+                    </p>
+                    <div style="padding-left:8px;">
+                        $(document).ready(function () <br />
+                        {
+                        <div style="padding-left:12px;">
+                            <p class="code">
+                                site_base_url = '/nodix.site';<br />
+                                api_base_url ='';<br />
+                                lang		= 'en';<br />
+                                <br />
+                                $('#node_name').html(SelfNode.user_agent);<br />
+                                $('#node_version').html(SelfNode.version);<br />
+                                $('#node_bheight').html(SelfNode.block_height);<br />
+                                <br />
+                                get_node_lag(SelfNode)<br />
+                            </p>
+                            });
+                        </div>
+                    </div>
+                    <p class="code">
+                        end_js<br />
+                        html_block "templates/footer.html"<br />
+                        success<br />
+                    </p>
+                    `
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

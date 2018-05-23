@@ -1,0 +1,604 @@
+let NODE_JSON_ARRAY stylesheets = `[
+	"/assets/fonts/fontawesome-webfont.woff2",
+	"/assets/plugins/bootstrap/css/bootstrap.min.css",
+	"/assets/css/style.css",
+	"/assets/css/headers/header-default.css",
+	"/assets/css/blocks.css",
+	"/assets/css/footers/footer-v7.css",
+	"/assets/plugins/animate.css",
+	"/assets/css/theme-skins/dark.css",
+	"/assets/css/font-awesome.min.css",
+	"/assets/plugins/sky-forms-pro/skyforms/css/sky-forms.css",
+	"/assets/css/custom.css"
+]`
+
+let NODE_JSON_ARRAY scripts = `[
+	"/assets/plugins/jquery/jquery.min.js",
+	"/assets/plugins/jquery/jquery-migrate.min.js",
+	"/assets/plugins/jquery/jquery-ui.min.js",
+	"/assets/plugins/jquery/jquery-cookies.js",
+	"/assets/plugins/bootstrap/js/bootstrap.min.js",
+	"/assets/plugins/back-to-top.js",
+	"/assets/js/custom.js",
+	"/app/blog/file/89BA19EA03E785E5278356C649E0DC6611A5940A2F79193D0C1779CCAD811B41"
+]`
+
+let NODE_MODULE_DEF node_adx = ` {"file" : "modz/node_adx.tpo"} `
+let NODE_MODULE_DEF blog = ` {"file" : "apps/blog/modz/blog.tpo"} `
+
+
+let NODE_GFX_INT ncats = 0
+let NODE_GFX_INT first = 0
+
+
+let NODE_GFX_OBJECT cat = `{}`
+let NODE_GFX_OBJECT post = `{}`
+let NODE_JSON_ARRAY cats = `[]`
+let NODE_JSON_ARRAY addrs = `[]`
+
+let NODE_GFX_OBJECT accounts = `{}`
+let NODE_JSON_ARRAY node_accounts = `[]`
+let NODE_GFX_OBJECT posts= `{}`
+let NODE_GFX_OBJECT messages= `{}`
+
+let NODE_GFX_STR appName	= "blog"
+let NODE_GFX_STR baseAppURL = "/app/blog/page/blog.site"
+
+let NODE_BITCORE_VSTR emptyStr = ""
+let NODE_GFX_STR html_mime = "text/html"
+let NODE_GFX_BINT root_app_fees = 0
+let NODE_GFX_BINT app_found = 0
+let NODE_BITCORE_HASH root_app_hash = 0
+let NODE_BITCORE_WALLET_ADDR root_app_addr = 0
+let NODE_GFX_OBJECT my_app = `{}`
+let NODE_GFX_OBJECT cat_obj = `{}`
+let NODE_GFX_OBJECT srch_obj= `{}`
+let NODE_GFX_BINT has_app_root = 0
+
+page index(firstPost) = `
+
+	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
+
+	 html_head  "NodiX Blog" 
+	
+	 html_block "templates/menu.html"
+	 html_layout "blog_nav.html"
+	 html_layout "blog.html"
+
+
+	 set first = 0;
+
+	 blog.blog_get_cats(cats,first)
+
+	 blog.blog_get_last_posts(posts,firstPost)
+
+	 html_scripts
+
+	 html_var cats;
+	 html_var posts;
+	 
+	 html_js
+		
+		 $(document).ready(function () 
+		 {
+		    var first= parseInt('%firstPost%');;
+			if(isNaN(first))first = 0;
+
+			update_cats	(cats,'cats');
+			update_posts(posts,'posts');
+
+			$('.button').each( function () {
+				var ref=$(this).attr('href');
+				$(this).attr('href','%baseAppURL%/'+ref);
+			});
+
+			$('#lastpostbut').addClass('selbut');
+
+			make_pages		('%baseAppURL%/index/', first, 10, posts.total);
+
+			
+		 });
+
+	 end_js
+	 html_block "templates/footer.html"
+
+`
+
+page viewcat(cat_id,first) = `
+
+	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
+
+	 set cat_obj.cat_id = cat_id;
+	 set cat_obj.first  = first;
+
+	 blog.blog_get_cat_posts(cat_obj,posts)
+	 blog.blog_get_cat		(cat_id ,cat)
+
+
+	 html_head  "NodiX Blog new post" 
+
+	 html_block "templates/menu.html"
+	 html_layout "blog_nav.html"
+	 html_layout "viewcat.html"
+
+
+	 html_scripts
+	 html_var posts;
+	 html_var cat;
+
+	 html_js
+		
+	 $(document).ready(function () 
+	 {
+		var first= parseInt('%firstPost%');;
+		if(isNaN(first))first = 0;
+
+		$('.button').each( function () {
+			var ref=$(this).attr('href');
+			$(this).attr('href','%baseAppURL%/'+ref);
+		});
+
+		$('#cat').html('<h1>'+cat.name+'</h1>');
+
+		make_pages		('%baseAppURL%/viewcat/%cat_id%/', first, 10, posts.total);
+		update_posts	(posts,'posts');
+	  });
+
+	 end_js
+
+	 html_block "templates/footer.html"
+
+`
+
+page viewpost(post_id) = `
+
+	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
+
+	 blog.blog_get_post		(post_id,post)
+	 blog.blog_get_cats		(cats,first)
+
+
+	 html_head  "NodiX Blog post" 
+
+	 html_block "templates/menu.html"
+	 html_layout "blog_nav.html"
+	 html_layout "viewpost.html"
+
+
+
+	 html_scripts
+	 html_var post;
+	 html_var cats;
+
+	 html_js
+		
+	 $(document).ready(function () 
+	 {
+
+		$('.button').each( function () {
+			var ref=$(this).attr('href');
+			$(this).attr('href','%baseAppURL%/'+ref);
+		});
+
+
+		$('#title').html(post.title);
+
+		if(post.poster)
+			$('#postAddr').html(post.poster);
+		else
+			$('#postAddr').html(post.poster_addr);
+		$('#post').html(post.content_data);
+
+		update_cats(cats,'cats');
+		
+	  });
+
+	 end_js
+
+	 html_block "templates/footer.html"
+
+`
+
+page postdone() = `
+	
+	 push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
+
+	 html_head  "NodiX Blog post done" 
+	
+	 html_block "templates/menu.html"
+	 html_layout "blog_nav.html"
+	 html_layout "post_done.html"
+
+	 html_scripts
+
+	 html_js
+
+		$(document).ready(function () 
+		{
+			$('.button').each( function () {
+				var ref=$(this).attr('href');
+				$(this).attr('href','%baseAppURL%/'+ref);
+			});
+
+			$('#post_txid').html	('%query_vars.posttx%');
+			create_file_link		('%query_vars.fileHash%')
+		});
+	end_js
+
+`
+
+page dopost(account_name) = `
+	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
+
+	push scripts,"/assets/js/tinymce/tinymce.min.js"
+	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/blocks.js"
+	push scripts,"/assets/js/apps.js"
+	push scripts,"/assets/js/keys.js"
+
+
+	 html_head  "NodiX Blog do post" 
+	
+	 html_block "templates/menu.html"
+	 html_layout "blog_nav.html"
+	 html_layout "do_post.html"
+
+
+
+	 if(formvars.blog_content.size > 0)
+		set formvars.blog_content.mime = html_mime;
+		node_adx.node_add_tmp_file(formvars.blog_content)
+	 endif
+
+	 node_adx.node_get_root_app	(root_app_hash) ? set has_app_root = 1; endor
+
+	 if(has_app_root = 1)
+		node_adx.node_get_root_app_addr(root_app_addr)
+		node_adx.node_get_root_app_fee(root_app_fees)
+	 endif
+
+	 set first = 0;
+
+	 node_adx.node_list_accounts	(node_accounts)
+	 blog.blog_get_cats				(cats,first)
+
+	 html_scripts
+
+	 html_var has_app_root;
+	 html_var root_app_hash;
+	 html_var root_app_addr;
+	 html_var root_app_fees;
+
+	 html_var formvars.blog_content;
+	 html_var formvars.blog_title;
+
+	 html_js
+
+		$(document).ready(function () 
+		{
+			$('.button').each( function () {
+				var ref=$(this).attr('href');
+				$(this).attr('href','%baseAppURL%/'+ref);
+			});
+
+			
+
+			 ec				= new EC('secp256k1');
+			 paytxfee		=  %SelfNode.paytxfee%;
+
+			 app_name	    = '%appName%';
+	
+			$('#paytxfee').val (paytxfee / unit);
+
+			MyApps			= new Applications();
+
+			MyAccount		= new AccountList	('account_list','my_wallet',{'withSecret':true,'staking':false,'newAccnt':false});
+			MyAccount.setAccounts				(%node_accounts%,'%account_name%');
+			MyAccount.addAccountSelect			('PostKey');
+
+			update_post_file	(blog_content);
+
+			update_edit_cats		(%cats%,'cats');
+
+			$('#postCats').val		('%formvars.postCats.value%');
+			$('#blog_title').val	(blog_title.value);
+			$('#blog_content').html	(blog_content.value);
+
+
+
+		});
+	end_js
+
+
+`
+
+
+page register() = `
+
+	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
+
+	push scripts,"/assets/js/tinymce/tinymce.min.js"
+	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/blocks.js"
+	push scripts,"/assets/js/keys.js"
+	push scripts,"/assets/js/apps.js"
+	
+	node_adx.node_list_accounts	(node_accounts)
+
+	html_head  "NodiX Blog register account" 
+	
+	html_block "templates/menu.html"
+	html_layout "blog_nav.html"
+	html_layout "register.html"
+
+	html_scripts
+
+	 html_js
+		
+		 $(document).ready(function () 
+		 {
+			$('.button').each( function () {
+				var ref=$(this).attr('href');
+				$(this).attr('href','%baseAppURL%/'+ref);
+			});
+
+			$('#regbut').addClass('selbut');
+
+			ec				= new EC('secp256k1');
+			paytxfee		=  %SelfNode.paytxfee%;
+			app_name	    = '%appName%';
+	
+			$('#paytxfee').val (paytxfee / unit);
+
+		 	MyAccount		= new AccountList	('account_list','my_wallet',{'withSecret':true,'staking':false,'newAccnt':false});
+			MyAccount.setAccounts				(%node_accounts%,'');
+			MyAccount.addAccountSelect			('AccountKey');
+		 });
+
+	 end_js
+
+	html_block "templates/footer.html"
+
+`
+
+page message(dstAddr) = `
+
+	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
+
+	push scripts,"/assets/js/tinymce/tinymce.min.js"
+	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/blocks.js"
+	push scripts,"/assets/js/keys.js"
+	push scripts,"/assets/js/apps.js"
+
+	node_adx.node_list_accounts	(node_accounts)
+	
+	html_head  "NodiX Blog send message"
+
+	html_block "templates/menu.html"
+	html_layout "blog_nav.html"
+	html_layout "message.html"
+	html_scripts
+
+	html_js
+		
+		var srcMsgPK;
+
+
+		$(document).ready(function () 
+		{
+			$('.button').each( function () {
+				var ref=$(this).attr('href');
+				$(this).attr('href','%baseAppURL%/'+ref);
+			});
+
+			ec				= new EC('secp256k1');
+			paytxfee		=  %SelfNode.paytxfee%;
+			app_name	    = '%appName%';
+	
+
+			MyAccount		= new AccountList	('account_list','my_wallet',{'withSecret':true,'staking':false,'newAccnt':false});
+			MyAccount.setAccounts				(%node_accounts%,'');
+			MyAccount.addAccountSelect			('srcAddr');
+
+			srcMsgPK = '%dstAddr%';
+
+			rpc_call('pubkeytoaddr', [srcMsgPK], function (data) {
+				$('#dstAddr').val(data.result.addr);
+			});
+		});
+
+	end_js
+	html_block "blog/footer.html"
+
+`
+
+json getmsgs(accountName, firstMsg) = `
+
+	node_adx.node_list_addrs	(accountName, addrs);
+
+	set srch_obj.addrs		= addrs;
+	set srch_obj.firstMsg	= firstMsg;
+	set srch_obj.srcAddr	= emptyStr;	
+	set srch_obj.srcAddr	= query_vars.srcAddr;	
+	
+	blog.blog_get_msgs		(srch_obj,result)
+
+	success
+`
+
+
+page mymessages(accountName, firstMsg) = `
+
+	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
+
+	push scripts,"/assets/js/tinymce/tinymce.min.js"
+	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/blocks.js"
+	push scripts,"/assets/js/keys.js"
+	push scripts,"/assets/js/apps.js"
+
+	node_adx.node_list_accounts	(node_accounts)
+	node_adx.node_list_addrs	(accountName, addrs);
+
+	set srch_obj.addrs		= addrs;
+	set srch_obj.firstMsg	= firstMsg;
+	set srch_obj.srcAddr	= emptyStr;	
+	set srch_obj.srcAddr	= query_vars.srcAddr;	
+	
+	
+	blog.blog_get_msgs(srch_obj,messages)
+
+	html_head  "NodiX Blog My Messages"
+
+	html_block "templates/menu.html"
+	html_layout "blog_nav.html"
+	html_layout "my_mesgs.html"
+	html_scripts
+
+	html_var messages;
+	html_var baseAppURL;
+
+	html_js
+		
+		var msg_from= '%query_vars.srcAddr%';
+		var suffix;
+
+		if(msg_from.length<34)
+			suffix =  ');' ;
+		else
+			suffix = msg_from + ');';
+
+		$(document).ready(function () 
+		{
+			var first= parseInt('%firstMsg%');
+			if(isNaN(first))first = 0;
+
+			$('.button').each( function () {
+				var ref=$(this).attr('href');
+				$(this).attr('href','%baseAppURL%/'+ref);
+			});
+
+
+			$('#msgbut').addClass('selbut');
+
+			ec				=  new EC('secp256k1');
+			paytxfee		=  %SelfNode.paytxfee%;
+			app_name	    = '%appName%';
+	
+
+			MyAccount		= new AccountList	('account_list','my_wallet',{'withSecret':true,'staking':false,'redirect':'%baseAppURL%/mymessages/', 'newAccnt':false});
+			MyAccount.setAccounts				(%node_accounts%,'%accountName%');
+
+			MyAccount.addr_selected = address_checked;
+
+			make_pages							("javascript:get_msgs('%accountName%',", first, 10, messages.total, suffix );
+			update_my_mesgs						('my_mesgs');
+		});
+
+	end_js
+	html_block "templates/footer.html"
+
+`
+
+
+page accounts(firstAccount) = `
+
+	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
+
+	push scripts,"/assets/js/tinymce/tinymce.min.js"
+	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/blocks.js"
+	push scripts,"/assets/js/keys.js"
+	push scripts,"/assets/js/apps.js"
+	
+	html_head  "NodiX Blog account list" 
+	html_block "templates/menu.html"
+	html_layout "blog_nav.html"
+	html_layout "accounts.html"
+
+	blog.blog_get_accounts(accounts,firstAccount);
+
+	html_scripts
+
+	html_var accounts;
+
+	html_js
+		
+		 $(document).ready(function () 
+		 {
+ 			var first= parseInt('%firstAccount%');
+			if(isNaN(first))first = 0;
+
+			$('.button').each( function () {
+				var ref=$(this).attr('href');
+				$(this).attr('href','%baseAppURL%/'+ref);
+			});
+
+			$('#accntbut').addClass('selbut');
+			make_pages		('%baseAppURL%/accounts/', first, 10, accounts.total);
+
+			update_accounts	(accounts,'accounts');
+		 });
+
+	end_js
+
+	
+`
+
+
+
+
+page newpost(account_name) = `
+
+	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
+
+	push scripts,"/assets/js/tinymce/tinymce.min.js"
+	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/blocks.js"
+
+
+	 html_head  "NodiX Blog new post" 
+	
+	 html_block "templates/menu.html"
+	 html_layout "blog_nav.html"
+	 html_layout "edit_post.html"
+	 	 
+	 blog.blog_get_ncats(ncats)
+	 blog.blog_get_cats(cats,first)
+
+	 html_scripts
+
+	 html_var cats;
+	 html_var ncats;
+
+
+	 html_js
+		
+		 $(document).ready(function () 
+		 {
+
+			$('.button').each( function () {
+				var ref=$(this).attr('href');
+				$(this).attr('href','%baseAppURL%/'+ref);
+			});
+
+			$('#newpostbut').addClass('selbut');
+
+			init_mce_smileys    ();
+			tinymce_conf.selector     = 'textarea#blog_content';
+			tinymce_conf.content_css  = '';
+			tinymce.init            (tinymce_conf);
+
+			app_name = '%appName%';
+
+			update_edit_cats		(cats,'cats');
+			$('#ncats').html		(cats.length);
+			$('#total').html		(ncats);
+
+		 });
+
+	 end_js
+	 html_block "templates/footer.html"
+
+`

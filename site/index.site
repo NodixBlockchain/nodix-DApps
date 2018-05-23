@@ -1,0 +1,520 @@
+
+
+let NODE_JSON_ARRAY stylesheets = `[
+	"/site/css/bootstrap.min.css",
+	"/site/css/normalize.min.css",
+	"/site/css/animate.min.css",
+	"/assets/css/style.css",
+	"/assets/css/headers/header-default.css",
+	"/site/css/flickity.min.css",
+	"/site/css/styles.css",
+	"https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
+]`
+
+let NODE_JSON_ARRAY scripts = `[
+	"http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js",
+	"http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js",
+	"/site/js/min/bootstrap.min.js",
+	"/site/js/min/modernizr-2.8.3-respond-1.4.2.min.js",
+	"/site/js/min/retina.min.js",
+	"/site/js/min/jquery.waypoints.min.js",
+	"/site/js/min/flickity.pkgd.min.js",
+	"/site/js/min/scripts-min.js",
+	"/assets/js/custom.js",
+	"/assets/js/app.js"
+]`
+
+
+let NODE_JSON_ARRAY assets = ` ["site/blockchain/menu.html","/assets/js/blocks.js","site/blockchain/index.html","site/blockchain/block_explorer.html","site/footer.html","templates/footer.html","site/blockchain/wallet.html","site/blockchain/download.html"
+"site/framework/menu.html","site/articles/libcon_en.html","site/framework/index.html","site/articles/libbase_en.html","site/articles/modules_en.html","site/articles/script_en.html","site/articles/examples_en.html"
+"site/webapp/menu.html","site/articles/blockjs_en.html","site/articles/walletjs_en.html","site/articles/webgljs_en.html","site/articles/services_en.html","/assets/img/nodix.png"] ` 
+
+
+let NODE_JSON_ARRAY metas = `[
+	{"viewport":"width=device-width, initial-scale=1.0"},
+	{"description":"NoDiX home page"},
+	{"author":"antoine bentue ferrer"},
+	{"keywords":"blockchain,crypto, altcoins, wallet"},
+	{"msapplication-TileColor":"#66e0e5"},
+	{"msapplication-TileImage":"/site/img/favicon/mstile-144x144.png"},
+	{"msapplication-config":"img/favicon/browserconfig.xml"},
+	{"theme-color":"#FFFFFF"}
+]`
+
+let NODE_MODULE_DEF	node_adx = `{"file" : "modz/node_adx.tpo"}`
+
+let NODE_JSON_ARRAY node_modules = `[]`
+let NODE_GFX_OBJECT node_handlers = `{}`
+
+
+
+let NODE_GFX_OBJECT protocol_def = `{"name":"protocol_adx",
+									 "file":"modz/protocol_adx",
+									 "desc":"parsing and manipulation of network packet according to protocol definition.",
+									 "methods":
+									 [
+										{"name":"add_bitcore_addr","desc":"add a bitcore address object as child of the node","params":[{"name":"node"			,"type":"zone ref"	,"desc":"parent object"},
+																																 {"name":"ip address"	,"type":"ip"		,"desc":"ip of the node"},
+																																 {"name":"port"			,"type":"int"		,"desc":"port of the node"},
+																																 {"name":"services"		,"type":"int"		,"desc":"services of the node"}
+																																]},
+
+										{"name":"compute_payload_size","desc":"compute serialized size of the payload object in bytes","params":[{"name":"payload","type":"zone ref","desc":"object to serialize"}]},
+
+										{"name":"create_block_message","desc":"create a block message object"		,"params":[	{"name":"node"			,"type":"zone ref"	,"desc":"target node"},
+																																{"name":"header"		,"type":"zone ref"	,"desc":"header of the block"},
+																																{"name":"tx_list"		,"type":"zone ref"	,"desc":"transactions of the block"},
+																																{"name":"signature"		,"type":"string"	,"desc":"block signature"},
+																																{"name":"block_pack"	,"type":"zone ref"	,"desc":"out packet"}
+																															  ]},
+										{"name":"create_getaddr_message","desc":"create a getaddr message object"		,"params":[	{"name":"node"		,"type":"zone ref"	,"desc":"target node"},
+																																	{"name":"addr_pack"	,"type":"zone ref"	,"desc":"out packet"}
+																																  ]},
+
+										{"name":"create_getdata_message","desc":"create a getdata message object"		,"params":[	{"name":"node"			,"type":"zone ref"	,"desc":"target node"},
+																																	{"name":"hash_list"		,"type":"zone ref"	,"desc":"hash list of the objects"},
+																																	{"name":"blk_hdr_pack"	,"type":"zone ref"	,"desc":"out packet"}
+																																  ]},
+
+																													
+										{"name":"create_getheaders_message","desc":"create a getheaders message object"	,"params":[	{"name":"node"			,"type":"zone ref"	,"desc":"target node"},
+																																	{"name":"blk_locator"	,"type":"zone ref"	,"desc":"list of local blocks"},
+																																	{"name":"hashstop"		,"type":"zone ref"	,"desc":"last block hash"},
+																																	{"name":"blk_hdr_pack"	,"type":"zone ref"	,"desc":"out packet"}
+																																   ]},
+
+										{"name":"create_inv_message","desc":"create a inv message object"				,"params":[	{"name":"node"	,"type":"zone ref"	,"desc":"target node"},{"name":"hash_list"		,"type":"zone ref"	,"desc":"hash list of objects"},{"name":"inv_pack"	,"type":"zone ref"	,"desc":"out packet"}]},
+										{"name":"create_ping_message","desc":"create a ping message object"				,"params":[	{"name":"node"	,"type":"zone ref"	,"desc":"target node"},{"name":"blk_hdr_pack"	,"type":"zone ref"	,"desc":"out packet"}]},
+										{"name":"create_pong_message","desc":"create a pong message object"				,"params":[	{"name":"node"	,"type":"zone ref"	,"desc":"target node"},{"name":"blk_hdr_pack"	,"type":"zone ref"	,"desc":"out packet"}]},
+										{"name":"create_getblocks_message","desc":"create a getblocks message object"	,"params":[	{"name":"node"	,"type":"zone ref"	,"desc":"target node"},{"name":"blk_hdr_pack"	,"type":"zone ref"	,"desc":"out packet"}]},
+										{"name":"create_getdata_message","desc":"create a getdata message object"		,"params":[	{"name":"node"	,"type":"zone ref"	,"desc":"target node"},{"name":"blk_hdr_pack"	,"type":"zone ref"	,"desc":"out packet"}]},
+										{"name":"create_verack_message","desc":"create a verack message object"			,"params":[	{"name":"node"	,"type":"zone ref"	,"desc":"target node"},{"name":"blk_hdr_pack"	,"type":"zone ref"	,"desc":"out packet"}]},
+										{"name":"create_version_message","desc":"create a version message object"		,"params":[	{"name":"node"	,"type":"zone ref"	,"desc":"target node"},{"name":"blk_hdr_pack"	,"type":"zone ref"	,"desc":"out packet"}]},
+										{"name":"get_node_size","desc":"get serialized size of the object"				,"params":[ {"name":"object","type":"zone ref","desc":"object to get the size of"}]},
+										{"name":"get_version","desc":"get protocol version information"					,"params":[ {"name":"inmagic","type":"int ptr","desc":"network magic number"},{"name":"version","type":"int ptr","desc":"protocol version"}]},
+										{"name":"init_node","desc":"initialize object members to zero value"			,"params":[ {"name":"object","type":"zone ref","desc":"object to initialize"}]},
+										{"name":"init_protocol","desc":"initialize protocol module"						,"params":[ {"name":"params","type":"zone ref","desc":"node configuration definition"}]},
+										{"name":"new_message","desc":"parse network message according to protocol definition","params":[ {"name":"data","type":"string","desc":"packet data"},{"name":"msg","type":"zone ref","desc":"out message object"}]},
+										{"name":"read_node","desc":"Initialize object from binary dat"					,"params":[ {"name":"key","type":"zone ref","desc":"target object"},{"name":"payload","type":"ptr","desc":"pointer to binary data"}]},
+										{"name":"serialize_children","desc":"serialize children of the object"			,"params":[ {"name":"object","type":"zone ref","desc":"source object"},{"name":"payload","type":"ptr","desc":"pointer to binary data"}]},
+										{"name":"serialize_message","desc":"serialize protocol message"					,"params":[ {"name":"msg","type":"zone ref","desc":"message to initialize"}]},
+										{"name":"unserialize_message","desc":"unserialize protocol message"				,"params":[ {"name":"msg","type":"zone ref","desc":"target msg"},{"name":"payload","type":"ptr","desc":"pointer to binary data"},{"name":"model","type":"ptr","desc":"model"}]},
+										{"name":"write_node","desc":"Write binary data from object"						,"params":[ {"name":"key","type":"zone ref","desc":"source object"},{"name":"payload","type":"ptr","desc":"pointer to binary target data"}]}
+								     ]
+								}`
+
+let NODE_GFX_OBJECT blockexplorer_def = `{"name":"block_explorer",
+										  "file":"modz/block_explorer.tpo",
+										  "desc":"CGI module implementing the block explorer API.",
+										  "methods":
+											[
+												{"name":"block","desc":"fetch informations about the specified block","params":[{"name":"block-hash"				,"type":"hash"		,"desc":"hash of the block"}]},
+												{"name":"block_index","desc":"fetch block hash for specified height" ,"params":[{"name":"block-height"	,"type":"int"		,"desc":"height of the block"}]},
+												{"name":"blocks","desc":"fetch filtered list of blocks"				 ,"params":[	{"name":"limit"			,"type":"int"		,"desc":"list n items"},
+																																{"name":"pageNum"		,"type":"int"		,"desc":"page number","mode":"query"},
+																																{"name":"BlockDate"		,"type":"date"		,"desc":"list block for date","mode":"query"},
+																																{"name":"SinceBlock"	,"type":"hash"		,"desc":"list block since hash","mode":"query"},
+																																{"name":"BeforeBlock"	,"type":"hash"		,"desc":"list block before hash","mode":"query"},
+																																{"name":"filters"		,"type":"filter"	,"desc":"filter expression on block keys (eg height<1000)","mode":"query"}
+																															  ]},
+												{"name":"tx","desc":"fetch information about a specified tx"		,"params":[{"name":"tx-hash"		,"type":"hash"		,"desc":"hash of the tx"}]},
+												{"name":"txs","desc":"fetch list of transactions"					,"params":[ {"name":"limit"			,"type":"int"		,"desc":"n items"},
+																																{"name":"block"			,"type":"hash"		,"desc":"hash of the block","mode":"query"},
+																																{"name":"address"		,"type":"btcaddr"	,"desc":"public address","mode":"query"},
+																																{"name":"pageNum"		,"type":"int"		,"desc":"page number","mode":"query"},
+																																{"name":"BlockDate"		,"type":"date"		,"desc":"list tx for date","mode":"query"}
+																															   ]}
+											]
+										}`
+
+
+let NODE_GFX_OBJECT wallet_def = `{	"name":"rpc_wallet",
+									"file":"modz/rpc_wallet.tpo",
+									"desc":"RPC module implementing the wallet json/RPC API.",
+									"methods":
+									[
+										{"name":"getaddressscanstatus","desc":"get the scanning status for given address","params":[{"name":"address","type":"btcaddr","desc":"address to scan"}]},
+										{"name":"getblockcount","desc":"get the current height"},
+										{"name":"getinfo","desc":"get info about the current node"},
+										{"name":"getlastblock","desc":"get the last block"},
+										{"name":"getprivaddr","desc":"get crypted private key associated with the public address","params":[{"name":"username","type":"string","desc":"account name"},{"name":"address","type":"btcaddr","desc":"public address"}]},
+										{"name":"getpubaddrs","desc":"get the public addresses for the given account","params":[{"name":"username","type":"string","desc":"account name"}]},
+										{"name":"getstaketx","desc":"generate staking transaction based on the given unspent","params":[{"name":"unspent-hash","type":"hash","desc":"tx id of the unspent"},{"name":"OutIdx","type":"int","desc":"vout index"},{"name":"newTxTime","type":"int","desc":"timestamp of the new tx"},{"name":"PubKey","type":"pubkey","desc":"public key of the unspent for p2sh"}]},
+										{"name":"getstaking","desc":"get staking information for the given unspent","params":[{"name":"tx-hash","type":"hash","desc":"hash of the tx"},{"name":"OutIdx","type":"int","desc":"vout index"}]},
+										{"name":"importaddress","desc":"import a read only address in the wallet","params":[{"name":"address","type":"btcaddr","desc":"public address"},{"name":"rescan","type":"int","desc":"rescan on import"}]},
+										{"name":"importkeypair","desc":"import keypair with crypted private key in the wallet","params":[{"name":"username","type":"string","desc":"name of the account"},{"name":"label","type":"string","desc":"label of the address"},{"name":"pubkey","type":"pubkey","desc":"public key"},{"name":"pubkey","type":"privkey","desc":"crypted private key"},{"name":"rescan","type":"int","desc":"rescan on import"}]},
+										{"name":"listaccounts","desc":"get list of account on this node","params":[{"name":"pageNum","type":"int","desc":"page index"}]},
+										{"name":"listreceived","desc":"list tx received on the given address","params":[{"name":"minconf","type":"int","desc":"min confirmation"},{"name":"maxconf","type":"int","desc":"max confirmation"},{"name":"addresses","type":"btcaddrlist","desc":"list of addresses"}]},
+										{"name":"listreceivedbyaddress","desc":"list all transaction received on the addresses of this node","params":[{"name":"minconf","type":"int","desc":"min confirmation"},{"name":"maxconf","type":"int","desc":"max confirmation"}]},
+										{"name":"listspent","desc":"list spent transaction on the given addresses","params":[{"name":"minconf","type":"int","desc":"min confirmation"},{"name":"maxconf","type":"int","desc":"max confirmation"},{"name":"addresses","type":"btcaddrlist","desc":"list of addresses"}]},
+										{"name":"liststaking","desc":"list staking unspent for the given addresses","params":[{"name":"minconf","type":"int","desc":"min confirmation"},{"name":"maxconf","type":"int","desc":"max confirmation"},{"name":"addresses","type":"btcaddrlist","desc":"list of addresses"}]},
+										{"name":"listtransactions","desc":"list all transactions for the given addresses","params":[{"name":"addresses","type":"btcaddrlist","desc":"list of addresses"}]},
+										{"name":"listunspent","desc":"list unspent transaction on the given addresses","params":[{"name":"minconf","type":"int","desc":"min confirmation"},{"name":"maxconf","type":"int","desc":"max confirmation"},{"name":"addresses","type":"btcaddrlist","desc":"list of addresses"}]},
+										{"name":"pubkeytoaddr","desc":"get public address from public key","params":[{"name":"public key","type":"pubkey","desc":"public key"}]},
+										{"name":"rescanaddrs","desc":"rescan specificed address list","params":[{"name":"addresses","type":"btcaddrlist","desc":"list of addresses"}]},
+										{"name":"signstakeblock","desc":"sign the specified block hash","params":[{"name":"block-hash","type":"hash","desc":"hash of the block"},{"name":"public key","type":"pubkey","desc":"public key"},{"name":"signature","type":"sig","desc":"signature"}]},
+										{"name":"signstaketx","desc":"sign the specified tx hash","params":[{"name":"tx-hash","type":"hash","desc":"hash of the tx"},{"name":"public key","type":"pubkey","desc":"public key"},{"name":"signature","type":"sig","desc":"signature"}]}
+									]
+								  }`
+
+page index = `
+	
+	html_head "NODIX HOME PAGE" 
+	html_block "site/menu.html"
+	html_block "site/index.html"
+	html_scripts
+	html_block "site/footer.html"
+`
+
+page blockchain = `
+	
+	node_adx.node_get_script_modules(node_modules);
+
+	node_adx.node_get_script_msg_handlers(node_handlers);
+
+	
+	push scripts,"/assets/js/blocks.js"
+	push scripts,"/assets/js/node.js"
+
+	html_head "NODIX BLOCKCHAIN" 
+	html_block "site/blockchain/menu.html" 
+	html_block "site/blockchain/index.html"
+
+	html_scripts
+
+	html_var    SelfNode;
+	html_var	node_modules;
+	html_var	node_handlers;
+	html_var	protocol_def;
+
+	html_js
+	$(document).ready(function () 
+	{
+		site_base_url = '/nodix.site';
+		api_base_url ='';
+		lang		= 'en';
+
+		$('#menu_bc').addClass('active');
+
+		MyNode = new Node();
+		
+		MyNode.setInfos				(SelfNode);
+
+		MyNode.make_node_html		('node_div',SelfNode);
+		MyNode.make_modules_html	('node_modules',node_modules);
+		MyNode.make_handlers_html	('node_msg_handlers',node_handlers);
+		MyNode.fill_module_def_html (protocol_def);
+
+
+		$('.tab').each( function (idx) { var left = parseInt($(this).position().left); $(this).width((24-(left % 24)) + 'px'); });
+	});
+	end_js
+	html_block "site/footer.html"
+`
+
+page configuration  = `
+	
+	push scripts,"/assets/js/blocks.js"
+	push scripts,"/assets/js/node.js"
+
+
+	html_head "NODIX CONFIGURATION" 
+	html_block "site/blockchain/menu.html" 
+	html_block "site/blockchain/conf.html"
+
+	html_scripts
+
+	html_var    SelfNode;
+	
+
+	html_js
+	$(document).ready(function () 
+	{
+
+		site_base_url = '/nodix.site';
+		api_base_url ='';
+		lang		= 'en';
+
+		$('#menu_bc').addClass('active');
+		$('#sub_menu').html('&nbsp;-&nbsp;configuration');
+		$('#sub_menu').attr('href','/index.site/configuration/');
+
+
+		MyNode = new Node();
+		
+		$('#serv_port').html(%SelfNode.http_service.port%);
+		$('#serv_name').html('%SelfNode.http_service.name%');
+		$('#serv_root').html('%SelfNode.http_service.docroot%');
+		$('#index').html('%SelfNode.http_service.indexpage%');
+		$('#defaultmime').html('%SelfNode.http_service.defaultmime%');
+
+		MyNode.make_mime_table('mimes',%SelfNode.http_service.mimes%);
+
+	});
+	end_js
+	html_block "site/footer.html"
+`
+
+
+page apps  = `
+	
+	push scripts,"/assets/js/blocks.js"
+	push scripts,"/assets/js/node.js"
+
+	html_head "NODIX CONFIGURATION" 
+	html_block "site/blockchain/menu.html" 
+	html_block "site/blockchain/apps.html"
+
+	html_scripts
+
+	html_var    SelfNode;
+
+	html_js
+	$(document).ready(function () 
+	{
+		site_base_url = '/nodix.site';
+		api_base_url ='';
+		lang		= 'en';
+
+		$('#menu_bc').addClass('active');
+		$('#sub_menu').html('&nbsp;-&nbsp;applications');
+		$('#sub_menu').attr('href','/index.site/apps/');
+
+		MyNode = new Node();
+		
+		MyNode.setInfos				(SelfNode);
+		MyNode.make_node_html		('node_div',SelfNode);
+
+	});
+	end_js
+	html_block "site/footer.html"
+`
+
+
+
+page blockexplorer = `
+
+	push scripts,"/assets/js/node.js"
+
+	html_head "NODIX BLOCK EXPLORER API DOCUMENTATION" 
+
+	html_block "site/blockchain/menu.html"
+	html_block "site/blockchain/block_explorer.html"
+
+	html_var	blockexplorer_def;
+
+	html_scripts
+
+	html_var SelfNode.http_service;
+
+	html_js
+		$(document).ready(function () 
+		{
+			site_base_url	= '/nodix.site';
+			api_base_url	= '';
+			lang			= 'en';
+
+			MyNode			= new Node();
+
+			$('#menu_bc_be').addClass('active');
+			node_ip			=	http_service.addr;
+			node_port		=	http_service.port;
+
+			$('#serv_port').html(node_port);
+			$('#serv_name').html(http_service.name);
+			$('#serv_root').html(http_service.docroot);
+						
+			MyNode.mods = Array();
+			for(var n=0;n<http_service.modules.length;n++)
+			{
+				if(http_service.modules[n].module.name=='block_explorer')
+					MyNode.mods.push(http_service.modules[n]);
+			}
+			MyNode.make_modules_html	('service_modz_div',MyNode.mods);
+			MyNode.fill_module_def_html	(blockexplorer_def);
+			
+		});
+	end_js
+
+	html_block "templates/footer.html"
+`
+
+page wallet = `
+
+	push scripts,"/assets/js/node.js"
+
+	html_head "NODIX BLOCK EXPLORER API DOCUMENTATION" 
+
+	html_block "site/blockchain/menu.html"
+	html_block "site/blockchain/wallet.html"
+
+	html_var	wallet_def;
+	html_var	SelfNode.http_service;
+
+	html_scripts
+
+	html_js
+		$(document).ready(function () 
+		{
+			site_base_url	= '/nodix.site';
+			api_base_url	= '';
+			lang			= 'en';
+
+			MyNode			=   new Node();
+
+			node_ip			=	http_service.addr;
+			node_port		=	http_service.port;
+
+			$('#menu_bc_w').addClass('active');
+
+			$('#serv_port').html(node_port);
+			$('#serv_name').html(http_service.name);
+			$('#serv_root').html(http_service.docroot);
+						
+			MyNode.mods = Array();
+			for(var n=0;n<http_service.modules.length;n++)
+			{
+				if(http_service.modules[n].module.name=='rpc_wallet')
+					MyNode.mods.push(http_service.modules[n]);
+			}
+			MyNode.make_modules_html	('service_modz_div',MyNode.mods);
+
+			MyNode.fill_module_def_html (wallet_def);
+			
+		});
+	end_js
+
+	html_block "templates/footer.html"
+`
+
+page download = `
+	
+	html_head "NODIX DOWNLOAD PAGE" 
+
+	html_block "site/blockchain/menu.html"
+	html_block "site/blockchain/download.html"
+
+	html_scripts
+
+	html_block "site/footer.html"
+
+	html_js
+		$('#menu_bc_dl').addClass('active');
+		$('#sub_menu').html('&nbsp;-&nbsp;download');
+		$('#sub_menu').attr('href','/index.site/download/');
+	end_js
+
+`
+
+page getcoins = `
+	
+	html_head "NODIX DOWNLOAD PAGE" 
+	html_block "site/blockchain/menu.html"
+	html_block "site/blockchain/getcoins.html"
+	html_scripts
+	html_block "site/footer.html"
+
+	html_js
+		$('#menu_bc_gc').addClass('active');
+		$('#sub_menu').html('&nbsp;-&nbsp;get coins');
+		$('#sub_menu').attr('href','/index.site/getcoins/');
+
+	end_js
+
+`
+
+page framework(page) = `
+	
+	push scripts,"/assets/js/blocks.js"
+
+	html_head "NODIX FRAMEWORK" 
+	html_block "site/framework/menu.html"
+
+	if(page = "")
+		html_block "site/framework/index.html"
+	endif
+
+	if(page = "libcon")
+		html_block "site/articles/libcon_en.html"
+	endif
+
+	if(page = "libbase")
+		html_block "site/articles/libbase_en.html"
+	endif
+
+	if(page = "modules")
+		html_block "site/articles/modules_en.html"
+	endif
+
+	if(page = "script")
+		html_block "site/articles/script_en.html"
+	endif
+
+	if(page = "examples")
+		html_block "site/articles/examples_en.html"
+	endif
+
+	html_scripts
+	html_js
+	$(document).ready(function () 
+	{
+		var page		= '%page%';
+		site_base_url	= '/nodix.site';
+		api_base_url	='';
+		lang			= 'en';
+
+		$('#sub_menu').html(page);
+		$('#sub_menu').attr('href','/index.site/framework/'+page);
+
+		$('h4').click(function () 
+		{ 
+				var target=$(this).attr('target'); 
+				$('#'+target).toggle(); 
+		})
+	});
+	end_js
+	html_block "site/footer.html"
+`
+
+
+
+page webapp(page) = `
+	
+	html_head "NODIX WEB APP API" 
+	html_block "site/webapp/menu.html"
+
+	if(page = "")
+		html_block "site/webapp/index.html"
+	endif
+
+	if(page = "blocks")
+		html_block "site/articles/blockjs_en.html"
+	endif
+
+	if(page = "walletrpc")
+		html_block "site/articles/walletjs_en.html"
+	endif
+
+	if(page = "webgl")
+		html_block "site/articles/webgljs_en.html"
+	endif
+
+	if(page = "services")
+		html_block "site/articles/services_en.html"
+	endif
+
+	html_scripts
+	html_js
+	$(document).ready(function () 
+	{
+		var page		= '%page%';
+		site_base_url	= '/nodix.site';
+		api_base_url	='';
+		lang			= 'en';
+
+		$('#sub_menu').html(page);
+		$('#sub_menu').attr('href','/index.site/webapp/'+page);
+	});
+	end_js
+	html_block "site/footer.html"
+`

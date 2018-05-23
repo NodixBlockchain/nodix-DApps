@@ -1,0 +1,85 @@
+SolutionDir=/mnt/samba/devos_svn/tree/
+ConfigurationName=Release_Win32
+CC=gcc
+TargetPath=/mnt/samba/devos_svn/tree/libpng.so
+TargetName=/mnt/samba/devos_svn/tree
+ProjectName=libpng.so
+Release_Win32_obj=Release_Win32/libpng/png.o Release_Win32/libpng/pnggccrd.o Release_Win32/libpng/pngget.o Release_Win32/libpng/pngmem.o Release_Win32/libpng/pngpread.o Release_Win32/libpng/pngread.o Release_Win32/libpng/pngrio.o Release_Win32/libpng/pngrtran.o Release_Win32/libpng/pngrutil.o Release_Win32/libpng/pngset.o Release_Win32/libpng/pngtrans.o Release_Win32/libpng/pngvcrd.o Release_Win32/libpng/pngwio.o Release_Win32/libpng/pngwrite.o Release_Win32/libpng/pngwtran.o Release_Win32/libpng/pngwutil.o 
+Release_Win32_incs= -I$(SolutionDir)/zlib-1.2.3 -I$(SolutionDir)include/c -I$(SolutionDir)/zlib-1.2.3 -I$(SolutionDir)include/c
+Release_Win32_def= -D _DEBUG=1 -D PNG_NO_STDIO=1 -D PNG_NO_READ_sCAL=1 -D PNG_NO_SETJMP_SUPPORTED=1 -D PNG_SETJMP_NOT_SUPPORTED=1 -D PNG_NO_WRITE_tIME=1 -D PNG_NO_READ_tIME=1
+Release_Win32_deps=lib_c.so lib_c.so 
+
+libpng.a: $(Release_Win32_deps)  $(Release_Win32_obj) 
+	ar -r libpng.a  $(Release_Win32_obj)
+clean:
+	make -f lib_c/Makefile.lib_c.linux clean 
+	rm -f  $(Release_Win32_obj)
+	rm -f libpng.so 
+
+lib_c.so:
+	make -f lib_c/Makefile.lib_c.linux 
+
+
+
+Release_Win32/libpng/png.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./png.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./png.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/png.o
+
+
+Release_Win32/libpng/pnggccrd.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pnggccrd.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pnggccrd.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pnggccrd.o
+
+
+Release_Win32/libpng/pngget.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngget.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngget.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pngget.o
+
+
+Release_Win32/libpng/pngmem.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngmem.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngmem.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pngmem.o
+
+
+Release_Win32/libpng/pngpread.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngpread.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngpread.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pngpread.o
+
+
+Release_Win32/libpng/pngread.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngread.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngread.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pngread.o
+
+
+Release_Win32/libpng/pngrio.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngrio.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngrio.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pngrio.o
+
+
+Release_Win32/libpng/pngrtran.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngrtran.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngrtran.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pngrtran.o
+
+
+Release_Win32/libpng/pngrutil.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngrutil.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngrutil.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pngrutil.o
+
+
+Release_Win32/libpng/pngset.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngset.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngset.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pngset.o
+
+
+Release_Win32/libpng/pngtrans.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngtrans.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngtrans.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pngtrans.o
+
+
+Release_Win32/libpng/pngvcrd.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngvcrd.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngvcrd.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pngvcrd.o
+
+
+Release_Win32/libpng/pngwio.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngwio.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngwio.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pngwio.o
+
+
+Release_Win32/libpng/pngwrite.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngwrite.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngwrite.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pngwrite.o
+
+
+Release_Win32/libpng/pngwtran.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngwtran.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngwtran.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pngwtran.o
+
+
+Release_Win32/libpng/pngwutil.o:/mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngwutil.c 
+	$(CC) -c /mnt/samba/devos_svn/tree/graphic_base/libpng-1.2.18/./pngwutil.c $(Release_Win32_incs)  $(Release_Win32_def)  -D DO_COMPILE=1 -o Release_Win32/libpng/pngwutil.o

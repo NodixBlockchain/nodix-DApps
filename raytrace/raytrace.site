@@ -1,0 +1,96 @@
+let NODE_JSON_ARRAY stylesheets = `[
+	"/assets/plugins/bootstrap/css/bootstrap.min.css",
+	"/assets/css/style.css",
+	"/assets/css/headers/header-default.css",
+	"/assets/css/blocks.css",
+	"/assets/css/footers/footer-v7.css",
+	"/assets/plugins/animate.css",
+	"/assets/css/theme-skins/dark.css",
+	"/assets/plugins/sky-forms-pro/skyforms/css/sky-forms.css",
+	"/assets/css/custom.css",
+	"/assets/css/colorpicker/colorpicker.css"
+]`
+
+let NODE_JSON_ARRAY scripts = `[
+	"/assets/plugins/jquery/jquery.min.js",
+	"/assets/plugins/jquery/jquery-migrate.min.js",
+	"/assets/plugins/jquery/jquery-ui.min.js",
+	"/assets/plugins/jquery/jquery-cookies.js",
+	"/assets/plugins/bootstrap/js/bootstrap.min.js",
+	"/assets/plugins/back-to-top.js",
+	"/assets/js/webGL/webgl-utils.js",
+	"/assets/js/webGL/J3DI.js",
+	"/assets/js/webGL/J3DIMath.js",
+	"/assets/js/colorpicker/colorpicker.js",
+	"/assets/js/custom.js",
+	"/app/raytrace/file/276206A9E064C22FFD1196D09CC8D1207E9A23B7B7978C8A1DD8BD4EDF4E8B92"
+]`
+
+
+let NODE_MODULE_DEF tracer = ` {"file" : "apps/raytrace/modz/tracer.tpo"} `
+let NODE_JSON_ARRAY service_modules = `[ {"base" : "/rt/", "type" : "cgi", (NODE_MODULE_DEF) "tracer_rpc" : {"file":"apps/raytrace/modz/tracer_rpc.tpo"}} ] `
+
+let NODE_GFX_INT nscenes = 0
+let NODE_GFX_INT first = 0
+let NODE_JSON_ARRAY scenes = `[]`
+let NODE_JSON_ARRAY shaders = `[{"name":"simple","file":"92AD450A1E0750E280E60297FA45E7D166976B703145633FFD79085E695481D4"},{"name":"medium","file":"EF6CED8326852D01457D9451FD4C0E8736F094FB123708E374B5E04FDA2EDD4D"},{"name":"advanced","file":"22619BC5C6431538DF473ED1D9FE285FFD6A2593F7A9CEF913E7FFA6F08752A5"}]`
+let NODE_GFX_OBJECT def_shader= `{"name":"simple","file":"92AD450A1E0750E280E60297FA45E7D166976B703145633FFD79085E695481D4"}`
+let NODE_GFX_STR shader_path = "/app/raytrace/file"
+let NODE_GFX_STR appName = "raytrace"
+
+page index = `
+
+	 html_head  "NodiX Raytrace scenes" 
+	
+	 html_block "templates/menu.html"
+	 html_layout "scenes.html"
+
+	 tracer.get_nscene(nscenes)
+	 tracer.get_scene_list(scenes,first)
+
+	 html_scripts
+
+	 html_var scenes;
+	 html_var nscenes;
+
+
+	 html_js
+		
+		 $(document).ready(function () 
+		 {
+			update_scenes(scenes,'scenes');
+			$('#nscenes').html(scenes.length);
+			$('#total').html(nscenes);
+		 });
+
+	 end_js
+	 html_block "templates/footer.html"
+
+`
+
+page draw(scene_id) = `
+
+	 html_head  "NodiX Raytrace application" 
+	
+	 html_block "templates/menu.html"
+	 html_layout "raytrace.html"
+
+	 html_scripts
+
+	 html_var scene_id;
+	 html_var shaders;
+	 html_var shader_path;
+	 html_var def_shader;
+
+	 html_js
+		
+		 $(document).ready(function () 
+		 {
+			initialize		();
+			update_shaders	(shaders,'shader_ver');
+		 });
+
+	 end_js
+	 html_block "templates/footer.html"
+
+`

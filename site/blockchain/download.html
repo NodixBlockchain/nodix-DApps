@@ -1,0 +1,60 @@
+<style>
+    a.dl-lnk{
+        display:inline-block;
+        border:1px solid #000;
+        padding:24px;
+        width:250px;
+        margin:4px;
+        color:#000;
+        background-color:#FFF;
+    }
+    a.active {
+        background-color:#DDD;
+    }
+    .dl-lnk:hover{
+        background-color:#DDD;
+    }
+</style>
+<section>
+    <div class="container content">
+        <section>
+            <h1>Get started now !</h1>
+            <p>Download the node for your operating system, and run your Nodix fullnode with wallet and block explorer !</p>
+
+            <form action="/siteapi/node.zip" method="get">
+                <div class="row">
+                    <div class="col-sm-4"><a class="dl-lnk active" onclick=" $('a.dl-lnk').removeClass('active'); $(this).addClass('active'); $('#target option[value=windows]').attr('selected', 'selected'); return false;" href="/siteapi/node.zip?target=win32"><img src="/site/img/icon_win.gif" alt="windows" /> Nodix win 32/64 bits</a></div>
+                    <div class="col-sm-4"><a class="dl-lnk" onclick=" $('a.dl-lnk').removeClass('active'); $(this).addClass('active'); $('#target option[value=linux]').attr('selected', 'selected'); return false;" href="/siteapi/node.zip?target=linux"><img src="/site/img/icon_linux.gif" alt="linux" />Nodix linux 32/64 bits</a></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><label>block explorer</label></div><div class="col-sm-4"><input type="checkbox" checked="checked" name="mods[]" value="block_explorer" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><label>HTML5 wallet</label></div><div class="col-sm-4"><input type="checkbox" checked="checked"  name="mods[]" value="rpc_wallet" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><label>Operating system</label></div><div class="col-sm-4"><select name="target" id="target"><option style="background-image:url(/site/img/icon_win.gif)" value="windows">windows</option><option value="linux">linux</option></select></div>
+                </div>
+                <div class="row"><div class="col-sm-4"><input type="submit" value="download" /></div></div>
+            </form>
+            <hr/>
+        </section>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">Run launcher.exe for windows, or launcher for linux.</div>
+        </div>
+        <section>
+            <h3>The node should start synchronizing</h3>
+            <div class="row">
+                <div class="col-sm-6"><img src="/site/img/launcher.png" alt="Launcher picture" /></div>
+                <div class="col-sm-6"><img src="/site/img/synch.png" alt="Node synchronizing" /></div>
+            </div>
+        </section>
+    </div>
+    <div class="container content">
+        <p>Open the following address <a href="http://localhost:16820/">"http://localhost:16820/"</a> in your web browser to access the local node interface. </p>
+        <p>The block explorer is located at this address <a href="http://localhost:16820/nodix.site/blocks">"http://localhost:16820/nodix.site/blocks"</a> </p>
+        <p>The html5 wallet is located at this address <a href="http://localhost:16820/nodix.site/wallet">"http://localhost:16820/nodix.site/wallet"</a> </p>
+    </div>
+ </section>

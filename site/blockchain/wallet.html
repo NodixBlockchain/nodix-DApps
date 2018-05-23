@@ -1,0 +1,111 @@
+<style>
+    .desc{
+        font-size:0.8em;
+    }
+</style>
+<script type="text/javascript">
+    function click_rpc_method(mod, method) {
+        $('#api_request').val(api_base_url + mod.base)
+        $('#api_method').val(method)
+        $('#api_type').val('rpc')
+        $('#proc_params').empty();
+
+        $('#query_url').html('http://' + node_ip + ':' + node_port + api_base_url + mod.base);
+
+        if (typeof MyNode.modules_definitions[mod.module.name] == 'object') {
+            var mod_def = MyNode.modules_definitions[mod.module.name];
+            var proc = MyNode.find_proc_name(mod_def, method);
+
+            if (proc != null) {
+
+                $('#proc_desc').html(proc.desc);
+
+                if (typeof proc.params != 'undefined') {
+                    for (var n = 0; n < proc.params.length; n++) {
+                        var id = 'api_param_' + proc.params[n].name;
+                        $('#proc_params').append('<label>' + proc.params[n].name + '</label>');
+                        $('#proc_params').append('<span class="desc">(' + proc.params[n].desc + ')</span>');
+                        $('#proc_params').append('<input name="' + id + '" id="' + id + '" value="" />');
+                        
+
+                    }
+                }
+            }
+        }
+    }
+
+    function do_rpc_request(myMethod, myUrl,mod_def) {
+        var params = [];
+        rpc_base   = myUrl;
+        var proc = MyNode.find_proc_name(mod_def, myMethod);
+      
+        if (proc != null) {
+           
+            if(typeof proc.params != 'undefined')
+            {
+                var error  = 0;
+                for (var n = 0; n < proc.params.length; n++) {
+                    var val = $('#api_param_' + proc.params[n].name).val();
+
+                    if (val.length == 0) {
+                        error = 1;
+                        params[n] = '';
+                        $('#api_param_' + proc.params[n].name).css('border-color', 'red');
+                    }
+                    else {
+                        $('#api_param_' + proc.params[n].name).css('border-color', 'green');
+
+                        if(proc.params[n].type=='btcaddrlist')
+                            params[n] = val.split(',');
+                        else
+                            params[n] = val;
+                    }
+                }
+                if (error == 1) return;
+            }
+
+            rpc_call(myMethod, params, function (data) {
+
+                if (!data.error)
+                    $('#responseCode').html(JSON.stringify(data.result))
+                else
+                    $('#responseCode').html('error')
+            });
+        }
+    }
+</script>
+<div class="container content">
+        <section>
+            <h1 id="serv_name"></h1>
+            <div class="row">
+                <div class="col-md-2"><label>running on port</label></div><div class="col-md-2"><span id="serv_port"></span></div>
+            </div>
+            <div class="row">
+                <div class="col-md-2"><label>document root</label></div><div class="col-md-2"><span id="serv_root"></span></div>
+            </div>
+        </section>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>module : </h2>
+            <div style="padding-left:18px;" id="service_modz_div"></div>
+        </div>
+        <div class="col-md-4" id="api_div">
+            <div class="row"><div class="col-md-2">request</div><div class="col-md-1"><input name="api_request" id="api_request" value="" /></div></div>
+            <div class="row"><div class="col-md-2">method</div><div class="col-md-1"><input name="api_method" id="api_method" value="" />&nbsp;<span id="api_type"></span></div></div>
+            <div class="row"><div class="col-md-10" id="proc_desc"></div></div>
+            <div class="row"><div class="col-md-2">params</div>
+                <div class="col-md-6">
+                    <div id="proc_params"><input name="api_params" id="api_params" value="" /></div>
+                </div>
+            </div>
+            <input type="button" value="execute" onclick="do_rpc_request($('#api_method').val(), $('#api_request').val(),wallet_def); " />
+
+            
+            <div class="row">request url:<br /><div class="col-md-4"><span id="query_url"></span></div></div>
+            <div class="row">answser:<br /><div class="col-md-4"><div id="responseCode"></div></div></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+<script type="text/javascript">
+    function addr_select(obj) {
+        if (has_app_root == 0) {
+            $('#new_app_addr').val($(obj).attr('addr'));
+        }
+    }
+
+</script>
+
+<style>
+    #app_error
+    {
+        color:red;
+    }
+
+    #my_wallet {
+        display: none;
+        max-height: 300px;
+        width: 100%;
+        overflow-y: scroll;
+        margin: 32px;
+    }
+</style>
+
+
+<div id="content" colspan="2">
+
+    <section>
+        <div id="account_list"></div>
+        <div id="my_wallet"></div>
+    </section>
+    <hr />
+    <div class="container">
+        <section>
+            <h1>New account</h1>
+            <div class="row"><div class="col-md-2">address</div><div class="col-md-4"><select name="AccountKey" id="AccountKey"><option>no addr</option></select></div></div>
+            <div class="row"><div class="col-md-2">account name</div><div class="col-md-4"><input id="AccountName" /></div></div>
+        </section>
+    </div>
+
+    <div class="container" id="upl_file"></div>
+    <div id="app_infos">
+            <div class="container" id="app"></div>
+            <div class="container">
+                <section>
+                    <h2>Post transaction infos</h2>
+                    <div id="app_error"></div>
+                    <div class="row"><div class="col-md-2"><label>Transaction fees</label></div><div class="col-md-2"><input type="text" name="paytxfee" id="paytxfee" /></div></div>
+                    <div class="row"><div class="col-md-2"><label>Selected addrs:</label></div><div class="col-md-2"><span id="selected_balance"></span></div></div>
+                    <div class="row" id="create_post_tx"><input type="button" onclick="new_account($('#AccountKey').val(), $('#AccountName').val(), $('#paytxfee').val());" value="new tx" /></div>
+                </section>
+            </div>
+    </div>
+ </div>

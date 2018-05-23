@@ -1,0 +1,517 @@
+<div id="content" colspan="2">
+    <style type="text/css">
+        #status {
+            text-align: center;
+            height: 200px;
+            width: 80%;
+            background: black;
+            color: white;
+            overflow: scroll;
+            margin: 8px;
+            border: 1px solid #000;
+            display: inline-block;
+        }
+
+        #img_list {
+            text-align: center;
+            position: relative;
+            height: 280px;
+            max-height: 280px;
+            margin: 8px;
+            overflow-x: scroll;
+            display: inline-block;
+            white-space: nowrap;
+            width: 800px;
+        }
+
+        .matColor {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #000;
+            padding: 1px;
+            display: inline-block;
+        }
+
+        #img_list img {
+            position: relative;
+            display: inline;
+            margin: 2px;
+            width: 256px;
+        }
+
+        #mat_list {
+            display: inline-block;
+            width: 220px;
+            height: auto;
+            overflow: scroll;
+            margin: 4px;
+            border: 1px solid #000;
+            vertical-align: top;
+        }
+    </style>
+
+
+    <script id="fshader" type="x-shader/x-fragment">
+        precision highp  float;
+        precision highp  int;
+        void main()
+        {
+        gl_FragColor = vec4(0.0,1.0,0.0,1.0);
+        }
+    </script>
+    <script id="vshader" type="x-shader/x-vertex">
+        precision mediump  float;
+        precision mediump  int;
+
+        uniform mediump  mat4 u_modelViewProjMatrix;
+        attribute mediump  vec4 vPosition;
+
+        void main()
+        {
+        gl_Position = u_modelViewProjMatrix * vPosition;
+        }
+    </script>
+
+    <script type="text/javascript">
+
+   var mouseTimer = null;
+
+   function mouseOut() {
+       g.mouse_clicked = false;
+   }
+
+   function mousedown(e) {
+       g.cmouseX = Math.round(e.clientX);
+       g.cmouseY = Math.round(e.clientY);
+       g.mouse_clicked = true;
+
+       if (mouseTimer != null)
+           clearTimeout(mouseTimer);
+       mouseTimer = setTimeout(mouseOut, 6000);
+
+       if (e.preventDefault) e.preventDefault(); else return false;
+   }
+   function mousemoved(e) {
+       if (g.mouse_clicked) {
+           g.scene.camPos[0] = ((e.clientX-(g.winH/2.0)))/4;
+           g.scene.camPos[2] = (g.winH-e.clientY) -10.0;
+           if (mouseTimer != null)
+               clearTimeout(mouseTimer);
+           mouseTimer = setTimeout(mouseOut, 6000);
+       }
+
+       if (e.preventDefault) e.preventDefault(); else return false;
+   }
+
+   function mouseup(e) {
+       g.mouse_clicked = false;
+       clearTimeout(mouseTimer);
+       mouseTimer = null;
+       if (e.preventDefault) e.preventDefault(); else return false;
+   }
+
+   function mouseout(e) {
+       g.mouse_clicked = false;
+       clearTimeout(mouseTimer);
+       mouseTimer = null;
+       if (e.preventDefault) e.preventDefault(); else return false;
+   }
+
+   function handleContextLost(e) {
+       clearLoadingImages();
+       if (requestId !== undefined) {
+           window.cancelAnimFrame(requestId);
+           requestId = undefined;
+       }
+
+       if (e.preventDefault) e.preventDefault(); else return false;
+   }
+   function handleContextRestored() {
+       initializeGL();
+       f();
+   }
+   function initializeGL() {
+       // Initialize
+       var date_obj = new Date();
+       var gl = initWebGL("gl_canvas");
+       if (!gl) { alert('unable to init opengl'); return; }
+
+       //var program = simpleSetup(gl, "vshader", "fshader", vtx_attribs, [1.0, 1.0, 1.0.5, 1], 10000);
+
+
+
+       g.start_time = date_obj.getTime();
+       // Set some uniform variables for the shaders
+       g.float_texture_ext = gl.getExtension('OES_texture_float');
+       g.boxData = new Float32Array(1024 * 3);
+       buffer = new ArrayBuffer(1024 * 3);
+       byteArray = new Uint8Array(buffer);
+       dataview = new DataView(buffer);
+
+       // Create some matrices to use later and save their locations in the shaders
+       g.mvMatrix = new J3DIMatrix4();
+       g.normalMatrix = new J3DIMatrix4();
+       g.perspectiveMatrix = new J3DIMatrix4();
+       g.cmMatrix = new J3DIMatrix4();
+       g.mvpMatrix = new J3DIMatrix4();
+
+       g.maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+
+
+       $('#max_tex_size').html(g.maxTextureSize);
+       $('#EXT_float_tex').html((g.float_texture_ext==null)?'no':'yes');
+
+       var c = document.getElementById('gl_canvas');
+
+
+
+       render_texture1.w = 2048;
+       render_texture1.h = 2048;
+       render_texture1.tex_unit = gl.TEXTURE2;
+       render_texture1.x_pos = 0;
+       render_texture1.y_pos = 0;
+       render_texture1.images = [];
+       render_texture1.texid = null;
+
+       render_texture2.w = 2048;
+       render_texture2.h = 2048;
+       render_texture2.tex_unit = gl.TEXTURE3;
+       render_texture2.x_pos = 0;
+       render_texture2.y_pos = 0;
+       render_texture2.images = [];
+       render_texture2.texid = null;
+
+       if (g.boxDataTexId == null) {
+           g.boxDataTexId = gl.createTexture();
+
+           gl.activeTexture(gl.TEXTURE0);
+           gl.bindTexture(gl.TEXTURE_2D, g.boxDataTexId);
+           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+           gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 1024, 1, 0, gl.RGB, gl.FLOAT, new Float32Array(1024 * 3));
+           gl.generateMipmap(gl.TEXTURE_2D);
+           gl.bindTexture(gl.TEXTURE_2D, null);
+       }
+
+
+       if (render_texture1.texid == null) {
+           render_texture1.texid = gl.createTexture();
+           gl.activeTexture(render_texture1.tex_unit);
+           gl.bindTexture(gl.TEXTURE_2D, render_texture1.texid);
+           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+           gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, render_texture1.w, render_texture1.h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+           gl.bindTexture(gl.TEXTURE_2D, null);
+
+       }
+
+       if (render_texture2.texid == null) {
+           render_texture2.texid = gl.createTexture();
+
+           gl.activeTexture(render_texture2.tex_unit);
+           gl.bindTexture(gl.TEXTURE_2D, render_texture2.texid);
+           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+           gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, render_texture2.w, render_texture2.h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+           gl.bindTexture(gl.TEXTURE_2D, null);
+       }
+
+       g.cubeMaptexID = null;
+
+       g.rt_plane = make_quad(gl, 1.0, 1.0);
+       g.cmMatrix.makeIdentity();
+       g.bbox_list = new Array();
+       g.scene = null;
+        $('canvas').bind('touchmove', function(e) {
+        var event = window.event;
+          g.scene.camPos[2] = (event.touches[0].clientX-(g.winH/2)) ;
+          g.scene.camPos[1] = (g.winH-event.touches[0].clientY)+400;
+
+           if (mouseTimer != null)
+               clearTimeout(mouseTimer);
+           mouseTimer = setTimeout(mouseOut, 6000);
+          e.preventDefault();
+
+        });
+
+       var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x
+       if (c.attachEvent) { //if IE (and Opera depending on user setting)
+           //c.attachEvent("on" + mousewheelevt, mousewheel);
+           c.attachEvent("onmousedown", mousedown);
+           c.attachEvent("ontouchstart", mousedown);
+           //c.attachEvent("onmouseup", mouseup);
+           c.attachEvent("onmouseout", mouseout);
+           c.attachEvent("onmousemove", mousemoved);
+       }
+       else if (c.addEventListener) //WC3 browsers
+       {
+           //c.addEventListener(mousewheelevt, mousewheel, false);
+           c.addEventListener("mousedown", mousedown, false);
+           c.addEventListener("touchstart", mousedown, false);
+           //c.addEventListener("mouseup", mouseup, false);
+           c.addEventListener("mouseout", mouseout, false);
+           c.addEventListener("mousemove", mousemoved, false);
+       }
+
+       return gl;
+   }
+   function f() {
+       var date_obj = new Date();
+       var cur_time = date_obj.getTime();
+       var time = cur_time - g.start_time;
+       var c = document.getElementById('gl_canvas');
+
+
+       reshape(gl);
+       gl.clearColor(0.0, 1.0, 0.0, 1.0);
+       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+       gl.disable(gl.DEPTH_TEST);
+       gl.disable(gl.BLEND);
+       gl.disable(gl.CULL_FACE);
+       gl.depthMask(false);
+
+       if ((g.program != null) && (g.scene != null)) {
+
+           var mat, imat;
+
+           if (!g.mouse_clicked) {
+               g.scene.camPos[0] = Math.sin(time / 1000.0) * 200;
+               g.scene.camPos[1] = 60;
+               g.scene.camPos[2] = Math.cos(time / 1000.0) * 200;
+           }
+
+           g.scene.lightPos[0] = Math.sin(time / 1500.0) * 140;
+           g.scene.lightPos[2] = Math.cos(time / 1500.0) * 140;
+
+
+
+           mat = makeLookAt3x3(g.scene.camPos, [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
+           imat = invMat3x3(mat);
+
+           gl.uniform3fv(g.cameraPosloc, g.scene.camPos);
+           gl.uniform3fv(g.lightPosloc, g.scene.lightPos);
+
+           gl.uniformMatrix3fv(g.cameraInvNormalloc, false, mat);
+           gl.uniformMatrix3fv(g.cameraInvMatloc, false, mat);
+           rayTracePicture(gl, time);
+       }
+       requestId = window.requestAnimFrame(f, c);
+
+   };
+
+   function reshape(gl) {
+       // change the size of the canvas's backing store to match the size it is displayed.
+       var canvas = document.getElementById('gl_canvas');
+       /*
+       if (canvas.clientWidth == canvas.width && canvas.clientHeight == canvas.height)
+           return;
+       */
+       canvas.width = canvas.clientWidth;
+       canvas.height = canvas.clientHeight;
+
+       g.winW = canvas.clientWidth;
+       g.winH = canvas.clientHeight;
+
+       // Set the viewport and projection matrix for the scene
+       gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+
+       g.perspectiveMatrix.makeIdentity();
+       g.perspectiveMatrix.ortho(-1, 1, -1, 1, -1, 1);
+
+       gl.uniform1f(g.winWloc, g.winW);
+       gl.uniform1f(g.winHloc, g.winH);
+
+  }
+
+  function load_frag() {
+
+      $('#status').append('shader Downloaded.<br/>');
+      $('#status').append('Loading shader program ... <br/>');
+      var program = loadShader_program(gl, "vshader", "fshader", vtx_attribs);
+      if (program != null) {
+          gl.useProgram(program);
+          g.program = program;
+          g.matModProjloc = gl.getUniformLocation(g.program, "u_modelViewProjMatrix");
+          g.camPersploc = gl.getUniformLocation(g.program, "camPersp");
+
+          g.cameraPosloc = gl.getUniformLocation(g.program, "cameraPos");
+          g.lightPosloc = gl.getUniformLocation(g.program, "lightPos");
+
+          g.cameraInvNormalloc = gl.getUniformLocation(g.program, "cameraInvNormal");
+          g.cameraInvMatloc = gl.getUniformLocation(g.program, "cameraInvMat");
+
+          g.boxDataTexloc = gl.getUniformLocation(g.program, "boxDataTex");
+          g.cubMaploc = gl.getUniformLocation(g.program, "cubemap");
+          g.texture1loc = gl.getUniformLocation(g.program, "texture1");
+          g.texture2loc = gl.getUniformLocation(g.program, "texture2");
+
+          g.invResloc = gl.getUniformLocation(g.program, "invRes");
+          g.winWloc = gl.getUniformLocation(g.program, "winW");
+          g.winHloc = gl.getUniformLocation(g.program, "winH");
+
+          $('#status').append('Shader program loaded.<br/>');
+      }
+
+      if ((imgs == null) || (imgs.length == 0)) {
+          $('#status').append('Downloading image list ...<br/>');
+
+          $('#img_list').empty();
+          rt_api_call('get_img_list', '/'+scene_id, function (data) {
+              imgs = data.images;
+
+              $('#status').append('Loading ' + imgs.length + 'images ...<br/>');
+              for (i = 0; i < imgs.length; i++) {
+                  images[i] = new Image();
+                  images[i].onload = image_load;
+                  images[i].src = imgs[i].url;
+                  $('#img_list').append(images[i]);
+              }
+              update_scene();
+          });
+      }
+
+      if (g.scene != null)
+          loadUniforms(gl, g.scene.shader_vars);
+
+    }
+
+    function updtMatInfos(Scene) {
+        var n = 0;
+
+        thead = document.getElementById("mat_table").tHead;
+        old_tbody = document.getElementById("mat_table").tBodies[0];
+        new_tbody = document.createElement('tbody');
+
+        if (typeof Scene.material_list == 'undefined')
+        {
+            old_tbody.parentNode.replaceChild(new_tbody, old_tbody);
+            return;
+        }
+
+        for (n = 0; n < Scene.material_list.length; n++) {
+            var pos = [0.0, 0.0], scale = [1.0, 1.0];
+            var material = Scene.material_list[n];
+
+            var row = new_tbody.insertRow(n);
+
+            cell = row.insertCell(0);
+            cell.className = "matid";
+            cell.innerHTML = material.id;
+
+            cell = row.insertCell(1);
+            cell.className = "texture_id";
+            if (typeof material.texture_id == "number")
+                cell.innerHTML = material.texture_id;
+            else
+                cell.innerHTML = '#none';
+
+            cell = row.insertCell(2);
+            cell.className = "normalmap_id";
+            if (typeof material.normalmap_id == "number")
+                cell.innerHTML = material.normalmap_id;
+            else
+                cell.innerHTML = '#none';
+
+
+            var colorHex = '#' + hex2dig(material.color[0]) + hex2dig(material.color[1]) + hex2dig(material.color[2]);
+            cell = row.insertCell(3);
+            cell.className = "color";
+            cell.innerHTML = colorHex + ' <div  matid="' + material.id + '"  class="matColor" id="matColor_' + material.id + '" style="background-color:' + colorHex + ';"></div><div style="display:none;position:absolute;" matid="' + material.id + '" id="matColorPick_' + material.id + '"></div>';
+
+
+            cell = row.insertCell(4);
+            cell.className = "reflection";
+            cell.innerHTML = material.reflect;
+
+            cell = row.insertCell(5);
+            cell.className = "refraction";
+            cell.innerHTML = material.refract;
+
+            cell = row.insertCell(6);
+            cell.className = "refraction indice";
+            cell.innerHTML = material.refract_density;
+        }
+        
+        old_tbody.parentNode.replaceChild(new_tbody, old_tbody);
+
+        $('.matColor').click(function () { var pickerId = '#matColorPick_' + $(this).attr('matid'); var show = $(pickerId).css('display') == 'none' ? true : false; $('div[id^=matColorPick_]').css('display', 'none'); if (show) $(pickerId).css('display', 'block'); });
+
+        for (n = 0; n < Scene.material_list.length; n++) {
+            var material = Scene.material_list[n];
+            var colorHex = '#' + hex2dig(material.color[0]) + hex2dig(material.color[1]) + hex2dig(material.color[2]);
+            $('#matColorPick_' + material.id).ColorPicker({
+                flat: true, color: colorHex,
+                onSubmit: function (hsb, hex, rgb) {
+
+                },
+                onChange: function (hsb, hex, rgb) {
+                    var matid = $(this).parent().attr('matid');
+                    var matidx = get_material_idx(g.scene, matid);
+                    $('#matColor_' + matid).css('backgroundColor', '#' + hex);
+
+
+                    g.scene.material_list[matidx].color[0] = rgb.r;
+                    g.scene.material_list[matidx].color[1] = rgb.g;
+                    g.scene.material_list[matidx].color[2] = rgb.b;
+                    updtMatData(gl, g.scene);
+                    g.tex_up_to_date = false;
+                }
+            });
+        }
+    }
+
+		function initialize()
+		{
+			  var c = document.getElementById('gl_canvas');
+
+                $('#status').append('Initializing opengl ... <br/>');
+
+			  //c = WebGLDebugUtils.makeLostContextSimulatingCanvas(c);
+			  // tell the simulator when to lose context.
+			  //c.loseContextInNCalls(1);
+			  gl = initializeGL();
+			  if (!gl) { return; }
+
+                $('#status').append('opengl initialized. <br/>');
+
+			  c.addEventListener('webglcontextlost', handleContextLost, false);
+			  c.addEventListener('webglcontextrestored', handleContextRestored, false);
+			  /*framerate = new Framerate("framerate");*/
+
+              $('#status').append('Downloading shader ... <br/>');
+			  $('#fshader').attr("type", "x-shader/x-fragment");
+			  $('#fshader').load(shader_path +'/'+ def_shader.file, load_frag);
+			  requestId = window.requestAnimFrame(f, c);
+		}
+
+
+    </script>
+
+    <div style="margin:28px;text-align:center;">
+        <div id="settings">
+            <div> texture size :<span id="max_tex_size"></span></div>
+            <div> float texture :<span id="EXT_float_tex"></span></div>
+            <div>
+                shader program : <select name="shader_ver" id="shader_ver" onchange=" var frag_name = this.options[this.selectedIndex].value; $('#fshader').attr('type', 'x-shader/x-fragment');  $('#fshader').load(shader_path+'/'+frag_name, load_frag);"></select>
+            </div>
+        </div>
+        <div>
+            <div id="mat_list">
+                <table id="mat_table">
+                    <thead><tr><th>id</th><th>texture_id</th><th>normalmap_id</th><th>color</th><th>reflection</th><th>refraction</th><th>refraction indice</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <canvas id="gl_canvas" width="512" height="384" style="background: black;">If you're seeing this your web browser doesn't support the &lt;canvas&gt;&gt; element. Ouch!</canvas>
+        </div>
+        <div id="status"></div>
+        <div id="img_list"></div>
+    </div>
+</div>

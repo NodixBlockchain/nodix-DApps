@@ -1,0 +1,44 @@
+<style>
+    .block_date
+    {
+        margin:3px;
+    }
+    .msg_ok
+    {
+        border:1px solid green;
+    }
+</style>
+
+<script language="javascript">
+
+    function address_checked(addr)
+    {
+        if (MyAccount.SelectedAddrs.indexOf(addr) >= 0)
+        {
+            $('tr[msgAddr="' + addr + '"]').addClass('msg_ok');
+        }
+        else
+            $('tr[msgAddr="' + addr + '"]').removeClass('msg_ok');
+    }
+</script>
+
+<div id="content" colspan="2">
+    <div id="account_list"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4"><div id="messageFrom"></div></div>
+            <div class="col-md-4"><div id="message"></div></div>
+        </div>
+    </div>
+    <div class="container">
+        <section>
+            <h1>my Messages</h1>
+            <div id="app_error"></div>
+
+            <div class="pagination"></div>
+            <div class="container" id="my_mesgs"></div>
+            <div class="pagination"></div>
+        </section>
+    </div>
+    <div id="my_wallet"></div>
+ </div>
