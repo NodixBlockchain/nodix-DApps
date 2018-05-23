@@ -2,6 +2,8 @@
 
 ## Blog and social media Dapp
 
+demo : http://nodix.eu:16820/app/blog/page/blog.site
+
 ### Access to blockchain data
 
 The [blog module](https://github.com/NodixBlockchain/nodix_dApps/tree/master/blog/modules/blog) implement access to blog's data from the blockchain. 
@@ -16,6 +18,8 @@ The [nodix script](https://github.com/NodixBlockchain/nodix_dApps/blob/master/bl
 implement the view in MVC stack.
 
 ## Raytracer
+
+demo : http://nodix.eu:16820/app/raytrace/page/raytrace.site
 
 ### Access to blockchain data
 
@@ -38,6 +42,8 @@ implement the external API for dynamic web applications.
 
 
 ## Nodix web site
+
+demo : http://nodix.eu:16820/index.site
 
 ### Generation of dynamic web pages from blockchain data
 
