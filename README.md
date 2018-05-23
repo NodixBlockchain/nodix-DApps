@@ -4,14 +4,14 @@
 
 ### Access to blockchain data
 
-The blog module ( https://github.com/NodixBlockchain/nodix_dApps/blog/modules/blog ) implement access to blog's data from the blockchain. 
+The [blog module](https://github.com/NodixBlockchain/nodix_dApps/tree/master/blog) implement access to blog's data from the blockchain. 
 
 implement the Model in MVC stack.
 
 
 ### Generation of dynamic web pages from blockchain data
 
-The nodix script ( https://github.com/NodixBlockchain/nodix_dApps/blog/blog.site ) generate dynamic web page or json data from the blog module data.
+The [nodix script](https://github.com/NodixBlockchain/nodix_dApps/blob/master/blog/blog.site) generate dynamic web page or json data from the blog module data.
 
 implement the view in MVC stack.
 
