@@ -4,7 +4,7 @@
 
 ### Access to blockchain data
 
-The blog module ( https://github.com/NodixBlockchain/nodix_dApps/modules/blog ) implement access to blog's data from the blockchain. 
+The blog module ( https://github.com/NodixBlockchain/nodix_dApps/blog/modules/blog ) implement access to blog's data from the blockchain. 
 
 implement the Model in MVC stack.
 
@@ -19,7 +19,7 @@ implement the view in MVC stack.
 
 ### Access to blockchain data
 
-The tracer module ( https://github.com/NodixBlockchain/nodix_dApps/tree/master/raytrace/modules/tracer ) implement access to scene hierarchy from the blockchain. 
+The tracer module ( https://github.com/NodixBlockchain/nodix_dApps/raytrace/modules/tracer ) implement access to scene hierarchy from the blockchain. 
 
 implement the Model in MVC stack.
 
