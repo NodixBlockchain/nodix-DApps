@@ -605,12 +605,15 @@ function image_load() {
 }
 
 
-function update_scenes(scenes, scene_id) {
+function update_scenes(scenes, scene_id, path) {
     var n;
     var html = '';
 
+    if (path == null)
+        path = '/app/raytrace/page/raytrace.site'
+
     for (n = 0; n < scenes.length; n++) {
-        html += '<div class="scene"><h2><a href="/app/raytrace/page/raytrace.site/draw/' + scenes[n].hash + '" > ' + scenes[n].name + '</a></h2></div>';
+        html += '<div class="scene"><h2><a href="' + path + '/draw/' + scenes[n].hash + '" > ' + scenes[n].name + '</a></h2></div>';
     }
 
     $('#' + scene_id).html(html);

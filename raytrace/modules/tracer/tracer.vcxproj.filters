@@ -76,13 +76,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\export\rt\raytrace.html">
+    <None Include="..\..\js\rt.js">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="..\export\rt\raytrace.site">
+    <None Include="..\..\raytrace.site">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="..\export\rt\scenes.html">
+    <None Include="..\..\raytrace_local.site">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\raytrace.html">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\scenes.html">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

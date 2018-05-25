@@ -58,7 +58,7 @@
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>$(SolutionDir)export\mod_maker.exe $(SolutionDir)export\$(TargetFileName)  $(SolutionDir)export\modz\</Command>
+      <Command>$(SolutionDir)export\mod_maker.exe $(SolutionDir)export\$(TargetFileName)  $(SolutionDir)\raytrace\modz\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -118,9 +118,11 @@
     <ClInclude Include="tracer.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\export\rt\raytrace.html" />
-    <None Include="..\export\rt\raytrace.site" />
-    <None Include="..\export\rt\scenes.html" />
+    <None Include="..\..\js\rt.js" />
+    <None Include="..\..\raytrace.html" />
+    <None Include="..\..\raytrace.site" />
+    <None Include="..\..\raytrace_local.site" />
+    <None Include="..\..\scenes.html" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
