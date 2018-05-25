@@ -23,3 +23,5 @@ export/tracer_rpc.lib
 .vs/dApps/v15/Solution.VC.db-wal
 .vs/dApps/v15/Solution.VC.db-shm
 .vs/dApps/v15/.suo
+export/site_cgi.dll
+export/site_cgi.lib
