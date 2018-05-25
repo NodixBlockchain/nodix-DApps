@@ -40,6 +40,18 @@ The [tracer_rpc module](https://github.com/NodixBlockchain/nodix_dApps/tree/mast
 
 implement the external API for dynamic web applications.
 
+### installation
+
+Compile the raytrace modules, raytrace/modz/tracer.tpo and raytrace/modz/tracer_rpc.tpo.
+
+Copy the raytrace folder to nodix/export/web, and remove the modules folder.
+
+Open the page 
+
+http://127.0.0.1:16820/raytrace/raytrace_local.site
+
+
+
 
 ## Nodix web site
 
