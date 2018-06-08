@@ -1,1 +1,276 @@
-<h1>Comming soon...</h1>
+<div class="container">
+        <H1>
+            <FONT COLOR="#000000">
+                <FONT SIZE=6 STYLE="font-size: 22pt">
+                    Block
+                    explorer API
+                </FONT>
+            </FONT>
+        </H1>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <FONT COLOR="#000000">
+                <FONT FACE="Times New Roman, serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        The
+                        block explorer API is defined in
+                    </FONT>
+                </FONT>
+            </FONT><A HREF="/assets/js/blocks.js" NAME="blocks.js"><FONT COLOR="#0000ff"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 9pt">blocks.js</FONT></FONT></FONT></A><FONT COLOR="#000000">
+                <FONT FACE="Times New Roman, serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        ,which
+                        contain the
+                    </FONT>
+                </FONT>
+            </FONT><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 9pt"><I>BlockExplorer</I></FONT></FONT></FONT><FONT COLOR="#000000">
+                <FONT FACE="Times New Roman, serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        class.
+                    </FONT>
+                </FONT>
+            </FONT>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <H2 CLASS="western">
+            <FONT COLOR="#000000">
+                Using the BlockExplorer
+                class
+            </FONT>
+        </H2>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <FONT FACE="Times New Roman, serif">
+                <FONT COLOR="#000000">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        To
+                        use the blockexplorer API, first need to import the block.js file
+                    </FONT>
+                </FONT>
+            </FONT>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <FONT FACE="Times New Roman, serif">
+                <FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">&lt;</FONT></FONT><FONT COLOR="#800000"><FONT SIZE=2 STYLE="font-size: 9pt">script</FONT></FONT><FONT COLOR="#000000">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                    </FONT>
+                </FONT><FONT COLOR="#ff0000"><FONT SIZE=2 STYLE="font-size: 9pt">type</FONT></FONT><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">=&quot;text/javascript&quot;</FONT></FONT><FONT COLOR="#000000">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                    </FONT>
+                </FONT><FONT COLOR="#ff0000"><FONT SIZE=2 STYLE="font-size: 9pt">src</FONT></FONT><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">=&quot;/assets/js/blocks.js&quot;&gt;&lt;/</FONT></FONT><FONT COLOR="#800000"><FONT SIZE=2 STYLE="font-size: 9pt">script</FONT></FONT><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;</FONT></FONT>
+            </FONT>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <FONT FACE="Times New Roman, serif">
+                <FONT COLOR="#000000">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        And
+                        create a new instance of the blockexplorer class :
+                    </FONT>
+                </FONT>
+            </FONT>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <FONT FACE="Times New Roman, serif">
+                <FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">&lt;</FONT></FONT><FONT COLOR="#800000"><FONT SIZE=2 STYLE="font-size: 9pt">script</FONT></FONT><FONT COLOR="#000000">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                    </FONT>
+                </FONT><FONT COLOR="#ff0000"><FONT SIZE=2 STYLE="font-size: 9pt">type</FONT></FONT><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">=&quot;text/javascript&quot;</FONT></FONT><FONT COLOR="#000000">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                    </FONT>
+                </FONT><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;</FONT></FONT>
+            </FONT>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <FONT FACE="Times New Roman, serif">
+                <FONT COLOR="#000000">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        MyBlocks
+                        =
+                    </FONT>
+                </FONT><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">new</FONT></FONT><FONT COLOR="#000000">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        BlockExplorer();
+                    </FONT>
+                </FONT>
+            </FONT>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 100%"><FONT FACE="Times New Roman, serif"><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">&lt;/</FONT></FONT><FONT COLOR="#800000"><FONT SIZE=2 STYLE="font-size: 9pt">script</FONT></FONT><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2cm; margin-bottom: 0cm">
+            <FONT FACE="Times New Roman, serif">
+                <FONT COLOR="#000000">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        And
+                        then calling
+                    </FONT>
+                </FONT><FONT COLOR="#000000"><FONT SIZE=2 STYLE="font-size: 9pt"><I>MyBlocks</I></FONT></FONT><FONT COLOR="#000000">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        methods to fetch and update data on the webpage.
+                    </FONT>
+                </FONT>
+            </FONT>
+        </P>
+        <H3 CLASS="western">Creating HTML blocks</H3>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">create_block_list(root_element)</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">create_addr_panel(root_element,addr)</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        create_tx_panel(root_element,
+                        txid)
+                    </FONT>
+                </FONT>
+            </FONT>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">create_day_nav(root_element,currentTime)</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">create_block_infos(root_element)</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <H3 CLASS="western">
+            Retrieving information from
+            the node
+        </H3>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">new_blocks()</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">list_addr_txs()</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">get_addr_balance()</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">get_lastblock()</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">get_lasttxs()</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        list_blocks(date,
+                        lastBlock)
+                    </FONT>
+                </FONT>
+            </FONT>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">list_txs(date)</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">list_block_txs(hash)</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">get_tx(hash)</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <H3 CLASS="western">Adding block filers</H3>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        add_block_filter(key,
+                        op, val)
+                    </FONT>
+                </FONT>
+            </FONT>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">remove_filter(i)</FONT></FONT></FONT></P>
+        <H3 CLASS="western">Reacting to webpage events</H3>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">selectBlockTxs(hash)</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">SelectTx(hash)</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">selectBlock(hash)</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">selectAddress(saddr)</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <H3 CLASS="western">Updating HTML layouts</H3>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">update_addr_balance()</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">update_filter_list()</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">update_txs()</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">update_addr_txs()</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">update_tx(tx)</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        update_blocks_calendar(d,
+                        reload)
+                    </FONT>
+                </FONT>
+            </FONT>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">update_blocks()</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">updateblock(block)</FONT></FONT></FONT></P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+            <BR>
+        </P>
+        <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">resetblock(block)</FONT></FONT></FONT></P>
+</div>

@@ -27,7 +27,7 @@ let NODE_JSON_ARRAY scripts = `[
 
 let NODE_JSON_ARRAY assets = ` ["site/blockchain/menu.html","/assets/js/blocks.js","site/blockchain/index.html","site/blockchain/block_explorer.html","site/footer.html","templates/footer.html","site/blockchain/wallet.html","site/blockchain/download.html"
 "site/framework/menu.html","site/articles/libcon_en.html","site/framework/index.html","site/articles/libbase_en.html","site/articles/modules_en.html","site/articles/script_en.html","site/articles/examples_en.html"
-"site/webapp/menu.html","site/articles/blockjs_en.html","site/articles/walletjs_en.html","site/articles/webgljs_en.html","site/articles/services_en.html","/assets/img/nodix.png"] ` 
+"site/webapp/menu.html","site/articles/blockjs_en.html","site/articles/walletjs_en.html","site/articles/appsjs_en.html","site/articles/services_en.html","/assets/img/nodix.png"] ` 
 
 
 let NODE_JSON_ARRAY metas = `[
@@ -495,8 +495,8 @@ page webapp(page) = `
 		html_block "site/articles/walletjs_en.html"
 	endif
 
-	if(page = "webgl")
-		html_block "site/articles/webgljs_en.html"
+	if(page = "applications")
+		html_block "site/articles/appsjs_en.html"
 	endif
 
 	if(page = "services")
