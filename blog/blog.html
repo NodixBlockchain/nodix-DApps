@@ -1,28 +1,18 @@
-<style>
-    #scene
-    {
-        width:800px;
-    }
-    .scene
-    {
-        width:250px;
-        height:200px;
-        border:1px solid;
-        text-align:center;
-        float:left;
-    }
-
-</style>
-
 <div id="content" colspan="2">
     <div class="container">
-        <h1>scene list</h1>
-        <div id="scenes">
+        <div class="card">
+            <div class="card-header"><h2>categories</h2></div>
+            <div class="card-body"><div id="cats"></div></div>
+            <br style="clear:both;" />
         </div>
-        <br style="clear:both;"/>
-        <div id="scenes_more">
-            <span id="nscenes"></span>&nbsp;/&nbsp;<span id="total"></span>
-            <input type="button" value="load more" />
+    </div>        
+
+    <hr />
+    <div class="container">
+        <div class="card">
+            <div class="card-header flex-center"><div class="pagination"></div></div>
+            <div class="card-body"><div id="posts"></div></div>
+            <div class="card-footer flex-center"><div class="pagination"></div></div>
         </div>
     </div>
 </div>

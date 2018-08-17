@@ -1,27 +1,16 @@
 let NODE_JSON_ARRAY stylesheets = `[
-	"/assets/fonts/fontawesome-webfont.woff2",
-	"/assets/plugins/bootstrap/css/bootstrap.min.css",
+	"/assets/font/fa/fontawesome-webfont.woff2",
+	"/assets/css/bootstrap.min.css",
+	"/assets/css/app.css",
 	"/assets/css/style.css",
-	"/assets/css/headers/header-default.css",
 	"/assets/css/blocks.css",
-	"/assets/css/footers/footer-v7.css",
-	"/assets/plugins/animate.css",
-	"/assets/css/theme-skins/dark.css",
 	"/assets/css/font-awesome.min.css",
-	"/assets/plugins/sky-forms-pro/skyforms/css/sky-forms.css",
-	"/assets/css/custom.css"
+	"/assets/css/mdb.min.css",
+	"/assets/css/custom.css",
+	"/app/blog/file/58E1C17A6B1B5762FD460EE021E0643891983DBC9FB4134967EF15077BE37B93"
 ]`
 
-let NODE_JSON_ARRAY scripts = `[
-	"/assets/plugins/jquery/jquery.min.js",
-	"/assets/plugins/jquery/jquery-migrate.min.js",
-	"/assets/plugins/jquery/jquery-ui.min.js",
-	"/assets/plugins/jquery/jquery-cookies.js",
-	"/assets/plugins/bootstrap/js/bootstrap.min.js",
-	"/assets/plugins/back-to-top.js",
-	"/assets/js/custom.js",
-	"/app/blog/file/89BA19EA03E785E5278356C649E0DC6611A5940A2F79193D0C1779CCAD811B41"
-]`
+let NODE_JSON_ARRAY scripts = `["/assets/js/jquery-3.3.1.min.js","/assets/plugins/jquery/jquery-cookies.js","/assets/js/popper.min.js", "/assets/js/bootstrap.min.js" ,"/assets/js/mdb.min.js","/assets/js/custom.js","/assets/js/app.js","/app/blog/file/9605D99FA7ADEB7C679114D5FC7DCCDBD8F01FEC9A260BA1105C09DB4509AAB7"]`
 
 let NODE_MODULE_DEF node_adx = ` {"file" : "modz/node_adx.tpo"} `
 let NODE_MODULE_DEF blog = ` {"file" : "apps/blog/modz/blog.tpo"} `
@@ -57,12 +46,9 @@ let NODE_GFX_BINT has_app_root = 0
 
 page index(firstPost) = `
 
-	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
-
 	 html_head  "NodiX Blog" 
 	
-	 html_block "templates/menu.html"
-	 html_layout "blog_nav.html"
+	 html_layout "blog_menu.html"
 	 html_layout "blog.html"
 
 
@@ -84,10 +70,12 @@ page index(firstPost) = `
 		    var first= parseInt('%firstPost%');;
 			if(isNaN(first))first = 0;
 
+			base_site_url ='%baseAppURL%';
+
 			update_cats	(cats,'cats');
 			update_posts(posts,'posts');
 
-			$('.button').each( function () {
+			$('.blog-nav').each( function () {
 				var ref=$(this).attr('href');
 				$(this).attr('href','%baseAppURL%/'+ref);
 			});
@@ -106,8 +94,6 @@ page index(firstPost) = `
 
 page viewcat(cat_id,first) = `
 
-	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
-
 	 set cat_obj.cat_id = cat_id;
 	 set cat_obj.first  = first;
 
@@ -117,8 +103,7 @@ page viewcat(cat_id,first) = `
 
 	 html_head  "NodiX Blog new post" 
 
-	 html_block "templates/menu.html"
-	 html_layout "blog_nav.html"
+	 html_layout "blog_menu.html"
 	 html_layout "viewcat.html"
 
 
@@ -133,7 +118,9 @@ page viewcat(cat_id,first) = `
 		var first= parseInt('%firstPost%');;
 		if(isNaN(first))first = 0;
 
-		$('.button').each( function () {
+		base_site_url ='%baseAppURL%';
+
+		$('.blog-nav').each( function () {
 			var ref=$(this).attr('href');
 			$(this).attr('href','%baseAppURL%/'+ref);
 		});
@@ -152,16 +139,13 @@ page viewcat(cat_id,first) = `
 
 page viewpost(post_id) = `
 
-	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
-
 	 blog.blog_get_post		(post_id,post)
 	 blog.blog_get_cats		(cats,first)
 
 
 	 html_head  "NodiX Blog post" 
 
-	 html_block "templates/menu.html"
-	 html_layout "blog_nav.html"
+	 html_layout "blog_menu.html"
 	 html_layout "viewpost.html"
 
 
@@ -175,7 +159,9 @@ page viewpost(post_id) = `
 	 $(document).ready(function () 
 	 {
 
-		$('.button').each( function () {
+		base_site_url ='%baseAppURL%';
+
+		$('.blog-nav').each( function () {
 			var ref=$(this).attr('href');
 			$(this).attr('href','%baseAppURL%/'+ref);
 		});
@@ -201,21 +187,20 @@ page viewpost(post_id) = `
 
 page postdone() = `
 	
-	 push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
-
 	 html_head  "NodiX Blog post done" 
 	
-	 html_block "templates/menu.html"
-	 html_layout "blog_nav.html"
+	 html_layout "blog_menu.html"
 	 html_layout "post_done.html"
 
 	 html_scripts
 
 	 html_js
 
+		base_site_url ='%baseAppURL%';
+
 		$(document).ready(function () 
 		{
-			$('.button').each( function () {
+			$('.blog-nav').each( function () {
 				var ref=$(this).attr('href');
 				$(this).attr('href','%baseAppURL%/'+ref);
 			});
@@ -228,8 +213,7 @@ page postdone() = `
 `
 
 page dopost(account_name) = `
-	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
-
+	
 	push scripts,"/assets/js/tinymce/tinymce.min.js"
 	push scripts,"/assets/js/ecdsa_bundle.js"
 	push scripts,"/assets/js/blocks.js"
@@ -239,10 +223,8 @@ page dopost(account_name) = `
 
 	 html_head  "NodiX Blog do post" 
 	
-	 html_block "templates/menu.html"
-	 html_layout "blog_nav.html"
+	 html_layout "blog_menu.html"
 	 html_layout "do_post.html"
-
 
 
 	 if(formvars.blog_content.size > 0)
@@ -276,12 +258,12 @@ page dopost(account_name) = `
 
 		$(document).ready(function () 
 		{
-			$('.button').each( function () {
+			base_site_url ='%baseAppURL%';
+
+			$('.blog-nav').each( function () {
 				var ref=$(this).attr('href');
 				$(this).attr('href','%baseAppURL%/'+ref);
 			});
-
-			
 
 			 ec				= new EC('secp256k1');
 			 paytxfee		=  %SelfNode.paytxfee%;
@@ -292,11 +274,11 @@ page dopost(account_name) = `
 
 			MyApps			= new Applications();
 
-			MyAccount		= new AccountList	('account_list','my_wallet',{'withSecret':true,'staking':false,'newAccnt':false});
+			MyAccount		= new AccountList	('account_list',null,{'withSecret':true,'staking':false,'newAccnt':false});
 			MyAccount.setAccounts				(%node_accounts%,'%account_name%');
 			MyAccount.addAccountSelect			('PostKey');
 
-			update_post_file	(blog_content);
+			update_post_file		(blog_content);
 
 			update_edit_cats		(%cats%,'cats');
 
@@ -315,9 +297,6 @@ page dopost(account_name) = `
 
 page register() = `
 
-	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
-
-	push scripts,"/assets/js/tinymce/tinymce.min.js"
 	push scripts,"/assets/js/ecdsa_bundle.js"
 	push scripts,"/assets/js/blocks.js"
 	push scripts,"/assets/js/keys.js"
@@ -327,8 +306,7 @@ page register() = `
 
 	html_head  "NodiX Blog register account" 
 	
-	html_block "templates/menu.html"
-	html_layout "blog_nav.html"
+	html_layout "blog_menu.html"
 	html_layout "register.html"
 
 	html_scripts
@@ -337,7 +315,10 @@ page register() = `
 		
 		 $(document).ready(function () 
 		 {
-			$('.button').each( function () {
+			
+			base_site_url ='%baseAppURL%';
+
+			$('.blog-nav').each( function () {
 				var ref=$(this).attr('href');
 				$(this).attr('href','%baseAppURL%/'+ref);
 			});
@@ -350,7 +331,7 @@ page register() = `
 	
 			$('#paytxfee').val (paytxfee / unit);
 
-		 	MyAccount		= new AccountList	('account_list','my_wallet',{'withSecret':true,'staking':false,'newAccnt':false});
+		 	MyAccount		= new AccountList	('account_list',null,{'withSecret':true,'staking':false,'newAccnt':false});
 			MyAccount.setAccounts				(%node_accounts%,'');
 			MyAccount.addAccountSelect			('AccountKey');
 		 });
@@ -363,8 +344,6 @@ page register() = `
 
 page message(dstAddr) = `
 
-	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
-
 	push scripts,"/assets/js/tinymce/tinymce.min.js"
 	push scripts,"/assets/js/ecdsa_bundle.js"
 	push scripts,"/assets/js/blocks.js"
@@ -375,8 +354,7 @@ page message(dstAddr) = `
 	
 	html_head  "NodiX Blog send message"
 
-	html_block "templates/menu.html"
-	html_layout "blog_nav.html"
+	html_layout "blog_menu.html"
 	html_layout "message.html"
 	html_scripts
 
@@ -387,7 +365,10 @@ page message(dstAddr) = `
 
 		$(document).ready(function () 
 		{
-			$('.button').each( function () {
+			
+			base_site_url ='%baseAppURL%';
+
+			$('.blog-nav').each( function () {
 				var ref=$(this).attr('href');
 				$(this).attr('href','%baseAppURL%/'+ref);
 			});
@@ -397,7 +378,7 @@ page message(dstAddr) = `
 			app_name	    = '%appName%';
 	
 
-			MyAccount		= new AccountList	('account_list','my_wallet',{'withSecret':true,'staking':false,'newAccnt':false});
+			MyAccount		= new AccountList	('account_list',null,{'withSecret':true,'staking':false,'newAccnt':false});
 			MyAccount.setAccounts				(%node_accounts%,'');
 			MyAccount.addAccountSelect			('srcAddr');
 
@@ -409,7 +390,7 @@ page message(dstAddr) = `
 		});
 
 	end_js
-	html_block "blog/footer.html"
+	html_block "template/footer.html"
 
 `
 
@@ -430,8 +411,7 @@ json getmsgs(accountName, firstMsg) = `
 
 page mymessages(accountName, firstMsg) = `
 
-	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
-
+	
 	push scripts,"/assets/js/tinymce/tinymce.min.js"
 	push scripts,"/assets/js/ecdsa_bundle.js"
 	push scripts,"/assets/js/blocks.js"
@@ -451,8 +431,7 @@ page mymessages(accountName, firstMsg) = `
 
 	html_head  "NodiX Blog My Messages"
 
-	html_block "templates/menu.html"
-	html_layout "blog_nav.html"
+	html_layout "blog_menu.html"
 	html_layout "my_mesgs.html"
 	html_scripts
 
@@ -464,6 +443,8 @@ page mymessages(accountName, firstMsg) = `
 		var msg_from= '%query_vars.srcAddr%';
 		var suffix;
 
+		base_site_url ='%baseAppURL%';
+
 		if(msg_from.length<34)
 			suffix =  ');' ;
 		else
@@ -474,7 +455,7 @@ page mymessages(accountName, firstMsg) = `
 			var first= parseInt('%firstMsg%');
 			if(isNaN(first))first = 0;
 
-			$('.button').each( function () {
+			$('.blog-nav').each( function () {
 				var ref=$(this).attr('href');
 				$(this).attr('href','%baseAppURL%/'+ref);
 			});
@@ -487,7 +468,7 @@ page mymessages(accountName, firstMsg) = `
 			app_name	    = '%appName%';
 	
 
-			MyAccount		= new AccountList	('account_list','my_wallet',{'withSecret':true,'staking':false,'redirect':'%baseAppURL%/mymessages/', 'newAccnt':false});
+			MyAccount		= new AccountList	('account_list',null,{'withSecret':true,'staking':false,'shownull':true,'redirect':'%baseAppURL%/mymessages/', 'newAccnt':false});
 			MyAccount.setAccounts				(%node_accounts%,'%accountName%');
 
 			MyAccount.addr_selected = address_checked;
@@ -504,8 +485,7 @@ page mymessages(accountName, firstMsg) = `
 
 page accounts(firstAccount) = `
 
-	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
-
+	
 	push scripts,"/assets/js/tinymce/tinymce.min.js"
 	push scripts,"/assets/js/ecdsa_bundle.js"
 	push scripts,"/assets/js/blocks.js"
@@ -513,8 +493,7 @@ page accounts(firstAccount) = `
 	push scripts,"/assets/js/apps.js"
 	
 	html_head  "NodiX Blog account list" 
-	html_block "templates/menu.html"
-	html_layout "blog_nav.html"
+	html_layout "blog_menu.html"
 	html_layout "accounts.html"
 
 	blog.blog_get_accounts(accounts,firstAccount);
@@ -530,7 +509,9 @@ page accounts(firstAccount) = `
  			var first= parseInt('%firstAccount%');
 			if(isNaN(first))first = 0;
 
-			$('.button').each( function () {
+			base_site_url ='%baseAppURL%';
+
+			$('.blog-nav').each( function () {
 				var ref=$(this).attr('href');
 				$(this).attr('href','%baseAppURL%/'+ref);
 			});
@@ -542,7 +523,7 @@ page accounts(firstAccount) = `
 		 });
 
 	end_js
-
+	html_block "templates/footer.html"
 	
 `
 
@@ -551,8 +532,6 @@ page accounts(firstAccount) = `
 
 page newpost(account_name) = `
 
-	push stylesheets,"/app/blog/file/6CCB4B6C3F98C2F686D8FB46759024F00065BD745E6CC76574BFF66E3505D430"
-
 	push scripts,"/assets/js/tinymce/tinymce.min.js"
 	push scripts,"/assets/js/ecdsa_bundle.js"
 	push scripts,"/assets/js/blocks.js"
@@ -560,8 +539,7 @@ page newpost(account_name) = `
 
 	 html_head  "NodiX Blog new post" 
 	
-	 html_block "templates/menu.html"
-	 html_layout "blog_nav.html"
+	 html_layout "blog_menu.html"
 	 html_layout "edit_post.html"
 	 	 
 	 blog.blog_get_ncats(ncats)
@@ -577,8 +555,10 @@ page newpost(account_name) = `
 		
 		 $(document).ready(function () 
 		 {
+			
+			base_site_url ='%baseAppURL%';
 
-			$('.button').each( function () {
+			$('.blog-nav').each( function () {
 				var ref=$(this).attr('href');
 				$(this).attr('href','%baseAppURL%/'+ref);
 			});

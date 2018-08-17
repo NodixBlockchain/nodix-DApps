@@ -28,6 +28,16 @@
     text-decoration: underline;
 }
 
+.pagination
+{
+}
+
 .pagination a {
     margin: 4px;
+}
+
+.pageN
+{
+    font-size:1.1em;
+    padding:12px;
 }

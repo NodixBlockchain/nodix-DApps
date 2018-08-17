@@ -23,19 +23,19 @@
     }
 </style>
 
-<div id="content" colspan="2">
-    <div id="account_list"></div>
-
+<div id="content">
+    <div class="container"><div id="account_list"></div></div>
+    <hr/>
     <div class="container">
-        <h1>New Message</h1>
-        <div id="app_error"></div>
-        <div class="row"><div class="col-md-2">dst addr</div><div class="col-md-2"><input type="text" size="34" id="dstAddr" /></div></div>
-        <div class="row"><div class="col-md-2">src addr</div><div class="col-md-2"><select id="srcAddr" ><option>no addr</option></select></div></div>
-        <div class="row"><div class="col-md-2">message</div><div class="col-md-6"><textarea id="message" ></textarea></div></div>
-        <div class="row"><div class="col-md-2"><input type="button" value="send" onclick="new_message($('#dstAddr').val(), $('#srcAddr').val(),$('#message').val(),0);" /></div></div>
-
-        
+        <div class="card">
+            <div class="card-header"><h1>New Message</h1></div>
+            <div class="card-body">
+               
+                <div class="row"><div class="col-md-2">dst addr</div><div class="col-md-2"><input type="text" size="34" id="dstAddr" /></div></div>
+                <div class="row"><div class="col-md-2">src addr</div><div class="col-md-2"><select id="srcAddr" class="browser-default"><option>no addr</option></select></div></div>
+                <div class="row"><div class="col-md-2">message</div><div class="col-lg"><textarea id="message"></textarea></div></div>
+            </div>
+            <div class="card-footer"><a class="btn btn-primary" onclick="new_message($('#dstAddr').val(), $('#srcAddr').val(),$('#message').val(),0);" >send</a><div id="app_error"></div></div>
+        </div>
     </div>
-
-    <div id="my_wallet"></div>
 </div>

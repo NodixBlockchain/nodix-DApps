@@ -41,32 +41,45 @@
 
 <div id="content" colspan="2">
 
+    <section><div id="account_list"></div></section>
+    <hr />
     <section>
-        <div id="account_list"></div>
-        <div id="my_wallet"></div>
+        <div class="container blog_preview">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Post Preview</h3>
+
+                    <div class="row"><div class="col-md-2">categories</div><div class="col-md-4"><input disabled="disabled" id="postCats" /></div></div>
+                    <div class="row"><div class="col-md-2">title</div><div class="col-md-4"><input disabled="disabled" id="blog_title" /></div></div>
+                </div>
+                <div class="card-body">
+                    <div class="row"><div class="col-md-12"><div id="blog_content"></div></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <hr/>
+    <section>
+        <div class="container">
+            <div class="card">
+                <div class="card-header"><h3>Post infos</h3></div>
+                <div class="card-body"><div id="upl_file"></div></div>
+            </div>
+         </div>
     </section>
     <hr />
-    <div class="container blog_preview">
-        <h1>Post Preview</h1>
-
-        <div class="row"><div class="col-md-2">categories</div><div class="col-md-4"><input disabled="disabled" id="postCats" /></div></div>
-        <div class="row"><div class="col-md-2">title</div><div class="col-md-4"><input disabled="disabled" id="blog_title" /></div></div>
-        <hr/>
-        <div class="row"><div class="col-md-12"><div id="blog_content"></div></div></div>
-    </div>
-
-    <div class="container" id="upl_file"></div>
-    <div id="app_infos">
-            <div class="container" id="app"></div>
-            <div class="container">
-                <section>
-                    <h2>Post transaction infos</h2>
-                    <div id="app_error"></div>
-                    <div class="row"><div class="col-md-2"><label>Post address</label></div><div class="col-md-2"><select name="PostKey" id="PostKey"><option>no addr</option></select></div></div>
-                    <div class="row"><div class="col-md-2"><label>Transaction fees</label></div><div class="col-md-2"><input type="text" name="paytxfee" id="paytxfee" /></div></div>
-                    <div class="row"><div class="col-md-2"><label>Selected addrs:</label></div><div class="col-md-2"><span id="selected_balance"></span></div></div>
-                    <div class="row" id="create_post_tx"><input type="button" onclick="make_post($('#PostKey').val(), $('#paytxfee').val(), $('#blog_title').val(), blog_content.dataHash);" value="new tx" /></div>
-                </section>
+    <section>
+        <div class="container">
+            <div class="card">
+                <div class="card-header"><h3>Post transaction infos</h3></div>
+                <div class="card-body">
+                    <div class="row"><div class="col-md-2"><label>Post address</label></div><div class="col-md-4"><select name="PostKey" id="PostKey" class="browser-default"><option>no addr</option></select></div></div>
+                    <div class="row"><div class="col-md-2"><label>Transaction fees</label></div><div class="col-md-4"><input type="text" name="paytxfee" id="paytxfee" /></div></div>
+                    <div class="row"><div class="col-md-2"><label>Selected addrs:</label></div><div class="col-md-4"><span id="selected_balance"></span></div></div>
+                </div>
+                <div class="card-footer"><div id="create_post_tx"><input type="button" onclick="make_post($('#PostKey').val(), $('#paytxfee').val(), $('#blog_title').val(), blog_content.dataHash);" value="new tx" /></div><div id="app_error"></div></div>
             </div>
+        </div>
+    </section>
+
     </div>
- </div>

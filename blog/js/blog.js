@@ -72,10 +72,10 @@ function make_pages(baseURL,first, PerPage,total, urlSuffix)
             url += urlSuffix;
 
         prev.href       = url;
-        prev.className  = 'button_sml';
+        prev.className = 'btn btn-outline btn-amber ';
     }
     else
-        prev.className = 'nolnk';
+        prev.className = 'btn btn-outline btn-amber  disabled';
 
     next.id = 'next';
     next.innerHTML = 'next';
@@ -87,21 +87,20 @@ function make_pages(baseURL,first, PerPage,total, urlSuffix)
         if (urlSuffix)
             url += urlSuffix;
 
-        next.className  = 'button_sml';
+        next.className = 'btn btn-outline btn-amber ';
         next.href = url;
     }
     else
-        next.className  = 'nolnk';
+        next.className = 'btn btn-outline btn-amber disabled';
 
 
     curPage         = Math.floor(first / PerPage) + 1;
     totalPage       = Math.floor((total+(PerPage-1)) / PerPage);
 
-    cur.id         = 'pageN';
-    cur.innerHTML  = curPage + '/' + totalPage;
+    cur.className = 'pageN';
+    cur.innerHTML = curPage +'&nbsp;/&nbsp;' + totalPage;
 
     $('.pagination').empty();
-    $('.pagination').append('pages :');
     $('.pagination').append(prev);
     $('.pagination').append(cur);
     $('.pagination').append(next);
@@ -167,7 +166,7 @@ function update_cats(cats, cats_id)
     var html = '';
 
     for (n = 0; n < cats.length; n++) {
-        html += '<div class="blog_cat"><h2><a href="' + base_site_url + '/viewcat/' + cats[n].hash + '" > ' + cats[n].name + '</a></h2></div>';
+        html += '<a class="btn btn-rounded aqua-gradient wave-effect" href="' + base_site_url + '/viewcat/' + cats[n].hash + '" > ' + cats[n].name + '</a></div>';
     }
     $('#' + cats_id).html(html);
 }
@@ -177,7 +176,7 @@ function update_edit_cats(cats, cats_id) {
     var html = '';
 
     for (n = 0; n < cats.length; n++) {
-        html += '<div class="blog_cat" onclick="add_cat(' + n + ');" >' + cats[n].name + '</div>';
+        html += '<div class="btn btn-rounded indigo wave-effect" onclick="add_cat(' + n + ');" >' + cats[n].name + '<i class="fa fa-plus ml-2"></i></div>';
         cats[n].idx = n;
     }
 

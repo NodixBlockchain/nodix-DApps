@@ -26,29 +26,38 @@
 <div id="content" colspan="2">
 
     <section>
-        <div id="account_list"></div>
-        <div id="my_wallet"></div>
+        <div class="container">
+            <div id="account_list"></div>
+        </div>
     </section>
     <hr />
-    <div class="container">
-        <section>
-            <h1>New account</h1>
-            <div class="row"><div class="col-md-2">address</div><div class="col-md-4"><select name="AccountKey" id="AccountKey"><option>no addr</option></select></div></div>
-            <div class="row"><div class="col-md-2">account name</div><div class="col-md-4"><input id="AccountName" /></div></div>
-        </section>
-    </div>
-
+    <section>
+        <div class="container">
+            <div class="card">
+                <div class="card-header"><h2>New account</h2></div>
+                <div class="card-body">
+                    <div class="row"><div class="col-md-2">address</div><div class="col-md-4"><select name="AccountKey" id="AccountKey" class="browser-default"><option>no addr</option></select></div></div>
+                    <div class="row"><div class="col-md-2">account name</div><div class="col-md-4"><input id="AccountName" /></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <hr/>
     <div class="container" id="upl_file"></div>
     <div id="app_infos">
-            <div class="container" id="app"></div>
+        <div class="container" id="app"></div>
+        <section>
             <div class="container">
-                <section>
-                    <h2>Post transaction infos</h2>
-                    <div id="app_error"></div>
-                    <div class="row"><div class="col-md-2"><label>Transaction fees</label></div><div class="col-md-2"><input type="text" name="paytxfee" id="paytxfee" /></div></div>
-                    <div class="row"><div class="col-md-2"><label>Selected addrs:</label></div><div class="col-md-2"><span id="selected_balance"></span></div></div>
-                    <div class="row" id="create_post_tx"><input type="button" onclick="new_account($('#AccountKey').val(), $('#AccountName').val(), $('#paytxfee').val());" value="new tx" /></div>
-                </section>
+                <div class="card">
+                    <div class="card-header"><h2>Post transaction infos</h2></div>
+                    <div class="card-body">
+                        <div id="app_error"></div>
+                        <div class="row"><div class="col-md-2"><label>Transaction fees</label></div><div class="col-md-2"><input type="text" name="paytxfee" id="paytxfee" /></div></div>
+                        <div class="row"><div class="col-md-2"><label>Selected addrs:</label></div><div class="col-md-2"><span id="selected_balance"></span></div></div>
+                        <div class="row" id="create_post_tx"><input type="button" onclick="new_account($('#AccountKey').val(), $('#AccountName').val(), $('#paytxfee').val());" value="new tx" /></div>
+                    </div>
+                </div>
             </div>
-    </div>
- </div>
+        </section>
+        </div>
+        </div>
