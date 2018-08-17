@@ -1,63 +1,61 @@
-<div class="wrapper">
-<!--=== Header ===-->
-<div class="header">
-	<div class="container">
-        <!-- Toggle get grouped for better mobile display -->
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="fa fa-bars"></span>
-        </button>
-        <!-- End Toggle -->
 
-		<!-- Logo -->
-        <div><a class="logo" href="/index.site/"><img src="/site/img/Nodix.svg" alt="Nodix logo" /></a></div>
-		<!-- End Logo -->
-	</div><!--/end container-->
-    
-    
-	<!-- Collect the nav links, forms, and other content for toggling -->
-	<div class="collapse navbar-collapse mega-menu navbar-responsive-collapse">
-		<div class="container">
-            <ul class="nav navbar-nav">
-                <!-- home -->
-                <li id="menu_bc" class="dropdown">
-                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">BlockChain</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/index.site/configuration">Node configuration</a>
-                        <li><a href="/index.site/apps">Applications</a>
-                    </ul>
-                </li>
-                <!-- /home -->
-                <!-- blockexplorer -->
-                <li id="menu_bc_be" class="dropdown">
-                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown"> block explorer</a>
-                    <ul class="dropdown-menu">
-                        <li><a target="_blank" href="/nodix.site/blocks">Demo </a>
-                        <li><a href="/index.site/blockexplorer">Documentation</a>
-                    </ul>
-                </li>
-                <!-- /blockexplorer -->
-                <!-- wallet -->
-                <li id="menu_bc_w" class="dropdown">
-                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">Wallet</a>
-                    <ul class="dropdown-menu">
-                        <li><a target="_blank" href="/nodix.site/wallet">Demo </a>
-                        <li><a href="/index.site/wallet">Documentation</a>
-                    </ul>
-                </li>
-                <!-- /wallet -->
-                <!-- getcoins -->
-                <li id="menu_bc_gc"><a href="/index.site/getcoins">Get coins</a></li>
-                <!-- /getcoins -->
-                <!-- download -->
-                <li id="menu_bc_dl"><a href="/index.site/download/">Download</a></li>
-                <!-- /download -->
-            </ul>
-		</div><!--/end container-->
-	</div><!--/navbar-collapse-->
-    
-</div>
-<!--=== End Header ===-->
-    <div class="container"><a style="vertical-align:bottom" href="/index.site/">home</a><a style="vertical-align:bottom" href="/index.site/blockchain"><img style="vertical-align:bottom;margin:2px;width:58px;height:32px;display:inline;" src="/site/img/blockchainIcon.png" /><strong style="vertical-align:bottom;">blockchain</strong></a><a id="sub_menu"></a></div>
-</div>
+<nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
+    <a class="navbar-brand" href="/index.site/">
+        <img src="/site/img/logo_single.png" width="30" height="30" class="d-inline-block align-top" alt="Nodix Brand">
+        Nodix
+    </a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+
+            <li  id="menu_bc"  class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">BlockChain</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/index.site/configuration">Node configuration</a>
+                    <a class="dropdown-item" href="/index.site/apps">Applications</a>
+                </div>
+            </li>
+
+            <li  id="menu_bc_be" class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> block explorer</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/nodix.site/blocks">Demo</a>
+                    <a class="dropdown-item" href="/index.site/blockexplorer">Documentation</a>
+                </div>
+            </li>
+
+            <li id="menu_bc_w"  class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Wallet</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/nodix.site/wallet">Demo </a>
+                    <a class="dropdown-item" href="/index.site/wallet">Documentation</a>
+                </div>
+            </li>
+            <li id="menu_bc_gc" class="nav-item">
+                <a class="nav-link" href="/index.site/getcoins">Get coins</a>
+            </li>
+            <li  id="menu_bc_dl" class="nav-item">
+                <a class="nav-link" href="/index.site/download/">Download</a>
+            </li>
+
+        </ul>
+    </div>
+</nav>
+<br />
+<br />
+<br />
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/index.site/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/index.site/blockchain">Blockchain</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a id="sub_menu"></a></li>
+    </ol>
+</nav>
+
+
 

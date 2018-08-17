@@ -14,7 +14,7 @@
         width:18px;
         display:inline-block;
     }
-     .cond{
+    .cond{
         color:red;
         font-weight:bolder;
         font-family:Arial;
@@ -23,11 +23,6 @@
     .com{
         color:darkgreen;
     }
-    .flickity-prev-next-button
-    {
-        display:block;
-    }
-
     #json-conf-div p {
         margin: 0px;
         border: 0px;
@@ -46,7 +41,6 @@
         padding: 0px;
         line-height: 12px;
     }
-
     .ident{
         padding-left:12px;
     }
@@ -55,7 +49,6 @@
         font-weight:normal;
         padding-left:8px;
     }
-
 
     @media screen and (max-width: 640px)
     {
@@ -84,156 +77,154 @@
             text-decoration:none;
         }
     }
-
+    section{
+        padding-top:54px;
+    }
+    #AppContent{
+        height: 100%;
+    }
 </style>
 
+<div  class="container">
+    <div class="row">
+        <div class="col-lg-10 col-md-12">
+                <section id="introduction">
+                    <h1>Nodix application managment</h1>
+                    <!-- SECTION: AppRoot -->
+                    <p>Applications can be managed via the applications <a href="/nodix.site/applications">configuration page</a> from the nodix wallet.</p>
+                    <p>For more informations about the javascript API, see the <a href="/index.site/webapp/walletrpc">html wallet documentation page</a>.</p>
+                    <p>For more informations about the script language, and how to use layouts, objects and files into an HTML5 webapp see <a href="/index.site/framework/script">script documentation</a>.</p>
+                    <p>For more informations about the type system, refer to the <a href="/index.site#whitepaper">whitepaper</a>, section 4.3 Application types.</p>
+                </section>
+                <section id="step1">
+                    <h2>Step 1</h2>
+                    <h3>Create application root</h3>
 
-<div class="container content">
-    <section>
-        <h1>Nodix application managment</h1>
-        <!-- SECTION: AppRoot -->
-        <p>Applications can be managed via the applications <a href="/nodix.site/applications">configuration page</a> from the nodix wallet.</p>
-        <p>For more informations about the javascript API, see the <a href="/index.site/webapp/walletrpc">html wallet documentation page</a>.</p>
-        <p>For more informations about the script language, and how to use layouts, objects and files into an HTML5 webapp see <a href="/index.site/framework/script">script documentation</a>.</p>
-        <p>For more informations about the type system, refer to the <a href="/index.site#whitepaper">whitepaper</a>, section 4.3 Application types.</p>
+                    <p>First, select your account in the drop down button.</p>
+                    <img src="/site/img/accnt.png" alt="accounts" />
 
+                    <p>Then select the address to use as application root. Fees to create new applications on the blockchain will be sent to this address.</p>
+                    <img src="/site/img/approot.png" alt="app root" />
 
-        
-        <section id="step1">
-            <h2>Step 1</h2>
-            <h3>Create application root</h3>
+                    <p>Application root needs to be only created once for a blockchain.</p>
+                </section>
+                <!-- END SECTION: AppRoot -->
+                <!-- SECTION: App -->
+                <section id="step2">
+                    <h2>Step 2</h2>
+                    <h3>Create the application</h3>
 
-            <p>First, select your account in the drop down button.</p>
-            <img src="/site/img/accnt.png" alt="accounts" />
+                    <p>Enter the secret key for the addresses to use as the application master address, and enough balance to pay the fees.</p>
+                    <img src="/site/img/newapp.png" alt="new app" />
 
-            <p>Then select the address to use as application root. Fees to create new applications on the blockchain will be sent to this address.</p>
-            <img src="/site/img/approot.png" alt="app root" />
+                    <p>Set the application name, and transactions fees, then press <span style="font-weight:bold;">create app</span> button.</p>
+                    <img src="/site/img/newapp2.png" alt="new app" />
 
-            <p>Application root needs to be only created once for a blockchain.</p>
-        </section>
-        <!-- END SECTION: AppRoot -->
-        <!-- SECTION: App -->
-        <section id="step3">
-            <h2>Step 2</h2>
-            <h3>Create the application</h3>
+                    <p>The transaction details should show up, then press <span style="font-weight:bold;">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
+                    <img src="/site/img/newapptx.png" alt="new app tx" />
 
-            <p>Enter the secret key for the addresses to use as the application master address, and enough balance to pay the fees.</p>
-            <img src="/site/img/newapp.png" alt="new app" />
+                    <p>Once the transaction will be confirmed, the application should show up on the <a href="/nodix.site/applications">applications page</a>.</p>
+                    <img src="/site/img/applst.png" alt="app list" />
+                </section>
+                <!-- END SECTION: App -->
+                <!-- SECTION: AppTypes -->
+                <section id="step3">
+                    <h2>Step 3</h2>
+                    <h3>Create data types</h3>
 
-            <p>Set the application name, and transactions fees, then press <span style="font-weight:bold;">create app</span> button.</p>
+                    <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key for the application master address.</p>
+                    <img src="/site/img/apptypeaccnt.png" alt="app type account" />
 
-            <img src="/site/img/newapp2.png" alt="new app" />
+                    <p>Enter a name and id for the type, then add the keys with their name, type and indexing attribute and press the <span style="font-weight:bold">new type</span> button.</p>
+                    <img src="/site/img/apptype.png" alt="app type" />
 
-            <p>The transaction details should show up, then press <span style="font-weight:bold;">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
+                    <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
+                    <img src="/site/img/apptypetx.png" alt="app type tx" />
+                </section>
+                <!-- END SECTION: AppTypes -->
+                <!-- SECTION: AppObjs -->
+                <section id="step4">
+                    <h2>Step 4</h2>
+                    <h3>Add new objects</h3>
 
-            <img src="/site/img/newapptx.png" alt="new app tx" />
+                    <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key that will be used to sign the object.</p>
+                    <img src="/site/img/appobjaccnt.png" alt="app object account" />
 
-            <p>Once the transaction will be confirmed, the application should show up on the <a href="/nodix.site/applications">applications page</a>.</p>
+                    <p>Select the address in the dropdown menu, and enter the values for the keys in the fields, then press the <span style="font-weight:bold">new obj</span> button.</p>
+                    <img src="/site/img/appobj.png" alt="app object" />
 
-            <img src="/site/img/applst.png" alt="app list" />
+                    <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
+                    <img src="/site/img/appobjtx.png" alt="app object" />
+                </section>
+                <!-- END SECTION: AppTypes -->
+                <!-- SECTION: AppMods -->
+                <section id="step5">
+                    <h2>Step 5</h2>
+                    <h3>Add html layout</h3>
 
+                    <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key for the application master address.</p>
+                    <img src="/site/img/apptypeaccnt.png" alt="app layout account" />
 
-        </section>
-        <!-- END SECTION: App -->
-        <!-- SECTION: AppTypes -->
-        <section id="step3">
-            <h2>Step 3</h2>
-            <h3>Create data types</h3>
+                    <p>Select a file using the <span style="font-weight:bold">Pick a file</span> button, and press <span style="font-weight:bold">send</span>.</p>
+                    <img src="/site/img/applayout1.png" alt="app layout" />
 
-            <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key for the application master address.</p>
-            <img src="/site/img/apptypeaccnt.png" alt="app type account" />
+                    <p>The informations about the layout should then appear. Press <span style="font-weight:bold">create layout tx</span> button.</p>
+                    <img src="/site/img/applayout2.png" alt="app layout" />
 
-            <p>Enter a name and id for the type, then add the keys with their name, type and indexing attribute and press the <span style="font-weight:bold">new type</span> button.</p>
+                    <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
+                    <img src="/site/img/applayouttx.png" alt="app layout tx" />
+                </section>
+                <!-- SECTION: AppMods -->
+                <section id="step6">
+                    <h2>Step 6</h2>
+                    <h3>Add scripts and modules</h3>
 
-            <img src="/site/img/apptype.png" alt="app type" />
+                    <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key for the application master address.</p>
+                    <img src="/site/img/apptypeaccnt.png" alt="app mod account" />
 
-            <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
+                    <p>Select a file using the <span style="font-weight:bold">Pick a file</span> button, and press <span style="font-weight:bold">send</span>.</p>
+                    <img src="/site/img/appmod1.png" alt="app module" />
 
-            <img src="/site/img/apptypetx.png" alt="app type tx" />
+                    <p>The informations about the module should then appear. Press<span style="font-weight:bold">create module tx</span>button.</p>
+                    <img src="/site/img/appmod2.png" alt="app module" />
 
-        </section>
-        <!-- END SECTION: AppTypes -->
-        <!-- SECTION: AppObjs -->
-        <section id="step4">
-            <h2>Step 4</h2>
-            <h3>Add new objects</h3>
+                    <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
+                    <img src="/site/img/appmodtx.png" alt="app module tx" />
+                </section>
+                <!-- END SECTION: AppMods -->
+                <!-- SECTION: AppMods -->
+                <section id="step7">
+                    <h2>Step 7</h2>
+                    <h3>Add application files</h3>
 
-            <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key that will be used to sign the object.</p>
-            <img src="/site/img/appobjaccnt.png" alt="app object account" />
+                    <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key that will be used to sign the file.</p>
+                    <img src="/site/img/appobjaccnt.png" alt="app file account" />
 
-            <p>Select the address in the dropdown menu, and enter the values for the keys in the fields, then press the <span style="font-weight:bold">new obj</span> button.</p>
+                    <p>Select a file using the <span style="font-weight:bold">Pick a file</span> button, and press <span style="font-weight:bold">send</span>.</p>
+                    <img src="/site/img/appfile1.png" alt="app file" />
 
-            <img src="/site/img/appobj.png" alt="app object" />
+                    <p>The informations about the file should then appear. Press <span style="font-weight:bold">create file tx</span> button.</p>
+                    <img src="/site/img/appfile2.png" alt="app file" />
 
-            <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
-
-            <img src="/site/img/appobjtx.png" alt="app object" />
-        </section>
-        <!-- END SECTION: AppTypes -->
-        <!-- SECTION: AppMods -->
-        <section id="step5">
-            <h2>Step 5</h2>
-            <h3>Add html layout</h3>
-
-            <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key for the application master address.</p>
-            <img src="/site/img/apptypeaccnt.png" alt="app layout account" />
-
-            <p>Select a file using the <span style="font-weight:bold">Pick a file</span> button, and press <span style="font-weight:bold">send</span>.</p>
-
-            <img src="/site/img/applayout1.png" alt="app layout" />
-
-            <p>The informations about the layout should then appear. Press <span style="font-weight:bold">create layout tx</span> button.</p>
-
-            <img src="/site/img/applayout2.png" alt="app layout" />
-
-            <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
-
-            <img src="/site/img/applayouttx.png" alt="app layout tx" />
-
-        </section>
-            <!-- SECTION: AppMods -->
-            <section id="step5">
-                <h2>Step 6</h2>
-                <h3>Add scripts and modules</h3>
-
-                <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key for the application master address.</p>
-                <img src="/site/img/apptypeaccnt.png" alt="app mod account" />
-
-                <p>Select a file using the <span style="font-weight:bold">Pick a file</span> button, and press <span style="font-weight:bold">send</span>.</p>
-
-                <img src="/site/img/appmod1.png" alt="app module" />
-
-                <p>The informations about the module should then appear. Press<span style="font-weight:bold">create module tx</span>button.</p>
-
-                <img src="/site/img/appmod2.png" alt="app module" />
-
-                <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
-
-                <img src="/site/img/appmodtx.png" alt="app module tx" />
-
-
-            </section>
-            <!-- END SECTION: AppMods -->
-            <!-- SECTION: AppMods -->
-            <section id="step6">
-                <h2>Step 7</h2>
-                <h3>Add application files</h3>
-
-                <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key that will be used to sign the file.</p>
-                <img src="/site/img/appobjaccnt.png" alt="app file account" />
-
-                <p>Select a file using the <span style="font-weight:bold">Pick a file</span> button, and press <span style="font-weight:bold">send</span>.</p>
-
-                <img src="/site/img/appfile1.png" alt="app file" />
-
-                <p>The informations about the file should then appear. Press <span style="font-weight:bold">create file tx</span> button.</p>
-
-                <img src="/site/img/appfile2.png" alt="app file" />
-
-                <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
-
-                <img src="/site/img/appfiletx.png" alt="app file tx" />
-            </section>
-            <!-- END SECTION: AppMods -->
-        </section>
+                    <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
+                    <img src="/site/img/appfiletx.png" alt="app file tx" />
+                </section>
+                <!-- END SECTION: AppMods -->
+        </div>
+        <div class="col-md-2">
+            <nav id="sidebar" class="sticky" style="position: fixed; top: 120px; width: 249.109px; z-index: 2;">
+                <ul class="nav nav-pills default-pills smooth-scroll">
+                    <li class="nav-item"><a class="nav-link" href="#introduction">Introduction</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#step1">Create application root</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#step2">Create the application</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#step3">Create data types</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#step4">Add new objects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#step5">Add html layout</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#step6">Add scripts and modules</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#step7">Add application files</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
 </div>
+

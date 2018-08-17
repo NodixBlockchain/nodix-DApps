@@ -1,28 +1,8 @@
 
 
-let NODE_JSON_ARRAY stylesheets = `[
-	"/site/css/bootstrap.min.css",
-	"/site/css/normalize.min.css",
-	"/site/css/animate.min.css",
-	"/assets/css/style.css",
-	"/assets/css/headers/header-default.css",
-	"/site/css/flickity.min.css",
-	"/site/css/styles.css",
-	"https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"
-]`
+let NODE_JSON_ARRAY stylesheets = `["/NodixSite/css/all.css","/NodixSite/css/bootstrap.min.css","/NodixSite/css/mdb.min.css"]`
 
-let NODE_JSON_ARRAY scripts = `[
-	"http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js",
-	"http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js",
-	"/site/js/min/bootstrap.min.js",
-	"/site/js/min/modernizr-2.8.3-respond-1.4.2.min.js",
-	"/site/js/min/retina.min.js",
-	"/site/js/min/jquery.waypoints.min.js",
-	"/site/js/min/flickity.pkgd.min.js",
-	"/site/js/min/scripts-min.js",
-	"/assets/js/custom.js",
-	"/assets/js/app.js"
-]`
+let NODE_JSON_ARRAY scripts = `["/NodixSite/js/jquery-3.3.1.min.js","/NodixSite/js/popper.min.js", "/NodixSite/js/bootstrap.min.js" ,"/NodixSite/js/mdb.min.js","/assets/js/custom.js","/assets/js/app.js"]`
 
 
 let NODE_JSON_ARRAY assets = ` ["site/blockchain/menu.html","/assets/js/blocks.js","site/blockchain/index.html","site/blockchain/block_explorer.html","site/footer.html","templates/footer.html","site/blockchain/wallet.html","site/blockchain/download.html"
@@ -32,9 +12,10 @@ let NODE_JSON_ARRAY assets = ` ["site/blockchain/menu.html","/assets/js/blocks.j
 
 let NODE_JSON_ARRAY metas = `[
 	{"viewport":"width=device-width, initial-scale=1.0"},
-	{"description":"NoDiX home page"},
+	{"description":"NoDiX BlockChain home page"},
 	{"author":"antoine bentue ferrer"},
 	{"keywords":"blockchain,crypto, altcoins, wallet"},
+	{"og:image":"http://nodix.eu:16820/site/img/logo.png"},
 	{"msapplication-TileColor":"#66e0e5"},
 	{"msapplication-TileImage":"/site/img/favicon/mstile-144x144.png"},
 	{"msapplication-config":"img/favicon/browserconfig.xml"},
@@ -46,7 +27,11 @@ let NODE_MODULE_DEF	node_adx = `{"file" : "modz/node_adx.tpo"}`
 let NODE_JSON_ARRAY node_modules = `[]`
 let NODE_GFX_OBJECT node_handlers = `{}`
 
-
+let NODE_BITCORE_TX_LIST node_apps = `[]`
+let NODE_GFX_BINT has_app_root = 0
+let NODE_BITCORE_HASH root_app_hash = 0
+let NODE_BITCORE_WALLET_ADDR root_app_addr = 0
+let NODE_GFX_BINT root_app_fees = 0
 
 let NODE_GFX_OBJECT protocol_def = `{"name":"protocol_adx",
 									 "file":"modz/protocol_adx",
@@ -159,7 +144,7 @@ let NODE_GFX_OBJECT wallet_def = `{	"name":"rpc_wallet",
 
 page index = `
 	
-	html_head "NODIX HOME PAGE" 
+	html_head "NODIX BLOCKHAIN HOME PAGE" 
 	html_block "site/menu.html"
 	html_block "site/index.html"
 	html_scripts
@@ -169,12 +154,20 @@ page index = `
 page blockchain = `
 	
 	node_adx.node_get_script_modules(node_modules);
+	node_adx.node_get_apps			(node_apps)
 
-	node_adx.node_get_script_msg_handlers(node_handlers);
+	set has_app_root = 0;
+	node_adx.node_get_root_app	(root_app_hash) ? set has_app_root = 1; endor
+
+	if(has_app_root = 1)
+		node_adx.node_get_root_app_addr(root_app_addr)
+		node_adx.node_get_root_app_fee(root_app_fees)
+	endif
 
 	
 	push scripts,"/assets/js/blocks.js"
 	push scripts,"/assets/js/node.js"
+	push scripts,"/assets/js/apps.js"
 
 	html_head "NODIX BLOCKCHAIN" 
 	html_block "site/blockchain/menu.html" 
@@ -186,6 +179,10 @@ page blockchain = `
 	html_var	node_modules;
 	html_var	node_handlers;
 	html_var	protocol_def;
+	html_var	root_app_fees;
+	html_var	root_app_addr;
+	html_var	root_app_hash;
+	html_var	has_app_root;
 
 	html_js
 	$(document).ready(function () 
@@ -201,15 +198,26 @@ page blockchain = `
 		MyNode.setInfos				(SelfNode);
 
 		MyNode.make_node_html		('node_div',SelfNode);
+
+		for(var n=0;n<SelfNode.peer_nodes.length;n++)
+		{
+			MyNode.make_node_html	('peer_nodes_div',SelfNode.peer_nodes[n]);
+		}
+
+		paytxfee		=  %SelfNode.paytxfee%;
+
+		MyApps			=	new Applications();
+		MyApps.setApps	(%node_apps%);
+
 		MyNode.make_modules_html	('node_modules',node_modules);
-		MyNode.make_handlers_html	('node_msg_handlers',node_handlers);
 		MyNode.fill_module_def_html (protocol_def);
+		
 
 
 		$('.tab').each( function (idx) { var left = parseInt($(this).position().left); $(this).width((24-(left % 24)) + 'px'); });
 	});
 	end_js
-	html_block "site/footer.html"
+	html_block "site/blockchain/footer.html"
 `
 
 page configuration  = `
@@ -236,7 +244,7 @@ page configuration  = `
 		lang		= 'en';
 
 		$('#menu_bc').addClass('active');
-		$('#sub_menu').html('&nbsp;-&nbsp;configuration');
+		$('#sub_menu').html('configuration');
 		$('#sub_menu').attr('href','/index.site/configuration/');
 
 
@@ -277,7 +285,7 @@ page apps  = `
 		lang		= 'en';
 
 		$('#menu_bc').addClass('active');
-		$('#sub_menu').html('&nbsp;-&nbsp;applications');
+		$('#sub_menu').html('applications');
 		$('#sub_menu').attr('href','/index.site/apps/');
 
 		MyNode = new Node();
@@ -287,7 +295,7 @@ page apps  = `
 
 	});
 	end_js
-	html_block "site/footer.html"
+	html_block "site/blockchain/footer.html"
 `
 
 
@@ -316,6 +324,8 @@ page blockexplorer = `
 
 			MyNode			= new Node();
 
+			$('#sub_menu').html('block explorer');
+			$('#sub_menu').attr('href','/index.site/blockexplorer/');
 			$('#menu_bc_be').addClass('active');
 			node_ip			=	http_service.addr;
 			node_port		=	http_service.port;
@@ -342,6 +352,9 @@ page blockexplorer = `
 page wallet = `
 
 	push scripts,"/assets/js/node.js"
+	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/keys.js"
+	
 
 	html_head "NODIX BLOCK EXPLORER API DOCUMENTATION" 
 
@@ -359,11 +372,15 @@ page wallet = `
 			site_base_url	= '/nodix.site';
 			api_base_url	= '';
 			lang			= 'en';
+			ec				= new EC('secp256k1');
 
 			MyNode			=   new Node();
 
 			node_ip			=	http_service.addr;
 			node_port		=	http_service.port;
+
+			$('#sub_menu').html('wallet');
+			$('#sub_menu').attr('href','/index.site/wallet/');
 
 			$('#menu_bc_w').addClass('active');
 
@@ -400,7 +417,7 @@ page download = `
 
 	html_js
 		$('#menu_bc_dl').addClass('active');
-		$('#sub_menu').html('&nbsp;-&nbsp;download');
+		$('#sub_menu').html('download');
 		$('#sub_menu').attr('href','/index.site/download/');
 	end_js
 
@@ -416,7 +433,7 @@ page getcoins = `
 
 	html_js
 		$('#menu_bc_gc').addClass('active');
-		$('#sub_menu').html('&nbsp;-&nbsp;get coins');
+		$('#sub_menu').html('get coins');
 		$('#sub_menu').attr('href','/index.site/getcoins/');
 
 	end_js

@@ -86,13 +86,16 @@
     <div class="container content">
     <section>
         <h1>Blockchain parameters</h1>
+        <p>The node is configured via the <a href="https://github.com/NodixBlockchain/nodix/blob/master/export/nodix.node">nodix.node</a> file.</p>
         <p>The first object in the node script file is the blockchain configuration. It is used to define blockchain parameters such as </p>
         <ul style="list-style:circle;margin-left:24px;font-size:14px;font-family:Arial;font-weight:bold;">
-            <li>General infos such as blockchain name, network magic number.</li>
+            <li>Blockchain name.</li>
+            <li>Network magic number.</li>
             <li>Prefix used for wallet address generation.</li>
             <li>Signature module.</li>
             <li>Seed node address and port.</li>
             <li>Mining target block time and reward.</li>
+            <li>Total number of blocks to be mined.</li>
             <li>Staking target block time and reward.</li>
             <li>Informations for the genesis block.</li>
         </ul>
@@ -266,8 +269,7 @@
                 <li><label>maxMsgSize</label><span class="doc">Max size of P2P messages.</span></li>
                 <li><label>checktxsign</label><span class="doc">Enable checking of transaction signature in received blocks.</span></li>
                 <li><label>coinbaseAddr</label><span class="doc">Address used for mining on this node. If this field is omitted, the node will automatically create new address.</span></li>
-                <li><label>scriptBlock</label><span class="doc">Use script procedure to validate blocks instead of native C version.</span></li>
-                <li><label>trustedApps</label><span class="doc">List of trusted applicatons. The node will load and execute module and script only for applications present in this array.</span></li>
+                    <li><label>trustedApps</label><span class="doc">List of trusted applicatons. The node will load and execute module and script only for applications present in this array.</span></li>
                 <li><label>p2p_addr</label><span class="doc">Address used for the p2p network.</span></li>
                 <li><label>http_service</label><span class="doc">Configure the HTTP application server.</span></li>
             </ul>
