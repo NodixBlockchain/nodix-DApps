@@ -1,0 +1,57 @@
+    .texture_id, .normalmap_id {
+        font-size: 0.6em;
+    }
+
+    #img_list img {
+        width: 92px;
+    }
+
+    .selected {
+        border: 2px #F00 solid;
+    }
+
+    section {
+        margin:12px;
+    }
+
+    #gl_canvas {
+        border: 1px solid #000;
+    }
+
+    #status {
+        background-color: #000;
+        padding: 8px;
+    }
+
+    fieldset {
+        background-color: rgba(0,0,0,0.4);
+        border: #FFF 1px solid;
+        color: #FFF;
+        padding: 12px;
+        margin: 8px;
+    }
+
+    label {
+        color: #FFF;
+    }
+
+    .mycard {
+        background-image: url('/app/Cards/file/B39EDB0BBBDD9E53817B45CEC33AEAB2BED0BDD6505B259F4F58F35E47A82104');
+    }
+    .cards-row{
+        margin:4px 0px 4px 0px ;
+        border-bottom:1px dashed #000;
+    }
+    .hash
+    {
+        font-size:0.8em;
+        font-family:'Lucida Console';
+        word-break:break-all;
+    }
+    #txfrs .row{
+        border-bottom:1px dashed #000;
+    }
+     #obj-loading
+    {
+        display:none;
+    }

@@ -1,0 +1,155 @@
+<script id="fshader" type="x-shader/x-fragment">
+    precision highp  float;
+    precision highp  int;
+
+    uniform	samplerCube cubemap;
+    uniform	sampler2D   tex1;
+    uniform	sampler2D   floortex;
+    uniform	sampler2D   normTex;
+
+    uniform	mediump  vec2	uvPosFloor;
+    uniform	mediump  vec2	uvScaleFloor;
+
+    uniform	mediump  float	refl_fac;
+    uniform	mediump  float	alpha;
+    uniform	mediump  int	useNormMap;
+    uniform	mediump  int	useCubemap;
+
+    varying vec4 v_Color;
+    varying vec2 v_Uv;
+    varying vec2 v_NUv;
+    varying vec3 v_Norm;
+    varying vec3 v_biNorm;
+    varying vec3 v_tang;
+
+    varying vec3 eyeDir;
+    varying vec3 lightDir;
+
+    void main()
+    {
+        mat3 bmat;
+        vec3 rvec;
+        vec3 NPix;
+        vec3 norm;
+        vec4 rcolor;
+        vec4 color;
+        vec2 ruv;
+        float  myfac;
+    
+        if(useNormMap == 1)
+        {
+            NPix = (texture2D(normTex, v_NUv).xyz - 0.5) * 2.0;
+
+            bmat = mat3(v_tang, v_biNorm, v_Norm);
+            norm = NPix * bmat;
+        }
+        else
+            norm = v_Norm;
+
+        rvec = reflect(eyeDir,norm);
+    
+        if(refl_fac>0.0)
+        {
+            if(useCubemap == 1)
+            {
+                rcolor = textureCube(cubemap, rvec);
+                myfac = refl_fac;
+            }
+            else
+            {
+                if(rvec.y > 0.0)
+                {
+                    ruv.x = rvec.x * uvScaleFloor.x + uvPosFloor.x;
+                    ruv.y = rvec.z * uvScaleFloor.y + uvPosFloor.y;
+                    rcolor = texture2D(floortex, ruv);
+                    myfac = refl_fac;
+                }
+                else
+                {
+                    myfac = 0.0;
+                    rcolor = vec4(1.0, 1.0, 1.0, 1.0);
+                }
+            }
+        }
+        else
+        {
+            myfac = 0.0;
+            rcolor = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+    
+        float light = max(0.0, dot(lightDir, norm));
+
+        color = v_Color + vec4(light,light,light,1.0);
+        color = mix(color,rcolor,myfac) * texture2D(tex1, v_Uv);
+
+        color.a = alpha;
+
+        gl_FragColor = color;
+    }
+</script>
+<script id="vshader" type="x-shader/x-vertex">
+    precision mediump  float;
+    precision mediump  int;
+
+    uniform	mediump  int	useNormMap;
+
+    uniform mediump  mat4 u_modelViewProjMatrix;
+    attribute mediump  vec3 vPosition;
+    attribute mediump  vec3 vNorm;
+    attribute mediump  vec2 vUv;
+    attribute mediump  vec3 vTangeant;
+    attribute mediump  vec3 vBinorm;
+
+    uniform mediump  vec3	lightPos;
+    uniform mediump  vec3	objPos;
+    uniform mediump  vec3	objScale;
+    uniform	mediump  vec3	cameraPos;
+
+    uniform	mediump  vec2	uvPos;
+    uniform	mediump  vec2	uvScale;
+
+    uniform	mediump  vec2	uvNMapPos;
+    uniform	mediump  vec2	uvNMapScale;
+
+
+
+    uniform	mediump  vec2	uvPosFloor;
+    uniform	mediump  vec2	uvScaleFloor;
+
+    uniform	mediump  mat4	cameraInvNormal;
+    uniform	mediump  mat3	cameraInvMat;
+
+    varying vec3 eyeDir;
+    varying vec3 lightDir;
+
+    varying vec4 v_Color;
+    varying vec2 v_Uv;
+    varying vec2 v_NUv;
+    varying vec3 v_Norm;
+    varying vec3 v_biNorm;
+    varying vec3 v_tang;
+
+    const float ambient = 0.2;
+
+    void main()
+    {
+
+        vec3 vert = vPosition * objScale + objPos;
+
+        lightDir = normalize(lightPos - vert);
+        eyeDir  = normalize(cameraPos - vert);
+
+        v_Color = vec4(ambient, ambient, ambient, 1.0);
+        v_Uv    = vUv * uvScale + uvPos;
+        v_Norm  = vNorm;
+
+        if(useNormMap == 1)
+        {
+            v_NUv = vUv * uvNMapScale + uvNMapPos;
+            v_biNorm = vBinorm;
+            v_tang = vTangeant;
+        }
+
+        gl_Position = u_modelViewProjMatrix * vec4( cameraInvMat * (vert - cameraPos), 1.0);
+    }
+</script>

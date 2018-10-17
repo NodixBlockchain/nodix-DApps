@@ -1,0 +1,353 @@
+let NODE_JSON_ARRAY stylesheets = `[
+	"/assets/font/fa/fontawesome-webfont.woff2",
+	"/assets/css/bootstrap.min.css",
+	"/assets/css/app.css",
+	"/assets/css/style.css",
+	"/assets/css/blocks.css",
+	"/assets/css/font-awesome.min.css",
+	"/assets/css/mdb.min.css",
+	"/assets/css/custom.css",
+	"/app/Cards/file/419528620B0DFA04A7FFD40585FA943EA76920AAD76470C08FC57EFFC16B3636"
+]`
+
+let NODE_JSON_ARRAY scripts = `["/assets/js/jquery-3.3.1.min.js","/assets/plugins/jquery/jquery-cookies.js","/assets/js/popper.min.js", "/assets/js/bootstrap.min.js" ,"/assets/js/mdb.min.js","/assets/js/custom.js",	"/assets/js/webGL/webgl-utils.js","/assets/js/webGL/J3DI.js","/assets/js/webGL/J3DIMath.js","/assets/js/colorpicker/colorpicker.js","/app/Cards/file/8E26C0B3F2D1FBF0EC72798A214D240B6F3999733AD3D89F1ADE2F6AAF046A1D"]`
+
+let NODE_MODULE_DEF node_adx = ` {"file" : "modz/node_adx.tpo"} `
+let NODE_MODULE_DEF card_tracer = ` {"file" : "apps/Cards/modz/card_tracer.tpo"} `
+
+
+
+
+let NODE_GFX_STR baseAppURL = "/app/Cards/page/cards.site"
+let NODE_GFX_STR appName	= "Cards"
+let NODE_GFX_OBJECT myscene = `{}`
+let NODE_GFX_OBJECT my_app = `{}`
+let NODE_GFX_STR app_name = "Cards"
+let NODE_GFX_INT app_found = 0
+let NODE_JSON_ARRAY node_accounts = `[]`
+let NODE_JSON_ARRAY addrs = `[]`
+let NODE_JSON_ARRAY app_types = `[]`
+
+let NODE_JSON_ARRAY floor_texs = `[{"marble":"10200DAC06FDF2B4B44C3324D5DB83FDCD4B2E0B51C31391D716C2716C366EBA"},{"gif":"13AFF42DE3565CC47B027E30FA8DA6255E7EA544243496BA1E1FDD8562B92DA8"},{"mp4":"ED09DF4127DF21BB22DBA05C6EDEB71CE1EF4AB492AA3E317B3D088A85DD9E39"},{"mpg":"2C8B48AD120662FA3BE70BAE5DDFE6EE352008183D983CBF33240F233FECD0B0"}]`
+
+let NODE_GFX_STR floor_tex = "10200DAC06FDF2B4B44C3324D5DB83FDCD4B2E0B51C31391D716C2716C366EBA"
+
+let NODE_BITCORE_HASH cubemap = "F8D686F84A98033F8E26E4A29502E00ACCB33E24E4A3213D8AADFDAC997E428D"
+
+page index(account_name) = `
+	
+	push scripts,"/assets/js/blocks.js"	
+	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/jsSHA-2.2.0/src/sha_dev.js"
+	push scripts,"/assets/js/keys.js"
+	push scripts,"/assets/js/apps.js"
+
+	node_adx.node_list_accounts	(node_accounts)
+	node_adx.node_list_addrs	(account_name, addrs);
+
+	set app_found = 0; 
+	node_adx.node_get_app(app_name,my_app) ? 
+		set app_found = 1; 
+		node_adx.node_get_app_types_def(app_name,app_types)
+	endor
+
+	html_head  "Cards - my cards" 
+	html_layout "header.html"
+	
+	html_scripts
+	html_var myscene;
+	html_var my_app;
+	
+	html_layout "shader_full.html"
+	html_layout "mycards.html"
+
+	html_js
+		
+		 $(document).ready(function () 
+		 {
+			site_base_url = '%baseAppURL%';
+
+		 	$('.cards-nav').each( function () {
+				var ref=$(this).attr('href');
+				$(this).attr('href',site_base_url+'/'+ref);
+			});
+
+			ec = new EC('secp256k1');
+			
+ 			MyAccount = new AccountList	('account_list',null,{'withSecret':true,'staking':false,'newAccnt':false,'redirect': site_base_url + '/index/','shownull':true});
+			MyAccount.addr_selected=addr_selected;
+
+			MyAccount.setAccounts (%node_accounts%,'%account_name%');
+			
+			
+			MyApps			=	new Applications();
+			MyApps.setApp		(my_app,null,%app_types%);
+
+
+			MyAccount.fetch_objects('Cards',0x1e000005,%addrs%).done( function (data) {
+				data.result.objects.sort(function (a, b) { return (b.time - a.time); });
+
+				update_app_objs(data.result.objects);
+
+				$('#total_tx').html(data.result.ntx);
+
+			});
+
+
+			MyAccount.fetch_sentobjs('Cards',0x1e000005,%addrs%).done( function (data) {
+				data.result.objects.sort(function (a, b) { return (b.time - a.time); });
+
+				update_app_sentobjs(data.result.objects);
+
+				//$('#total_tx').html(data.result.ntx);
+
+			});
+			makeFloorTexSelect('floor-tex',%floor_texs%,'%floor_tex%');
+			initialize		();
+		});
+	
+	end_js
+
+	html_layout "footer.html"
+
+
+`
+
+page newobj= `
+
+	push scripts,"/assets/js/blocks.js"	
+	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/jsSHA-2.2.0/src/sha_dev.js"
+	push scripts,"/assets/js/keys.js"
+	push scripts,"/assets/js/apps.js"
+
+	node_adx.node_get_app(app_name,my_app) ? 
+		set app_found = 1; 
+		node_adx.node_get_app_types_def(app_name,app_types)
+	endor
+
+	node_adx.node_list_accounts	(node_accounts)
+
+	card_tracer.tracer_new_scene(myscene)
+	card_tracer.tracer_load_cubemap(myscene,cubemap)
+
+	if(formvars.objfile.size > 0)
+		card_tracer.read_objfile(formvars.objfile, myscene)
+	endif
+	
+	html_head  "Cards - upload new object" 
+	html_layout "header.html"
+	
+	html_scripts
+	html_var myscene;
+	html_var my_app;
+
+	html_layout "newobj.html"
+	
+	html_js
+		
+		 $(document).ready(function () 
+		 {
+			site_base_url = '%baseAppURL%';
+
+			$('.cards-nav').each( function () {
+				var ref=$(this).attr('href');
+				$(this).attr('href',site_base_url+'/'+ref);
+			});
+
+			ec = new EC('secp256k1');
+
+ 			MyAccount = new AccountList	('account_list',null,{'withSecret':true,'staking':false,'newAccnt':false});
+			MyAccount.setAccounts (%node_accounts%,'');
+
+			Applications.prototype.update_app_files = update_app_files;
+			Applications.prototype.update_app_file = update_app_file;
+			
+
+			MyApps			=	new Applications();
+			MyApps.setApp		(my_app,null,%app_types%);
+
+
+			makeFloorTexSelect('floor-tex',%floor_texs%,'%floor_tex%');
+
+			initialize		();
+			init_scene(myscene);
+		 });
+
+	end_js
+
+	html_layout "footer.html"
+
+`
+json getobj(hash) = `
+
+	set resp_headers.cache-control = "max-age=3600";
+
+	card_tracer.tracer_new_scene(result)
+	card_tracer.tracer_load_cubemap(result,cubemap)
+	card_tracer.tracer_load_model(result,hash)
+
+`
+
+page newcard(objhash) = `
+	push scripts,"/assets/js/blocks.js"	
+	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/jsSHA-2.2.0/src/sha_dev.js"
+	push scripts,"/assets/js/keys.js"
+	push scripts,"/assets/js/apps.js"
+
+	node_adx.node_list_accounts	(node_accounts)
+
+	set app_found = 0; 
+	node_adx.node_get_app(app_name,my_app) ? 
+		set app_found = 1; 
+		node_adx.node_get_app_types_def(app_name,app_types)
+	endor
+
+	card_tracer.tracer_new_scene(myscene)
+	
+	html_head  "Cards - create new card" 
+	html_layout "header.html"
+	
+	html_scripts
+	html_var myscene;
+	html_var my_app;
+	
+	html_layout "newcard.html"
+
+	html_js
+		
+		 $(document).ready(function () 
+		 {
+			site_base_url = '%baseAppURL%';
+
+			$('.cards-nav').each( function () {
+				var ref=$(this).attr('href');
+				$(this).attr('href',site_base_url+'/'+ref);
+			});
+
+			ec = new EC('secp256k1');
+
+ 			MyAccount = new AccountList	('account_list',null,{'withSecret':true,'staking':false,'newAccnt':false});
+			MyAccount.setAccounts (%node_accounts%,'');
+			
+			
+			MyApps			=	new Applications();
+			MyApps.setApp		(my_app,null,%app_types%);
+
+
+			MyApps.get_app_type_objs_p(0x1e000003).done(function (data) {
+				if (!data.error) {
+					update_app_objs(data.result.objs);
+				}
+				else {
+					$('#objs_1e000003').html('no objects');
+				}
+			});
+
+			initialize		();
+
+			makeFloorTexSelect('floor-tex',%floor_texs%,'%floor_tex%');
+			load_object		('%objhash%').done( function (data) { deleteSceneObjects(); init_scene(data); } );
+		});
+	
+	end_js
+
+	html_layout "footer.html"
+
+`
+page viewcard(cardHash) = `
+	
+	push scripts,"/assets/js/apps.js"
+
+	html_head  "Cards - view card" 
+	html_layout "header.html"
+	html_layout "viewcard.html"
+
+	set app_found = 0; 
+	node_adx.node_get_app(app_name,my_app) ? 
+		set app_found = 1; 
+		node_adx.node_get_app_types_def(app_name,app_types)
+	endor
+
+	node_adx.node_list_accounts	(node_accounts)
+	
+	html_scripts
+	html_var myscene;
+	html_var my_app;
+	
+	html_js
+		 
+
+		 $(document).ready(function () 
+		 {
+			site_base_url = '%baseAppURL%';
+
+			$('.cards-nav').each( function () {
+				var ref=$(this).attr('href');
+				$(this).attr('href',site_base_url+'/'+ref);
+			});
+			
+			
+			MyApps			=	new Applications();
+			MyApps.setApp		(my_app,null,null);
+
+			initialize		();
+			
+			makeFloorTexSelect('floor-tex',%floor_texs%,'%floor_tex%');
+
+			MyApps.load_obj_p('%cardHash%',8).done(function (data) { $('#cardId').html('%cardHash%'); updateCard(data.result.obj); } );
+
+			
+			MyApps.listobjtxfr	(0x1E000005,'%cardHash%').done( function (data){ update_obj_txfrs(data.result.txfrs); } );
+		 });
+	end_js
+	html_layout "footer.html"
+`
+
+
+
+page viewobj(hash) = `
+
+	push scripts,"/assets/js/apps.js"
+
+	node_adx.node_get_app(app_name,my_app) ? 
+		set app_found = 1; 
+	endor
+
+	card_tracer.tracer_new_scene(myscene)
+	
+	html_head  "Cards" 
+	html_layout "header.html"
+	
+	html_scripts
+	html_var myscene;
+	html_var my_app;
+	
+	html_layout "viewobj.html"
+
+	html_js
+		
+		 $(document).ready(function () 
+		 {
+			site_base_url = '%baseAppURL%';
+
+		 	$('.cards-nav').each( function () {
+				var ref=$(this).attr('href');
+				$(this).attr('href',site_base_url+'/'+ref);
+			});
+
+			MyApps			=	new Applications();
+			MyApps.setApp		(my_app,null,null);
+
+			initialize		();
+			makeFloorTexSelect('floor-tex',%floor_texs%,'%floor_tex%');
+			load_object		('%hash%').done( function (data) { deleteSceneObjects(); init_scene(data); } );
+
+		});
+	
+	end_js
+
+	html_layout "footer.html"
+
+`

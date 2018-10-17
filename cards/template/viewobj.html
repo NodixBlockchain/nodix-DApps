@@ -1,0 +1,840 @@
+<!-- <script src="/cards/obj.js" type="text/javascript" ></script> -->
+<style>
+
+</style>
+
+<script id="fshader" type="x-shader/x-fragment">
+    precision highp  float;
+    precision highp  int;
+
+    uniform	samplerCube cubemap;
+    uniform	sampler2D   tex1;
+    uniform	sampler2D   normTex;
+
+    uniform	mediump  vec2	uvPosFloor;
+    uniform	mediump  vec2	uvScaleFloor;
+
+    uniform	mediump  float	refl_fac;
+    uniform	mediump  float	alpha;
+    uniform	mediump  int	useNormMap;
+    uniform	mediump  int	useCubemap;
+
+    varying vec4 v_Color;
+    varying vec2 v_Uv;
+    varying vec2 v_NUv;
+    varying vec3 v_Norm;
+    varying vec3 v_biNorm;
+    varying vec3 v_tang;
+
+    varying vec3 eyeDir;
+    varying vec3 lightDir;
+
+    void main()
+    {
+        mat3 bmat;
+        vec3 rvec;
+        vec3 NPix;
+        vec3 norm;
+        vec4 rcolor;
+        vec4 color;
+        vec2 ruv;
+        float  myfac;
+
+
+
+        if(useNormMap == 1)
+        {
+            NPix = (texture2D(normTex, v_NUv).xyz - 0.5) * 2.0;
+
+            bmat = mat3(v_tang, v_biNorm, v_Norm);
+            norm = NPix * bmat;
+        }
+        else
+            norm = v_Norm;
+
+        rvec = reflect(eyeDir,norm);
+
+
+        if(refl_fac>0.0)
+        {
+            if(useCubemap == 1)
+            {
+                rcolor = textureCube(cubemap, rvec);
+                myfac = refl_fac;
+            }
+            else
+            {
+                if(rvec.y > 0.0)
+                {
+                    ruv.x = rvec.x * uvScaleFloor.x + uvPosFloor.x;
+                    ruv.y = rvec.z * uvScaleFloor.y + uvPosFloor.y;
+                    rcolor = texture2D(tex1, ruv);
+                    myfac = refl_fac;
+                }
+                else
+                {
+                    myfac = 0.0;
+                    rcolor = vec4(1.0, 1.0, 1.0, 1.0);
+                }
+            }
+        }
+        else    
+        {
+            myfac = 0.0;
+            rcolor = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+            
+
+        float light = max(0.0, dot(lightDir, norm));
+
+        color = v_Color + vec4(light,light,light,1.0);
+        color = mix(color,rcolor,myfac) * texture2D(tex1, v_Uv);
+
+        color.a = alpha;
+            
+        gl_FragColor = color;
+    }
+</script>
+<script id="vshader" type="x-shader/x-vertex">
+    precision mediump  float;
+    precision mediump  int;
+
+    uniform	mediump  int	useNormMap;
+
+    uniform mediump  mat4 u_modelViewProjMatrix;
+    attribute mediump  vec3 vPosition;
+    attribute mediump  vec3 vNorm;
+    attribute mediump  vec2 vUv;
+    attribute mediump  vec3 vTangeant;
+    attribute mediump  vec3 vBinorm;
+
+    uniform mediump  vec3	lightPos;
+    uniform mediump  vec3	objPos;
+    uniform mediump  vec3	objScale;
+    uniform	mediump  vec3	cameraPos;
+
+    uniform	mediump  vec2	uvPos;
+    uniform	mediump  vec2	uvScale;
+
+    uniform	mediump  vec2	uvNMapPos;
+    uniform	mediump  vec2	uvNMapScale;
+
+    
+
+    uniform	mediump  vec2	uvPosFloor;
+    uniform	mediump  vec2	uvScaleFloor;
+
+    uniform	mediump  mat4	cameraInvNormal;
+    uniform	mediump  mat3	cameraInvMat;
+
+    varying vec3 eyeDir;
+    varying vec3 lightDir;
+
+    varying vec4 v_Color;
+    varying vec2 v_Uv;
+    varying vec2 v_NUv;
+    varying vec3 v_Norm;
+    varying vec3 v_biNorm;
+    varying vec3 v_tang;
+
+    const float ambient = 0.2;
+
+    void main()
+    {
+
+        vec3 vert = vPosition * objScale + objPos;
+        
+        lightDir = normalize(lightPos - vert);
+        eyeDir  = normalize(cameraPos - vert);
+
+        v_Color = vec4(ambient, ambient, ambient, 1.0);
+        v_Uv    = vUv * uvScale + uvPos;
+        v_Norm  = vNorm;
+
+        if(useNormMap == 1)
+        {
+            v_NUv   = vUv * uvNMapScale + uvNMapPos;
+            v_biNorm = vBinorm;
+            v_tang = vTangeant;
+        }
+
+        gl_Position =  u_modelViewProjMatrix * vec4( cameraInvMat * (vert - cameraPos), 1.0);
+    }
+</script>
+
+<script type="text/javascript">
+    
+    var vtx_attribs = ["vPosition", "vNorm", "vUv"];
+    var g = {};
+    
+    var images = [];
+    var curfile = null;
+
+    var mouseTimer = null;
+
+    var has_app_root = 1;
+    var root_app_hash = '';
+    var root_app_addr = '';
+    var root_app_fees = '';
+    var unit = 1;
+    var paytxfee = 0;
+
+    var render_texture = {};
+
+    var selectedMatTex = { id: 0, type: 0 };
+
+    
+
+    function scene_image_selected(id) {
+        $('#img_list img').removeClass('selected');
+
+
+        if (selectedMatTex.id == 0) return 0;
+        if (selectedMatTex.type == 0) return 0;
+
+        var mat = getMaterial(selectedMatTex.id);
+
+        if (selectedMatTex.type == 1) {
+            if (mat.texture_id == id) {
+                mat.texture = '';
+                mat.texture_id = 0;
+            }
+            else {
+                $('#tex_' + id).addClass('selected');
+                mat.texture_id = id;
+                mat.texture = getImage(mat.texture_id).txid;
+            }
+        }
+
+        if (selectedMatTex.type == 2) {
+            if (mat.normalmap_id == id) {
+                mat.normalmap = '';
+                mat.normalmap_id = 0;
+            }
+            else {
+                $('#tex_' + id).addClass('selected');
+                mat.normalmap_id = id;
+                mat.normalmap = getImage(mat.normalmap_id).txid;
+            }
+        }
+
+        updtMatInfos(g.scene);
+
+    }
+    
+    function hex2dig(d) {
+        return ("00" + (+d).toString(16)).slice(-2);
+    }
+    function mouseOut() {
+        g.mouse_clicked = false;
+    }
+
+    function mousedown(e) {
+        g.cmouseX = Math.round(e.clientX);
+        g.cmouseY = Math.round(e.clientY);
+        g.mouse_clicked = true;
+
+        if (mouseTimer != null)
+            clearTimeout(mouseTimer);
+        mouseTimer = setTimeout(mouseOut, 6000);
+
+        if (e.preventDefault) e.preventDefault(); else return false;
+    }
+    function mousemoved(e) {
+        if (g.mouse_clicked) {
+            var a = ((e.clientX - (g.winW / 2.0))) / 500.0;
+            g.scene.camPos[0] = Math.cos(a+Math.PI/8.0) * 8;
+            g.scene.camPos[2] = Math.sin(a+Math.PI/8.0) * 8;
+
+            g.scene.camPos[1] = g.scene.objects[0].bmin[0] - (g.winH - e.clientY) / 50.0;
+            if (mouseTimer != null)
+                clearTimeout(mouseTimer);
+            mouseTimer = setTimeout(mouseOut, 6000);
+        }
+
+        if (e.preventDefault) e.preventDefault(); else return false;
+    }
+
+    function mouseup(e) {
+        g.mouse_clicked = false;
+        clearTimeout(mouseTimer);
+        mouseTimer = null;
+        if (e.preventDefault) e.preventDefault(); else return false;
+    }
+
+    function mouseout(e) {
+        g.mouse_clicked = false;
+        clearTimeout(mouseTimer);
+        mouseTimer = null;
+        if (e.preventDefault) e.preventDefault(); else return false;
+    }
+
+    function handleContextLost(e) {
+        clearLoadingImages();
+        if (requestId !== undefined) {
+            window.cancelAnimFrame(requestId);
+            requestId = undefined;
+        }
+
+        if (e.preventDefault) e.preventDefault(); else return false;
+    }
+    function handleContextRestored() {
+        initializeGL();
+        renderscene();
+    }
+
+    function matTexClicked(mat_id) {
+        var mat = getMaterial(mat_id);
+
+        $('#img_list img').removeClass('selected');
+
+        if ((selectedMatTex.id == mat.id) && (selectedMatTex.type == 1)) {
+            matSelected.innerHTML = 'Scene images';
+            selectedMatTex.id = 0;
+            selectedMatTex.type = 0;
+            return;
+        }
+
+        selectedMatTex.id = mat_id;
+        selectedMatTex.type = 1;
+
+        $('#tex_' + mat.texture_id).addClass('selected');
+
+        matSelected.innerHTML = mat.name + ' texture ';
+    }
+
+    function matNormClicked(mat_id) {
+        var mat = getMaterial(mat_id);
+
+        $('#img_list img').removeClass('selected');
+
+        if ((selectedMatTex.id == mat.id) && (selectedMatTex.type == 2)) {
+            matSelected.innerHTML = 'Scene images';
+            selectedMatTex.id = 0;
+            selectedMatTex.type = 0;
+            return;
+        }
+
+        selectedMatTex.id = mat.id;
+        selectedMatTex.type = 2;
+
+        $('#tex_' + mat.normalmap_id).addClass('selected');
+
+        matSelected.innerHTML = mat.name + ' normal map ';
+    }
+
+
+    function updtMatInfos(Scene) {
+        var n = 0;
+
+        thead = document.getElementById("mat_table").tHead;
+        old_tbody = document.getElementById("mat_table").tBodies[0];
+        new_tbody = document.createElement('tbody');
+
+        if (typeof Scene.material_list == 'undefined') {
+            old_tbody.parentNode.replaceChild(new_tbody, old_tbody);
+            return;
+        }
+
+        for (n = 0; n < Scene.material_list.length; n++) {
+            var pos = [0.0, 0.0], scale = [1.0, 1.0];
+            var material = Scene.material_list[n];
+
+            var row = new_tbody.insertRow(n);
+
+
+
+            cell = row.insertCell(0);
+            cell.className = "matid";
+            cell.innerHTML = material.id;
+
+            cell = row.insertCell(1);
+            cell.className = "name";
+            cell.innerHTML = material.name;
+
+            cell = row.insertCell(2);
+            cell.className = "texture_id";
+            if ((typeof material.texture_id == "number") && (material.texture_id > 0))
+                cell.innerHTML = getImage(material.texture_id).txid;
+            else
+                cell.innerHTML = '#none';
+
+            cell.setAttribute('mat_id', material.id);
+
+            cell.addEventListener("click", function () { matTexClicked(parseInt(this.getAttribute('mat_id'))); });
+
+            cell = row.insertCell(3);
+            cell.className = "normalmap_id";
+            if ((typeof material.normalmap_id == "number") && (material.normalmap_id > 0))
+                cell.innerHTML = getImage(material.normalmap_id).txid;
+            else
+                cell.innerHTML = '#none';
+
+            cell.setAttribute('mat_id', material.id);
+
+            cell.addEventListener("click", function () { matNormClicked(parseInt(this.getAttribute('mat_id'))); });
+
+            var colorHex = '#' + hex2dig(material.color[0]) + hex2dig(material.color[1]) + hex2dig(material.color[2]);
+            cell = row.insertCell(4);
+            cell.className = "color";
+            cell.innerHTML = colorHex + ' <div  matid="' + material.id + '"  class="matColor" id="matColor_' + material.id + '" style="background-color:' + colorHex + ';"></div><div style="display:none;position:absolute;" matid="' + material.id + '" id="matColorPick_' + material.id + '"></div>';
+
+
+            cell = row.insertCell(5);
+            cell.className = "reflection";
+            cell.innerHTML = material.reflect;
+
+            cell = row.insertCell(6);
+            cell.className = "refraction";
+            cell.innerHTML = material.refract;
+
+            cell = row.insertCell(7);
+            cell.className = "refraction indice";
+            cell.innerHTML = material.refract_density;
+
+            cell = row.insertCell(8);
+            cell.className = "txid";
+            cell.innerHTML = material.txid;
+        }
+
+        old_tbody.parentNode.replaceChild(new_tbody, old_tbody);
+
+        $('.matColor').click(function () { var pickerId = '#matColorPick_' + $(this).attr('matid'); var show = $(pickerId).css('display') == 'none' ? true : false; $('div[id^=matColorPick_]').css('display', 'none'); if (show) $(pickerId).css('display', 'block'); });
+
+        for (n = 0; n < Scene.material_list.length; n++) {
+            var material = Scene.material_list[n];
+            var colorHex = '#' + hex2dig(material.color[0]) + hex2dig(material.color[1]) + hex2dig(material.color[2]);
+            $('#matColorPick_' + material.id).ColorPicker({
+                flat: true, color: colorHex,
+                onSubmit: function (hsb, hex, rgb) {
+
+                },
+                onChange: function (hsb, hex, rgb) {
+                    var matid = $(this).parent().attr('matid');
+                    var matidx = get_material_idx(g.scene, matid);
+                    $('#matColor_' + matid).css('backgroundColor', '#' + hex);
+
+                    g.scene.material_list[matidx].color[0] = rgb.r;
+                    g.scene.material_list[matidx].color[1] = rgb.g;
+                    g.scene.material_list[matidx].color[2] = rgb.b;
+                }
+            });
+        }
+    }
+
+
+    function load_frag(gl) {
+        $('#status').append('Loading shader program ... <br/>');
+        var program = loadShader_program(gl, "vshader", "fshader", vtx_attribs);
+        if (program != null) {
+            gl.useProgram(program);
+            g.program = program;
+            $('#status').append('Shader program loaded.<br/>');
+        }
+        else
+        {
+            $('#status').append('Error loading shader program.<br/>');
+        }
+        return program;
+    }
+
+
+    function reshape(gl) {
+        // change the size of the canvas's backing store to match the size it is displayed.
+        var canvas = document.getElementById('gl_canvas');
+        /*
+        if (canvas.clientWidth == canvas.width && canvas.clientHeight == canvas.height)
+            return;
+        */
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+
+        g.winW = canvas.clientWidth;
+        g.winH = canvas.clientHeight;
+
+        // Set the viewport and projection matrix for the scene
+        gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
+    }
+
+    var useStencil = false;
+
+
+    function renderscene() {
+        var date_obj = new Date();
+        var cur_time = date_obj.getTime();
+        var time = cur_time - g.start_time;
+        var c = document.getElementById('gl_canvas');
+        var gl = g.gl;
+
+        reshape(gl);
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LEQUAL);
+        gl.disable(gl.BLEND);
+        gl.disable(gl.CULL_FACE);
+        gl.depthMask(true);
+
+        if ((g.program != null) && (g.scene != null)) {
+
+            var camMat;
+            if ((g.scene.cubemap.length == 6) &&(g.cubeMaptexID == null))
+            {
+                var ok=true;
+                for (var j = 0; j < 6; j++) {
+
+                    var image=document.getElementById('tex_'+g.scene.cubemap[j]);
+                    if (!image.complete)
+                        ok = false;
+                }
+
+                if (ok) {
+                    gl.activeTexture(gl.TEXTURE2);
+                    g.max_cm = gl.getParameter(gl.MAX_CUBE_MAP_TEXTURE_SIZE);
+                    g.cubeMaptexID = gl.createTexture();
+
+                    gl.activeTexture(gl.TEXTURE2);
+                    gl.bindTexture(gl.TEXTURE_CUBE_MAP, g.cubeMaptexID);
+                    var targets = [
+                       gl.TEXTURE_CUBE_MAP_POSITIVE_X, gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+                       gl.TEXTURE_CUBE_MAP_POSITIVE_Y, gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                       gl.TEXTURE_CUBE_MAP_POSITIVE_Z, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
+                    ];
+
+                    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+                    for (var j = 0; j < 6; j++) {
+
+                        var image = document.getElementById('tex_' + g.scene.cubemap[j]);
+                        
+                        gl.texImage2D(targets[j], 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+                        console.log("load cubemap [" + j + "]");
+                        console.log(image);
+
+                    }
+                    gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+                    gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+                }
+            }
+
+            if (!g.mouse_clicked) {
+                g.scene.camPos[0] = Math.sin(time / 1000.0) * 8;
+                g.scene.camPos[1] = 2;
+                g.scene.camPos[2] = Math.cos(time / 1000.0) * 8;
+            }
+
+            g.scene.lightPos[0] = Math.sin(time / 500.0) * 10;
+            g.scene.lightPos[2] = Math.cos(time / 500.0) * 10;
+
+            gl.uniform3fv(g.cameraPosloc, g.scene.camPos);
+            gl.uniform3fv(g.lightPosloc, g.scene.lightPos);
+
+
+            g.perspectiveMatrix.makeIdentity();
+            g.perspectiveMatrix.perspective(60.0, g.winW / g.winH, 0.1, 100);
+            g.mvpMatrix.load(g.perspectiveMatrix);
+            g.mvpMatrix.setUniform(gl, g.matModProjloc, false);
+
+            if (g.scene.objects[0])
+                camMat = makeLookAt3x3t(g.scene.camPos, [0.0, g.scene.objects[0].center[1], 0.0], [0.0, 1.0, 0.0]);
+            else
+                camMat = makeLookAt3x3t(g.scene.camPos, [0.0, 0.0, 0.0], [0.0, 1.0, 0.0]);
+
+            gl.uniformMatrix3fv(g.cameraInvMatloc, false, camMat);
+            gl.uniform1f(g.alphaloc, 1.0);
+
+
+            if (g.scene.floor) {
+
+                if (g.scene.camPos[1] > g.scene.floor.bmin[1]) {
+
+                    if (useStencil) {
+
+                        // Don't update color or depth. 
+                        gl.disable(gl.DEPTH_TEST);
+                        gl.colorMask(false, false, false, false);
+                        gl.depthMask(false);
+
+                        // Draw 1 into the stencil buffer. 
+
+                        gl.enable(gl.STENCIL_TEST);
+                        gl.stencilOp(gl.KEEP, gl.KEEP, gl.REPLACE);
+                        gl.stencilFunc(gl.ALWAYS, 1, 0xff);
+                        gl.stencilMask(0xFF);
+
+                        renderobj(gl, g.scene.floor, time);
+
+                        // Re-enable update of color and depth. 
+                        gl.colorMask(true, true, true, true);
+                        gl.enable(gl.DEPTH_TEST);
+                        gl.depthMask(true);
+
+                        // Now, only render where stencil is set to 1. 
+                        gl.stencilFunc(gl.EQUAL, 1, 0xFF);  // draw if ==1 
+                        gl.stencilMask(0x0);
+                        //gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
+                    }
+
+                    for (var n = 0; n < g.scene.objects.length; n++) {
+
+                        g.scene.objects[n].scale[1] = -1.0;
+                        g.scene.objects[n].pos = [0.0, g.scene.objects[0].bmin[1] * 2, 0.0];
+
+                        renderobj(gl, g.scene.objects[n], time);
+
+                        g.scene.objects[n].pos = [0.0, 0.0, 0.0];
+                        g.scene.objects[n].scale[1] = 1.0;
+                    }
+
+
+                    if (useStencil) {
+                        // Don't want to be using stenciling for drawing the actual dinosaur (not its reflection) and the floor. 
+                        gl.disable(gl.STENCIL_TEST);
+                    }
+                }
+
+                gl.enable(gl.BLEND);
+                gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+                gl.uniform1f(g.alphaloc, 0.8);
+                renderobj(gl, g.scene.floor, time);
+                gl.uniform1f(g.alphaloc, 1.0);
+
+                gl.disable(gl.BLEND);
+            }
+            
+            for (var n = 0; n < g.scene.objects.length; n++) {
+                renderobj(gl, g.scene.objects[n], time);
+            }
+        }
+        requestId = window.requestAnimFrame(renderscene, c);
+    }
+
+    
+
+    function initializeGL() {
+        // Initialize
+        var date_obj = new Date();
+        var gl = initWebGL("gl_canvas");
+        if (!gl) { alert('unable to init opengl'); return; }
+
+
+        //gl = gl_canvas.getContext("webgl", { stencil: true });
+
+        //var program = simpleSetup(gl, "vshader", "fshader", vtx_attribs, [1.0, 1.0, 1.0.5, 1], 10000);
+
+        g.maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+
+        reset_rt(render_texture, g.maxTextureSize);
+
+        render_texture.texid = gl.createTexture();
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, render_texture.texid);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, render_texture.w, render_texture.h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+
+        g.start_time = date_obj.getTime();
+        // Create some matrices to use later and save their locations in the shaders
+        g.mvMatrix = new J3DIMatrix4();
+        g.normalMatrix = new J3DIMatrix4();
+        g.perspectiveMatrix = new J3DIMatrix4();
+        g.cmMatrix = new J3DIMatrix4();
+        g.mvpMatrix = new J3DIMatrix4();
+        g.cubeMaptexID = null;
+
+        g.cmMatrix.makeIdentity();
+
+       
+        
+        $('#max_tex_size').html(g.maxTextureSize);
+
+        var c = document.getElementById('gl_canvas');
+
+        $('canvas').bind('touchmove', function (e) {
+            var event = window.event;
+
+            var a = ((event.touches[0].clientX - (g.winW / 2.0))) / 500.0;
+            g.scene.camPos[0] = Math.cos(a + Math.PI / 8.0) * 8;
+            g.scene.camPos[2] = Math.sin(a + Math.PI / 8.0) * 8;
+
+            g.scene.camPos[1] = (g.winH - event.touches[0].clientY) / 50.0 + 4.2;
+
+            if (mouseTimer != null)
+                clearTimeout(mouseTimer);
+            mouseTimer = setTimeout(mouseOut, 6000);
+            e.preventDefault();
+
+        });
+
+        var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel"; //FF doesn't recognize mousewheel as of FF3.x
+        if (c.attachEvent) { //if IE (and Opera depending on user setting)
+            //c.attachEvent("on" + mousewheelevt, mousewheel);
+            c.attachEvent("onmousedown", mousedown);
+            c.attachEvent("ontouchstart", mousedown);
+            //c.attachEvent("onmouseup", mouseup);
+            c.attachEvent("onmouseout", mouseout);
+            c.attachEvent("onmousemove", mousemoved);
+        }
+        else if (c.addEventListener) //WC3 browsers
+        {
+            //c.addEventListener(mousewheelevt, mousewheel, false);
+            c.addEventListener("mousedown", mousedown, false);
+            c.addEventListener("touchstart", mousedown, false);
+            //c.addEventListener("mouseup", mouseup, false);
+            c.addEventListener("mouseout", mouseout, false);
+            c.addEventListener("mousemove", mousemoved, false);
+        }
+
+        return gl;
+    }
+
+    function init_scene(scene)
+    {
+        g.scene = scene;
+
+
+        g.textures = new Array();
+
+        g.scene.camPos = new Array(0.0, 10.0, -10.0);
+        g.scene.lightPos = new Array(0.0, 1.0, 0.0);
+
+
+        for (var n = 0; n < g.scene.objects.length; n++) {
+            g.scene.objects[n].vertices = null;
+            g.scene.objects[n].buffer = null;
+            getObjBounds(g.scene.objects[n]);
+            scaleObj(g.scene.objects[n],5.0);
+           
+        }
+
+        if (g.scene.objects.length > 0) {
+            getMaterial(g.scene.objects[0].surfaces[0].material_id).reflect = 0.4;
+            compute_biNorms(g.scene.objects[0]);
+            splitSurface(g.scene.objects[0], 0, 5000);
+            buildobjarray(gl, g.scene.objects[0]);
+
+            $('#objName').html(g.scene.objects[0].name);
+            updtMatInfos(g.scene);
+        }
+
+
+        rpc_call('getappfile', [$('#floor-tex').val()], function (data) {
+            if (!data.error) {
+                var imgId, matId;
+                curfile = data.result.file;
+                imgId = add_image();
+
+                matId = newMat('floor', [1.0, 1.0, 1.0], imgId, 0);
+
+                if (g.scene.objects[0])
+                    g.scene.floor = makeFloor([100.0, 100.0], 10.0, g.scene.objects[0].bmin[1], matId);
+                else
+                    g.scene.floor = makeFloor([100.0, 100.0], 10.0, 0.0, matId);
+
+                updtMatInfos(g.scene);
+            }
+        });
+
+        for (var i = 0; i < g.scene.images.length; i++) {
+            curfile = g.scene.images[i];
+            add_html_image(g.scene.images[i].id, g.scene.images[i].url);
+        }
+
+    }
+
+    function initialize() {
+        var c = document.getElementById('gl_canvas');
+
+        $('#status').append('Initializing opengl ... <br/>');
+
+        //c = WebGLDebugUtils.makeLostContextSimulatingCanvas(c);
+        // tell the simulator when to lose context.
+        //c.loseContextInNCalls(1);
+        g.gl = initializeGL();
+        if (!g.gl) { return; }
+        $('#status').append('opengl initialized. <br/>');
+
+        c.addEventListener('webglcontextlost', handleContextLost, false);
+        c.addEventListener('webglcontextrestored', handleContextRestored, false);
+        /*framerate = new Framerate("framerate");*/
+
+        if (load_frag(gl) != null)
+        {
+            g.matModProjloc = gl.getUniformLocation(g.program, "u_modelViewProjMatrix");
+            g.cameraPosloc = gl.getUniformLocation(g.program, "cameraPos");
+            g.lightPosloc = gl.getUniformLocation(g.program, "lightPos");
+            g.objPosloc = gl.getUniformLocation(g.program, "objPos");
+            g.objScaleloc = gl.getUniformLocation(g.program, "objScale");
+            
+            g.cameraInvNormalloc = gl.getUniformLocation(g.program, "cameraInvNormal");
+            g.cameraInvMatloc = gl.getUniformLocation(g.program, "cameraInvMat");
+
+            g.cubMaploc = gl.getUniformLocation(g.program, "cubemap");
+            g.tex1loc = gl.getUniformLocation(g.program, "tex1");
+
+            g.uvPosloc = gl.getUniformLocation(g.program, "uvPos");
+            g.uvScaleloc = gl.getUniformLocation(g.program, "uvScale");
+
+            g.uvNMapPosloc = gl.getUniformLocation(g.program, "uvNMapPos");
+            g.uvNMapScaleloc = gl.getUniformLocation(g.program, "uvNMapScale");
+            g.normTexloc = gl.getUniformLocation(g.program, "normTex");
+
+            g.useNormMaploc = gl.getUniformLocation(g.program, "useNormMap");
+            g.useCubemaploc = gl.getUniformLocation(g.program, "useCubemap");
+
+            g.uvPosFloorloc = gl.getUniformLocation(g.program, "uvPosFloor");
+            g.uvScaleFloorloc = gl.getUniformLocation(g.program, "uvScaleFloor");
+
+            g.refl_facloc = gl.getUniformLocation(g.program, "refl_fac");
+            g.alphaloc = gl.getUniformLocation(g.program, "alpha");
+        }
+
+       
+
+        requestId = window.requestAnimFrame(renderscene, c);
+    }
+</script>
+
+<section>
+    <div class="container">
+        <div id="app_hdr"></div>
+    </div>
+</section>
+
+<section>
+    <div class="container" id="account_list"></div>
+</section>
+<section>
+    <div class="container">
+        <div class="card">
+            <div class="card-header"><h2 id="objName"></h2></div>
+            <div class="card-body">
+                <div id="mat_list">
+                    <h2>object's materials</h2>
+                    <table id="mat_table" class="table">
+                        <thead><tr><th>id</th><th>name</th><th>texture_id</th><th>normalmap_id</th><th>color</th><th>reflection</th><th>refraction</th><th>refraction indice</th><th>txid</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <hr />
+
+                <div>
+                    <h3 id="matSelected">Scene images</h3>
+                    <div id="img_list"></div>
+                </div>
+                <hr />
+                <h2>object preview</h2>
+                <div class="col-md flex-center"><img id="obj-loading" /><div id="glRender" class="text-center"><select onchange="setFloorTex($(this).val());" id="floor-tex" class="browser-default"></select><canvas id="gl_canvas" width="512" height="384" style="background: black;">If you're seeing this your web browser doesn't support the &lt;canvas&gt;&gt; element. Ouch!</canvas></div></div>
+            </div>
+            <div class="card-footer"><div id="status"></div></div>
+        </div>
+    </div>
+</section>
