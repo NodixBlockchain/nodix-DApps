@@ -1,0 +1,470 @@
+<style>
+    pre{
+        max-height:400px;
+        overflow:scroll;
+        background-color:#000;
+        color:#FFF;
+    }
+</style>
+<div class="container">
+    <p align=CENTER><strong><font size=6><u>TPO BINARY MODULES</u></font></strong></p>
+    <p>&nbsp;</p>
+    <p><strong><font size=5><u>1. Why tpo modules ?</u></font></strong></p>
+    <p>&nbsp;</p>
+    <p>
+        <font size=3>
+            The motivation for developing binary modules, is that
+            existing binary format ( DLL or ELF ) are strongly tied to their own
+            operating system, and can't be executed easily on other platform,
+            even if the machine code only involve cpu instruction, the convention
+            for exported function name and memory model prevent the use of one
+            binary from one operating system to another, even if the code doesn't
+            use operating system specific code.
+        </font>
+    </p>
+    <p>
+        <font size=3>
+            Tpo module are inter OS dynamically linked position
+            independent binary module. In the process of developing a micro
+            kernel project, i wanted to avoid dependency on a particular compiler
+            or operating system for the binaries produced from the host system,
+            but still being able to compile and link binary executables and
+            dynamically linked libraries from them using their own tool chain, 
+            but without having any dependency on a particular tool chain 
+            for the module to be loaded and executed on micro kernel 
+            architecture with minimalist C Library and runtime.
+        </font>
+    </p>
+    <p>
+       <font size=3>
+            The nodix framework allow to abstract
+            dependencies on compiler runtime and operating system in order to
+            have safe portable binary linked with each other regardless of 
+            the compiler and operating system used to produce them.
+        </font>
+    </p>
+    <p><strong><font size=5><u>2. Internal structure.</u></font></strong></p>
+    <p>&nbsp;</p>
+    <table width=100% border=1 cellpadding=4 cellspacing=3>
+        <col width=36*>
+        <col width=134*>
+        <col width=85*>
+        <tr valign=TOP>
+            <th width=14%>
+                <p>START</p>
+            </th>
+            <th width=52%>
+                <p>SIZE</p>
+            </th>
+            <th width=33%>
+                <p>
+                    <br>
+                </p>
+            </th>
+        </tr>
+        <tr valign=TOP>
+            <td width=14% sdval="0" sdnum="1033;">
+                <p>0</p>
+            </td>
+            <td width=52% sdval="128" sdnum="1033;">
+                <p>128</p>
+            </td>
+            <td width=33%>
+                <p>Module name</p>
+            </td>
+        </tr>
+        <tr valign=TOP>
+            <td width=14% sdval="128" sdnum="1033;">
+                <p>128</p>
+            </td>
+            <td width=52% sdval="4" sdnum="1033;">
+                <p>4</p>
+            </td>
+            <td width=33%>
+                <p>Length of the string buffer</p>
+            </td>
+        </tr>
+        <tr valign=TOP>
+            <td width=14% sdval="132" sdnum="1033;">
+                <p>132</p>
+            </td>
+            <td width=52% sdval="4" sdnum="1033;">
+                <p>4</p>
+            </td>
+            <td width=33%>
+                <p>Type of function decoration (GCC or MSVC)</p>
+            </td>
+        </tr>
+        <tr valign=TOP>
+            <td width=14% sdval="136" sdnum="1033;">
+                <p>136</p>
+            </td>
+            <td width=52% sdval="4" sdnum="1033;">
+                <p>4</p>
+            </td>
+            <td width=33%>
+                <p>Number of sections</p>
+            </td>
+        </tr>
+        <tr valign=TOP>
+            <td width=14% sdval="140" sdnum="1033;">
+                <p>140</p>
+            </td>
+            <td width=52%>
+                <p>
+                    28 byte header
+                </p>
+            </td>
+            <td width=33%>
+                <p>Length and other information about the section</p>
+            </td>
+        </tr>
+        <tr valign=TOP>
+            <td width=14% sdval="168" sdnum="1033;">
+                <p>168</p>
+            </td>
+            <td width=52%>
+                <p>Section size</p>
+            </td>
+            <td width=33%>
+                <p>Section data aligned on 16 bytes boundaries.</p>
+            </td>
+        </tr>
+        <tr valign=TOP>
+            <td width=14%>
+                <p>168 + section size</p>
+            </td>
+            <td width=52% sdval="12" sdnum="1033;">
+                <p>12</p>
+            </td>
+            <td width=33%>
+                <p>
+                    Import definition
+                </p>
+                <p>4 bytes offset of the name of the lib in the string buffer</p>
+                <p>4 bytes offset of the function name in the string buffer</p>
+                <p>4 bytes offset of the import location</p>
+            </td>
+        </tr>
+        <tr valign=TOP>
+            <td width=14%>
+                <p>168 + section size + imps[]</p>
+            </td>
+            <td width=52% sdval="8" sdnum="1033;">
+                <p>8</p>
+            </td>
+            <td width=33%>
+                <p>Export definition</p>
+                <p>4 bytes offset of the function name in the string buffer</p>
+                <p>4 bytes offset of the export location</p>
+            </td>
+        </tr>
+        <tr valign=TOP>
+            <td width=14%>
+                <p>168 + section size + imps[] + exps[]</p>
+            </td>
+            <td width=52% sdval="8" sdnum="1033;">
+                <p>8</p>
+            </td>
+            <td width=33%>
+                <p>Internal relocation for position independent code.</p>
+                <p>4 bytes base address for the section relocation</p>
+                <p>4 bytes offset from the base address.</p>
+                <p>
+                    <br>
+                </p>
+            </td>
+        </tr>
+    </table>
+    <p><br><br></p>
+    <p><strong><font size=5><u>3. Creation of tpo modules from native binaries.</u></font></strong></p>
+    <p><font size=3>The only tool required to produce tpo module is &quot;modmaker&quot;, which is a command line tools that convert a dll or a .so into a binary module.</font></p>
+    <p>
+        <font size=3>
+            The source code and build instruction for linux and windows can be found on the github at this address <a href="https://github.com/NodixBlockchain/nodix/tree/master/mod_maker">mod_maker</a>
+        </font>
+    </p>
+    <p><font size=3>The command line tool reads the sections, imported and exported symbols, as well as relocation table, and convert it to a binary format that can be loaded by the libcon runtime on any intel x86 32 bit system (or x64 with x32 emulation, no support for native x64 yet).</font></p>
+    <p><font size=3>To create a tpo from a .so or dll, just run the command 'modmaker myfile.[so|dll] [output directory]'.</font></p>
+    <p><font size=3>The only restriction is the dynamic loader doesn't handle non initialized data section, because code reference to non initialized data point to location that are not in the binary, and it has to be loaded 'in place' as position independent code in the micro kernel architecture with an allocation-free mode. (the allocator is in a tpo module). Memory allocation routines or stack can be used to create uninitialized memory at runtime.</font></p>
+    <p><font size=3>The output should look like this for example for therpc module that handle the request for the javascript wallet : </font></p>
+    <p><font face="terminal, monaco"><font size=4>using file : rpc_wallet.dll -&gt;export/modz/</font></font></p>
+<pre class="western" style="border: none; padding: 0in">PE HEADER Symbols : 0 , 0 flag
+: 2102 
+import table : 68b8 - 80
+function name : _tree_manager_get_child_value_i64@12 
+reloc addr : 00000080@00006000 =&gt; 6ec2 
+function name : _tree_manager_get_node_hash@12 
+reloc addr : 00000084@00006000 =&gt; 6ea0 
+function name : _tree_manager_write_node_btcaddr@12 
+reloc addr : 00000088@00006000 =&gt; 6e7a 
+function name : _tree_manager_set_child_value_float@16 
+reloc addr : 0000008c@00006000 =&gt; 6e50 
+function name : _tree_manager_node_add_child@8 
+reloc addr : 00000090@00006000 =&gt; 6e2e 
+function name : _tree_manager_create_node@12 
+reloc addr : 00000094@00006000 =&gt; 6e0e 
+function name : _tree_manager_set_child_value_hash@12 
+reloc addr : 00000098@00006000 =&gt; 6de6 
+function name : _tree_manager_get_node_istr@16 
+reloc addr : 0000009c@00006000 =&gt; 6dc4 
+function name : _tree_manager_get_child_value_i16@12 
+reloc addr : 000000a0@00006000 =&gt; 6d9c 
+function name : _tree_manager_add_child_node@16
+ 
+ 
+    
+export table : 6630 - 647
+export table name : rpc_wallet
+- functions : 22 - names : 22 
+name: _getaddressscanstatus@12@rpc_wallet - func addr: 0x00001e80 0x00001000 - ordinal : 1 
+name : _getblockcount@12@rpc_wallet -func addr: 0x000026a0 0x00001000 - ordinal : 2 
+name : _getinfo@12@rpc_wallet - func addr: 0x00002380 0x00001000 - ordinal : 3 
+name : _getlastblock@12@rpc_wallet - func addr: 0x00002070 0x00001000 - ordinal : 4 
+name : _getprivaddr@12@rpc_wallet - func addr: 0x00005580 0x00001000 - ordinal : 5 
+name : _getpubaddrs@12@rpc_wallet - func addr: 0x00005710 0x00001000 - ordinal : 6 
+name : _getstaketx@12@rpc_wallet - func addr: 0x00004ac0 0x00001000 - ordinal : 7 
+name : _getstaking@12@rpc_wallet - func addr: 0x00004f60 0x00001000 - ordinal : 8 
+name : _importaddress@12@rpc_wallet - func addr: 0x000026d0 0x00001000 - ordinal : 9 
+name : _importkeypair@12@rpc_wallet - func addr: 0x00005150 0x00001000 - ordinal : 10 
+name : _listreceived@12@rpc_wallet - func addr: 0x00002ee0 0x00001000 - ordinal : 11 
+name : _listreceivedbyaddress@12@rpc_wallet - func addr: 0x00003650 0x00001000 - ordinal : 12 
+name : _listspent@12@rpc_wallet - func addr: 0x00003000 0x00001000 - ordinal : 13 
+name : _liststaking@12@rpc_wallet - func addr: 0x000042d0 0x00001000 - ordinal : 14 
+name : _listtransactions@12@rpc_wallet - func addr: 0x00002840 0x00001000 - ordinal : 15 
+name : _listunspent@12@rpc_wallet - func addr: 0x00003520 0x00001000 - ordinal : 16 
+name : _pubkeytoaddr@12@rpc_wallet - func addr: 0x000037a0 0x00001000 - ordinal : 18 
+name : _set_node@8@rpc_wallet - func addr: 0x00001010 0x00001000 - ordinal : 19 
+name : _signstakeblock@12@rpc_wallet - func addr: 0x000044d0 0x00001000 - ordinal : 20 
+name : _signstaketx@12@rpc_wallet - func addr: 0x000047c0 0x00001000 - ordinal : 21 
+name : mod_name_deco_type@rpc_wallet - func addr: 0x00008000 0x00008000 - ordinal : 17 
+text section : name : .text 
+section header flags : 60000020 
+relocations : 0 
+relocations ptr: 0 
+vaddr : 00001000 
+paddr : 000048cd 
+size : 18944 
+externs : 0 
+syms : 0 imports : 0 
+rdata section :
+name : .rdata 
+section header flags : 40000040 
+relocations : 0 
+relocations ptr: 0 
+vaddr : 00006000 
+paddr : 00001368 
+size : 5120 
+externs : 0 
+syms : 0 
+symboles :
+imports : 88 
+module : libbase - function : _tree_manager_get_child_value_i64@12 - reloc addr : 0x00000080 
+module : libbase - function : _tree_manager_get_node_hash@12 - reloc addr : 0x00000084  
+module : libbase - function : _tree_manager_write_node_btcaddr@12 - reloc addr : 0x00000088  
+module : libbase - function : _tree_manager_set_child_value_float@16 - reloc addr : 0x0000008c  
+module : libbase - function : _tree_manager_node_add_child@8 - reloc addr : 0x00000090  
+module : libbase - function : _tree_manager_create_node@12 - reloc addr : 0x00000094
+    </pre><p>
+        <br><br>
+    </p>
+
+    <p><strong><font size=5><u>4. High level encapsulation</u></font></strong></p>
+    <p><strong><span style="text-decoration: none"><font size=3><span style="font-weight: normal">Modules can be encapsulated either as 'local' application modules, or as distributed modules which will be used behind a network protocol such as http rpc or cgi.</span></font></span></strong></p>
+    <p><strong><font size=5><u>4.1 Application modules</u></font></strong></p>
+    <p><strong><span style="text-decoration: none"><font size=3><span style="font-weight: normal">Application modules export function can be used by other binary modules or scripts.</span></font></span></strong></p>
+    <p><strong><span style="text-decoration: none"><font size=3><span style="font-weight: normal">If they are called locally from another binary modules, the is not special requirement other than using OS_API_C_FUNC macro to declare the function prototype.</span></font></span></strong></p>
+    <p><strong><span style="text-decoration: none"><font size=3><span style="font-weight: normal">Any module compiled using the same std_def.h file will be able to import and call any function exported by any other module regardless of the host operating system and/or compiler used to produce it. </span> </font> </span></strong></p>
+    <p><strong><span style="text-decoration: none"><font size=3><span style="font-weight: normal">For exported interfaces called from the script language, they are required to have between 0 and 2 arguments which must be nodes references.</span></font></span></strong></p>
+    <p><strong><font size=5><u>4.2 Common Gateway Interface modules.</u></font></strong></p>
+    <p><strong><span style="text-decoration: none"><font size=3><span style="font-weight: normal">CGI modules are made to be executed behind http request.</span></font></span></strong></p>
+    <p><strong><span style="text-decoration: none"><font size=3><span style="font-weight: normal">Using the node's service configuration entry</span></font></span></strong></p>
+    <p>
+        <strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">{</span></span></font></font></span></font></strong><strong><font color="#a31515"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;base&quot;</span></span></font></font></span></font></strong><strong><font color="#000000"><span style="text-decoration: none">&nbsp;</span></font></strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">:&nbsp;</span></span></font></font></span></font></strong><strong><font color="#a31515"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;/my_mod/&quot;</span></span></font></font></span></font></strong><strong><font color="#000000"><span style="text-decoration: none">&nbsp;</span></font></strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">,&nbsp;</span></span></font></font></span></font></strong><strong><font color="#a31515"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;type&quot;</span></span></font></font></span></font></strong><strong><font color="#000000"><span style="text-decoration: none">&nbsp;</span></font></strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">:&nbsp;</span></span></font></font></span></font></strong><strong><font color="#a31515"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;cgi&quot;</span></span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">,(NODE_MODULE_DEF)&nbsp;</span></span></font></font></span></font>
+        </strong><strong><font color="#a31515"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;mod_name&quot;</span></span></font></font></span></font></strong><strong><font color="#000000"><span style="text-decoration: none">&nbsp;</span></font></strong><strong>
+        </strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">:{</span></span></font></font></span></font>
+        </strong><strong><font color="#a31515"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;file&quot;</span></span></font></font></span></font></strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">:</span></span></font></font></span></font></strong><strong><font color="#a31515"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;modz/my_cgi_mod.tpo&quot;</span></span></font></font></span></font></strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">}}</span></span></font></font></span></font></strong><strong>
+        </strong>
+    </p>
+    <p><strong><span style="text-decoration: none"><font size=3><span style="font-weight: normal">The modules exported function will be made available with an url like</span></font></span></strong></p>
+    <p><strong><a href="http://node-ip/my_mod/my_function"><span style="text-decoration: none"><font size=3><span style="font-weight: normal">http://node-ip/my_mod/my_function</span></font></span></a></strong></p>
+    <p><strong><span style="text-decoration: none"><font size=3><span style="font-weight: normal">Additional parameters can be passed as additional path segment in the url, or via query strings, post data in json, or cookies. </span></font></span></strong></p>
+    <p><strong><span style="text-decoration: none"><font size=3><span style="font-weight: normal">The  function prototype for CGI module is :</span></font></span></strong></p>
+    <p>
+        <strong><font color="#6f008a"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal">OS_API_C_FUNC</span></font></font></span></font></strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal">(</span></font></font></span></font></strong><strong><font color="#0000ff"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal">int</span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal">) my_function( </span></font></font></span></font>
+        </strong><strong><font color="#0000ff"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal">const</span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#0000ff"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal">char</span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal"> * </span></font></font></span></font>
+        </strong><strong><font color="#808080"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal">params</span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal"> , </span></font></font></span></font>
+        </strong><strong><font color="#0000ff"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal">const</span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#0000ff"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal">struct</span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#2b91af"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal">http_req</span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal"> * </span></font></font></span></font>
+        </strong><strong><font color="#808080"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal">req</span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal"> , </span></font></font></span></font>
+        </strong><strong><font color="#2b91af"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal">mem_zone_ref_ptr</span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#808080"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal">result</span></font></font></span></font></strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-weight: normal">)</span></font></font></span></font></strong>
+    </p>
+    <p><strong><span style="text-decoration: none"><font size=3><span style="font-weight: normal"> Params is a pointer the url path segments after the method name.</span></font></span></strong></p>
+    <p><strong><span style="text-decoration: none"><font size=3><span style="font-weight: normal">Req is a pointer to a structure containing informations about the http request such as query string variables and http request header.</span></font></span></strong></p>
+    <p><strong><span style="text-decoration: none"><font size=3><span style="font-weight: normal">Result is a dynamic object which will be converted to json and returned in the http response .</span></font></span></strong></p>
+    <p><br><br></p>
+    <p><br><br></p>
+    <p><strong><font size=5><u id="RPC">4.3 RPC modules.</u></font></strong></p>
+    <p>RPC modules are made to handle json/rpc request over the http protocol.</p>
+    <p>Using the node's service configuration entry</p>
+    <p>
+        <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">{</span></span></font></font></font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;base&quot;</span></span></font></font></font><font color="#000000">&nbsp;</font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">:&nbsp;</span></span></font></font></font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;/jsonrpc&quot;</span></span></font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">,&nbsp;</span></span></font></font></font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;type&quot;</span></span></font></font></font><font color="#000000">&nbsp;</font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">:&nbsp;</span></span></font></font></font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;rpc&quot;</span></span></font></font></font>
+        <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal"> , (NODE_MODULE_DEF)&nbsp;</span></span></font></font></font>
+        <font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;</span></span></font></font></font><strong><font color="#a31515"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">mod_name</span></span></font></font></span></font></strong><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;</span></span></font></font></font><font color="#000000">&nbsp;</font>
+        <font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal"> :  { </span></span></font></font></font>
+        <font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;file&quot;</span></span></font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">:</span></span></font></font></font><font color="#a31515"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">&quot;modz/my_rpc_mod.tpo&quot;</span></span></font></font></font><font color="#000000"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">}}</span></span></font></font></font>
+    </p>
+    <p style="font-style: normal; font-weight: normal"><font color="#000000">RPC methods exported from the modules will be available at</font></p>
+    <p><strong><a href="http://node-ip/jsonrpc"><font color="#000000"><span style="text-decoration: none"><font face="Times New Roman, serif"><font size=3><span style="font-style: normal"><span style="font-weight: normal">http://node-ip/jsonrpc</span></span></font></font></span></font></a></strong></p>
+    <p><strong><font color="#000000"><span style="text-decoration: none"><span style="font-style: normal"><span style="font-weight: normal">The HTTP POST contain the rpc request formated as json containing themethod name, and the parameters.</span></span></span></font></strong></p>
+    <p><strong><font color="#000000"><span style="text-decoration: none"><span style="font-style: normal"><span style="font-weight: normal">The function prototype for RPC modules is :</span></span></span></font></strong></p>
+    <p>
+        <strong><font color="#6f008a"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">OS_API_C_FUNC</span></span></font></font></span></font></strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">(</span></span></font></font></span></font></strong><strong><font color="#0000ff"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">int</span></span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#000000"><span style="text-decoration: none"><span style="font-style: normal"><span style="font-weight: normal">)rpc_method(</span></span></span></font>
+        </strong><strong><font color="#2b91af"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">mem_zone_ref_const_ptr</span></span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#808080"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">params</span></span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#000000"><span style="text-decoration: none"><span style="font-style: normal"><span style="font-weight: normal"> , </span></span></span></font>
+        </strong><strong><font color="#0000ff"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">unsigned</span></span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#0000ff"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">int</span></span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#808080"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">rpc_mode</span></span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#000000"><span style="text-decoration: none"><span style="font-style: normal"><span style="font-weight: normal"> , </span></span></span></font>
+        </strong><strong><font color="#2b91af"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">mem_zone_ref_ptr</span></span></font></font></span></font></strong><strong>
+        </strong><strong><font color="#808080"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">result</span></span></font></font></span></font></strong><strong><font color="#000000"><span style="text-decoration: none"><font face="Consolas, sans-serif"><font size=2 style="font-size: 9pt"><span style="font-style: normal"><span style="font-weight: normal">)</span></span></font></font></span></font></strong>
+    </p>
+    <p><strong><font color="#000000"><span style="text-decoration: none"><span style="font-style: normal"><span style="font-weight: normal">Params can be either an array containing the ordered list of parameters, or an object containing parameters as named key, depending on the value of rpc_mode.</span></span></span></font></strong></p>
+    <p><strong><font color="#000000"><span style="text-decoration: none"><span style="font-style: normal"><span style="font-weight: normal">rpc_mode indicate if parameters are passed as ordered array or key/value pair objects.</span></span></span></font></strong></p>
+    <p><strong><font color="#000000"><span style="text-decoration: none"><span style="font-style: normal"><span style="font-weight: normal">Result is the dynamic object that will be converted to json and sent as the http response.</span></span></span></font></strong></p>
+    <p><br><br></p>
+    <p><strong><font size=5><u>5. How to use tpo modules ?</u></font></strong></p>
+    <p>The full API to use the modules is described in the <a href="libcon#mod_anchor" name="Libcon section">Libcon section </a>.</p>
+
+    <p><h5>From C/C++ application using the runtime.</h5></p>
+    <p>Binary modules can be loaded and executed from a C or C++ program using the module API by linking with the libcon library (statically or dynamically) and including the header definitions.</p>
+    <p style="border: none; padding: 0in">
+        #<font color="#008000">include</font>
+        &lt;<font color="#800000">base/std_def.h</font>&gt;<br>#<font color="#008000">include</font>
+        &lt;<font color="#800000">base/std_mem.h</font>&gt;<br>#<font color="#008000">include</font>
+        &lt;<font color="#800000">base/mem_base.h</font>&gt;<br>#<font color="#008000">include</font>
+        &lt;<font color="#800000">base/std_str.h</font>&gt;<br>#<font color="#008000">include</font>
+        &lt;<font color="#800000">fsio.h</font>&gt;<br>#<font color="#008000">include</font>
+        &lt;<font color="#800000">mem_stream.h</font>&gt;<br>#<font color="#008000">include</font>
+        &lt;<font color="#800000">tpo_mod.h</font>&gt;
+    </p>
+    <p style="border: none; padding: 0in">
+        <font color="#0000ff">int</font>
+        main(int argc, char **argv)
+    </p>
+    <p style="border: none; padding: 0in">{</p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">int done = 0;</p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">
+        <font color="#008000">//base initialization</font><br>
+        init_mem_system ();
+    </p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">
+        <font color="#008000">//init 8Mo of memory</font><br>
+        init_default_mem_area (8 * 1024 * 1024);
+    </p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">&nbsp;</p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">
+        <font color="#008000">//init network</font><br>
+        network_init ();
+    </p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">
+        <font color="#008000">//set home dir</font><br>
+        set_exe_path ();<br>
+        set_home_path ( &quot;purenode&quot; );
+    </p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">&nbsp;</p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">
+        <font color="#008000">
+            //load
+            node modules
+        </font>
+    </p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">
+        load_module(&quot;modz/libbase.tpo&quot;, &quot;libbase&quot;, &amp;libbase_mod); <br>
+        load_module(&quot;modz/protocol_adx.tpo&quot;, &quot;protocol_adx&quot;, &amp;protocol_mod);<br>
+        load_module(&quot;modz/block_adx.tpo&quot;, &quot;block_adx&quot;, &amp;block_mod);<br>
+        load_module(&quot;modz/iadixcoin.tpo&quot;, &quot;iadixcoin&quot;, &amp;iadix_mod);
+    </p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">&nbsp;</p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">
+        <font color="#008000">
+            //load
+            application entry points
+        </font>
+    </p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">
+        app_init = get_tpo_mod_exp_addr_name ( &amp;iadix_mod, &quot;app_init&quot;, 0);
+    </p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">
+        app_start = get_tpo_mod_exp_addr_name ( &amp;iadix_mod, &quot;app_start&quot;, 0);<br>
+        app_loop = get_tpo_mod_exp_addr_name ( &amp;iadix_mod, &quot;app_loop&quot;, 0);<br>
+        app_stop = get_tpo_mod_exp_addr_name ( &amp;iadix_mod, &quot;app_stop&quot;, 0);
+    </p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">
+        if
+        (!app_init(PTR_NULL))<br>{
+    </p>
+    <p style="margin-left: 1.20in; border: none; padding: 0in">
+        console_print ( &quot;could not initialize app &quot; ); <br>
+        console_print ( iadix_mod.name );<br>
+        console_print ( &quot;\n&quot; );<br>
+        return 0;
+    </p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">}</p>
+    <p style="margin-left:0.60in; border: none; padding: 0in">
+        <font color="#008000">
+            //initialize
+            application context
+        </font>
+    </p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">
+        daemonize
+        (&quot;purenode&quot;);
+    </p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">
+        <font color="#008000">//start application</font><br>
+        app_start (PTR_NULL);
+    </p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">
+        while (isRunning())<br>{
+    </p>
+    <p style="margin-left: 1.20in; border: none; padding: 0in">app_loop(PTR_NULL);</p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">}</p>
+    <p style="margin-left: 0.60in; border: none; padding: 0in">app_stop(PTR_NULL);</p>
+    <p style="border: none; padding: 0in">}</p>
+    <p>The dynamic loader take care of registering module exported interface, as well as symbol decoration differences between compilers, as long as the calling convention is identical (compiled with same std_def.h)</p>
+    <p>The same binary module can be loaded and executed from any operating system host, provided it can execute x86 machine code from memory. Parameters types are handled automatically by the runtime based on runtime type information from the libbase tree.</p>
+    <hr/>
+
+    <p><h5>Using node script definition</h5></p>
+
+    <p>
+    let NODE_MODULE_DEF	protocol_adx = `{"order":0, "file" : "modz/protocol_adx.tpo"}`<br/>
+    let NODE_MODULE_DEF	block_adx    = `{"order":1, "file" : "modz/block_adx.tpo"}`<br />
+    let NODE_MODULE_DEF	wallet	     = `{"order":2, "file" : "modz/wallet.tpo"}`<br />
+    let NODE_MODULE_DEF	node_adx     = `{"order":3, "file" : "modz/node_adx.tpo"}`<br />
+    let NODE_MODULE_DEF	nodix        = `{"order":4, "file" : "modz/nodix.tpo"}`<br />
+    </p>
+    <p>The runtime will automatically load the modules from the file at specified path, and store the module internal representation in a child node of the module container object. If a module with the same path is already loaded, it will copy a reference to it in the target variable.</p>
+    <p>let NODE_GFX_OBJECT configuration = ` { "name" : "nodix", "seed_node" : { "host" : "iadix.com", "port" : 16714 } } `</p>
+    <p>proc my_proc = ` node_adx.connect_peer_node ( configuration.seed_node ) `</p>
+    <p>Functions exported in the binary modules can then be invoked as an abstract interface to manipulate objects with the corresponding abstract type.</p>
+    <p>Informations about the interfaces implemented in the modules can be accessed dynamically through the NODE_MODULE_DEF container object, which provide an abstraction layer over binary module export definition.</p>    
+    
+    <hr/>
+
+    <p>Modules interfaces exported over rpc or cgi services can be invoked via the corresponding HTTP API eg. from javascript</p>
+    
+
+</div>

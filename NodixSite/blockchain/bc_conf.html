@@ -1,0 +1,2079 @@
+<style>
+    .script_proc {
+        font-size: 12px;
+        font-style: italic;
+        font-family: Consolas;
+        padding-left: 8px;
+        overflow: scroll;
+        word-break: keep-all;
+        word-wrap: normal;
+        display: none;
+    }
+    .tab
+    {
+        width:18px;
+        display:inline-block;
+    }
+     .cond{
+        color:red;
+        font-weight:bolder;
+        font-family:Arial;
+        text-decoration:underline;
+    }
+    .com{
+        color:darkgreen;
+    }
+    .flickity-prev-next-button
+    {
+        display:block;
+    }
+
+    #json-conf-div p {
+        margin: 0px;
+        border: 0px;
+        padding: 0px;
+        line-height: 12px;
+    }
+    #node-obj p {
+        margin: 0px;
+        border: 0px;
+        padding: 0px;
+        line-height: 12px;
+    }
+    #serv-conf p {
+        margin: 0px;
+        border: 0px;
+        padding: 0px;
+        line-height: 12px;
+    }
+
+    .ident{
+        padding-left:12px;
+    }
+    .doc
+    {
+        font-weight:normal;
+        padding-left:8px;
+    }
+
+    .code_panel
+    {
+        max-height:400px;
+        overflow-y:scroll;
+        padding:32px;
+        font-size:0.8em;
+    }
+
+    @media screen and (max-width: 800px) {
+        #init_script
+        {
+            font-size:0.6em;
+            word-break:keep-all;
+            overflow:hidden;
+        }
+        .com{
+           font-size:0.8em;
+        }
+        .tab
+        {
+            width:8px;
+            display:inline-block;
+        }
+        .cond{
+            color:red;
+            font-weight:normal;
+            font-family:serif;
+            text-decoration:none;
+        }
+    }
+
+</style>
+
+<!-- SECTION: Intro -->
+    <div class="container content">
+    <section>
+        <h1>Blockchain parameters</h1>
+        <p>The node is configured via the <a href="https://github.com/NodixBlockchain/nodix/blob/master/export/nodix.node">nodix.node</a> file.</p>
+        <p>The first object in the node script file is the blockchain configuration. It is used to define blockchain parameters such as </p>
+        <ul style="list-style:circle;margin-left:24px;font-size:14px;font-family:Arial;font-weight:bold;">
+            <li>Blockchain name.</li>
+            <li>Network magic number.</li>
+            <li>Prefix used for wallet address generation.</li>
+            <li>Signature module.</li>
+            <li>Seed node address and port.</li>
+            <li>Mining target block time and reward.</li>
+            <li>Total number of blocks to be mined.</li>
+            <li>Staking target block time and reward.</li>
+            <li>Informations for the genesis block.</li>
+        </ul>
+        <br/>
+        <p>It is defined once for all for the whole life-time of the blockchain. Any change in this object will trigger an hard fork.</p>
+    </section>
+    </div>
+    <div class="container content">
+    <div id="json-conf-div">
+        
+        <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">let NODE_GFX_OBJECT configuration = `</FONT></FONT></FONT></P>
+        <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">{</FONT></FONT></FONT></P>
+        <div class="ident">
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;name&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;nodix&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT></P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;magic&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            :0xD9BEFECA,
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;pubKeyVersion&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:0x19,</FONT></FONT></FONT></P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;sign_mod&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : {
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;file&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;modz/ecdsa.tpo&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">},</FONT></FONT></FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;seed_node&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            :
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		{</FONT></FONT></FONT></P>
+            <div class="ident">
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;host&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;nodix.eu&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;port&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                : 16819
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+            </div>
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		},</FONT></FONT></FONT></P>
+
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;staking&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT></P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            {
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <div class="ident">
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;targetspacing&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:64,</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;maxtargetspacing&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                : 640,
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;targettimespan&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:960,</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;limit&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:0x1B00FFFF,</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;minStakeDepth&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:2,</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;reward&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                : 150000000,
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;pos_kernel&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                : {
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;file&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;modz/stake_pos3.tpo&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">}</FONT></FONT></FONT>
+                </P>
+            </div>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            },
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;mining&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            {
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <div class="ident">
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;targetspacing&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:64,</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;maxtargetspacing&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                : 640,
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;targettimespan&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:960,</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;limit&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:0x1E0FFFFF,</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;reward&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:10000000000000,</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;last_pow_block&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:200000,</FONT></FONT></FONT></P>
+            </div>
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		},</FONT></FONT></FONT></P>
+
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;genesis&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT></P>
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		{</FONT></FONT></FONT></P>
+            <div class="ident">
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;version&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		:1,</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;time&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			:1466419085,</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;bits&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			:0x1e0fffff,</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;nonce&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			:579883,</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;InitialStakeModifier&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:0,</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;InitialStakeModifier2&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:0</FONT></FONT></FONT></P>
+            </div>
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		}</FONT></FONT></FONT></P>
+        </div>
+        <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">}`</FONT></FONT></FONT></P>
+    </div>
+    </div>
+
+    <div class="container content">
+        <section>
+            <h1>Node configuration</h1>
+            <p>The second object in the node definition script is the node object. It is used to define web service configuration, as well as various parameters to determine node behavior.</p>
+
+            <ul style="list-style:circle;margin-left:24px;font-size:14px;font-family:Arial;font-weight:bold;">
+                <li><label>paytxfee</label><span class="doc">Amount of fee this node will include in transactions.</span></li>
+                <li><label>version</label><span class="doc">Blockchain protocol version.</span></li>
+                <li><label>uPnP</label><span class="doc">Enable or Disable uPnP port forwarding.</span></li>
+                <li><label>bestChainDepth</label><span class="doc">Number of valid block ahead to trigger chain change.</span></li>
+                <li><label>maxMsgSize</label><span class="doc">Max size of P2P messages.</span></li>
+                <li><label>checktxsign</label><span class="doc">Enable checking of transaction signature in received blocks.</span></li>
+                <li><label>coinbaseAddr</label><span class="doc">Address used for mining on this node. If this field is omitted, the node will automatically create new address.</span></li>
+                <li><label>trustedApps</label><span class="doc">List of trusted applicatons. The node will load and execute module and script only for applications present in this array.</span></li>
+                <li><label>p2p_addr</label><span class="doc">Address used for the p2p network.</span></li>
+            </ul>
+            <br />
+            <div id="node-obj">
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">let NODE_BITCORE_NODE SelfNode = `</FONT></FONT></FONT></P>
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">{</FONT></FONT></FONT></P>
+            <div class="ident">
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;user_agent&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            :
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;nodix&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_GFX_BINT)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;paytxfee&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : 0,
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;privKeyVersion&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            :
+                        </FONT>
+                    </FONT>
+                <FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">0x55</FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;block_height&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : 0,
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_GFX_INT)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;version&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : 60018,
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_GFX_BOOL)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;uPnP&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">false</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT></P>
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_GFX_INT)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;bestChainDepth&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:3,</FONT></FONT></FONT></P>
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_GFX_INT)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;maxMsgSize&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:1024,</FONT></FONT></FONT></P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_GFX_INT)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;checktxsign&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : 0,
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_GFX_INT)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;next_check&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : 0,
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_BITCORE_WALLET_ADDR)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;coinbaseAddr&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            :
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;B8mPBEg2XbYSUwEh5a7yrfehvMNijpAm1P&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_GFX_INT)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;scriptBlock&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : 0,
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_GFX_INT)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;current_pos_diff&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : 0,
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_GFX_INT)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;current_pow_diff&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : 0,
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_GFX_BINT)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;pos_reward&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : 0,
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_GFX_BINT)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;pow_reward&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : 0,
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_GFX_SIGNED_BINT)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;ping_delay&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : 0,
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_GFX_INT)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;last_block_time&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : 0,
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            (NODE_BITCORE_BLK_HDR)
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;last_block&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : {},
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            (NODE_BITCORE_BLK_HDR)
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;lastPOSBlk&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : {},
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            (NODE_BITCORE_BLK_HDR)
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;lastPOWBlk&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : {},
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            (NODE_GFX_OBJECT)
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;trustedApps&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            :
+                            {
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;blog&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            :
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">true</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            ,
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;raytrace&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            :
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">true</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            },
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_BITCORE_ADDR)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;p2p_addr&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            :
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	{</FONT></FONT></FONT></P>
+            <div class="ident">
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;services&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            :
+                            0,
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		(NODE_NET_IP)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;addr&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            :
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;127.0.0.1&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		(NODE_GFX_SHORT)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;port&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : 16819
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            </div>
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	},</FONT></FONT></FONT></P>
+            
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            (NODE_BITCORE_NODE_LIST)
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;peer_nodes&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : [],
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            (NODE_BITCORE_WALLET_ADDR_LIST)
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            &quot;addr
+                            scan list&quot;
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            :
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">null</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            (NODE_BITCORE_MSG_LIST)
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            &quot;send
+                            queue&quot;
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : [],
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            (NODE_BITCORE_MSG_LIST)
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;emitted_queue&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : [],
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            (NODE_BITCORE_TX_LIST)
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;mempool&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : [],
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            (NODE_BITCORE_TX_LIST)
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            &quot;submitted
+                            txs&quot;
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : [],
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            (NODE_BITCORE_HASH_LIST)
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            &quot;pending
+                            files&quot;
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : [],
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            <P STYLE="margin-bottom: 0cm">
+                <FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            (NODE_BITCORE_BLOCK_LIST)
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#a31515">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            &quot;submitted
+                            blocks&quot;
+                        </FONT>
+                    </FONT>
+                </FONT><FONT COLOR="#000000">
+                    <FONT FACE="Consolas, sans-serif">
+                        <FONT SIZE=2 STYLE="font-size: 9pt">
+                            : []
+                        </FONT>
+                    </FONT>
+                </FONT>
+            </P>
+            </div>
+            <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">}`</FONT></FONT></FONT></P>
+         </div>
+         </section>
+    </div>
+
+    <div class="container content">
+        <section>
+            <h1>Node initialization</h1>
+            <section class="code_panel">
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT FACE="Arial Black, sans-serif">
+                        <FONT SIZE=4 STYLE="font-size: 16pt">
+                            <U>
+                                <FONT COLOR="#000000">
+                                    Core
+                                    blockchain modules import and loading
+                                </FONT>
+                            </U>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                let
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#3333ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">NODE_MODULE_DEF</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	</FONT></FONT></FONT><FONT COLOR="#cc0000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">vec		</FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                =
+                                `{
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#990000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;</FONT></FONT></FONT><FONT COLOR="#990000">order</FONT><FONT COLOR="#990000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                :0,
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#990000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;file&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                :
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#990000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;modz/vec3.tpo&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">}`</FONT></FONT></FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                let
+                                <FONT COLOR="#3333ff">NODE_MODULE_DEF</FONT>	<FONT COLOR="#cc0000">protocol_adx</FONT>	=
+                                `{<FONT COLOR="#990000">&quot;order&quot;</FONT>:1, <FONT COLOR="#990000">&quot;file&quot;</FONT>
+                                : <FONT COLOR="#990000">&quot;modz/protocol_adx.tpo&quot;</FONT>}`
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                let
+                                <FONT COLOR="#3333ff">NODE_MODULE_DEF</FONT>	<FONT COLOR="#cc0000">block_adx	</FONT>=
+                                `{<FONT COLOR="#990000">&quot;order&quot;</FONT>:2, <FONT COLOR="#990000">&quot;file&quot;</FONT>
+                                : &quot;<FONT COLOR="#990000">modz/block_adx.tpo&quot;</FONT>}`
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                let
+                                <FONT COLOR="#3333ff">NODE_MODULE_DEF</FONT>	<FONT COLOR="#cc0000">wallet		</FONT>=
+                                `{<FONT COLOR="#990000">&quot;order&quot;</FONT>:3, <FONT COLOR="#990000">&quot;file&quot;</FONT>
+                                : <FONT COLOR="#990000">&quot;modz/wallet.tpo&quot;</FONT>}`
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                let
+                                <FONT COLOR="#3333ff">NODE_MODULE_DEF</FONT>	<FONT COLOR="#cc0000">node_adx	</FONT>=
+                                `{<FONT COLOR="#990000">&quot;order&quot;</FONT>:4, <FONT COLOR="#990000">&quot;file&quot;</FONT>
+                                : <FONT COLOR="#990000">&quot;modz/node_adx.tpo&quot;</FONT>}`
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                let
+                                <FONT COLOR="#3333ff">NODE_MODULE_DEF</FONT>	<FONT COLOR="#cc0000">nodix		</FONT>=
+                                `{<FONT COLOR="#990000">&quot;order&quot;</FONT>:5, <FONT COLOR="#990000">&quot;file&quot;</FONT>
+                                : &quot;<FONT COLOR="#990000">modz/nodix.tpo&quot;</FONT>}`
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Arial Black, sans-serif">
+                            <FONT SIZE=4 STYLE="font-size: 16pt">
+                                <U>
+                                    Network
+                                    message handlers
+                                </U>
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#990099"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">handler</FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#cc0000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">on_verack</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT></FONT><FONT COLOR="#000066"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>node</B></FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                ,
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#000066"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>payload</B></FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                )
+                                = `
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                    </FONT><FONT COLOR="#cc0000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">node_adx</FONT></FONT></FONT>.queue_ping_message<FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT></FONT><FONT COLOR="#000066"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>node</B></FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                )
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                success
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">`</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#990099">handler</FONT>
+                                <FONT COLOR="#cc0000">on_ping</FONT>(<FONT COLOR="#000066"><B>node</B></FONT>,<FONT COLOR="#000066"><B>payload</B></FONT>)	=
+                                `
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#cc0000">
+                        <FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">node_adx</FONT></FONT>
+                    </FONT>.queue_pong_message<FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT></FONT><FONT COLOR="#000066"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>node</B></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT><FONT COLOR="#000066"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>payload</B></FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                .nonce)
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                success
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">`</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#990099">handler</FONT>
+                                <FONT COLOR="#cc0000">on_pong</FONT>(<FONT COLOR="#000066"><B>node</B></FONT>,
+                                <FONT COLOR="#000066"><B>payload</B></FONT>)	= `
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                gettime
+                                <FONT COLOR="#000066"><B>node</B></FONT>.ping_delay;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                gettime
+                                <FONT COLOR="#000066"><B>node</B></FONT>.last_pong;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                sub
+                                <FONT COLOR="#000066"><B>node</B></FONT>.ping_delay, <FONT COLOR="#000066"><B>node</B></FONT>.last_ping;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                set
+                                <FONT COLOR="#000066"><B>node</B></FONT>.next_pong = 0;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                set
+                                <FONT COLOR="#000066"><B>node</B></FONT>.synching = 1;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                success
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">`</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#990099">handler</FONT>
+                                <FONT COLOR="#cc0000">on_inv</FONT>(<FONT COLOR="#000066"><B>node</B></FONT>,
+                                <FONT COLOR="#000066"><B>payload</B></FONT>)	= `
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#cc0000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">node_adx</FONT></FONT></FONT>.queue_getdata_message<FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT></FONT><FONT COLOR="#000066"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>node</B></FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                ,
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#000066"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>payload</B></FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                .hashes)
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                success
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">`</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#990099">handler</FONT>
+                                <FONT COLOR="#cc0000">on_addr</FONT>(<FONT COLOR="#000066"><B>node</B></FONT>,
+                                <FONT COLOR="#000066"><B>payload</B></FONT>)	= `
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                foreach
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#000066"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>payload</B></FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                .addrs
+                                &gt;
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#cc0000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">node_adx</FONT></FONT></FONT>.node_log_addr_infos<FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                ;
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#cc0000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">node_adx</FONT></FONT></FONT>.node_add_remote_peers<FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                (
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#000066"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>node</B></FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                ,
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#000066"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>payload</B></FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                .addrs)
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                success
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">`</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#990099">handler</FONT>
+                                <FONT COLOR="#cc0000">on_tx</FONT>(<FONT COLOR="#000066"><B>node</B></FONT>,
+                                <FONT COLOR="#000066"><B>payload</B></FONT>)	= `
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#cc0000">
+                        <FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">node_adx</FONT></FONT>
+                    </FONT>.node_add_tx_to_mempool<FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT></FONT><FONT COLOR="#000066">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <B>
+                                    payload
+                                </B>
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                .tx)
+                                ?
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#cc0000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">node_adx</FONT></FONT></FONT>.check_tx_files(<FONT COLOR="#000066"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>node</B></FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                ,
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#000066">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <B>
+                                    payload
+                                </B>
+                            </FONT>
+                        </FONT>
+                    </FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                .tx)
+                                endor
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                success
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">`</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#990099">handler</FONT>
+                                <FONT COLOR="#cc0000">on_mempool</FONT>(<FONT COLOR="#000066"><B>node</B></FONT>,
+                                <FONT COLOR="#000066"><B>payload</B></FONT>) = `
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#cc0000">
+                        <FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">node_adx</FONT></FONT>
+                    </FONT>.node_get_mempool_hashes<FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                (hash_list)
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#cc0000">
+                        <FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">node_adx</FONT></FONT>
+                    </FONT>.queue_inv_message<FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">(</FONT></FONT></FONT><FONT COLOR="#000066"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><B>node</B></FONT></FONT></FONT><FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                ,hash_list)
+                                success
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">`</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#990099">handler</FONT>
+                                <FONT COLOR="#cc0000">on_version</FONT>(<FONT COLOR="#000066"><B>node</B></FONT>,<FONT COLOR="#000066"><B>payload</B></FONT>)
+                                = `
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                if(<FONT COLOR="#000066">
+                                    <B>
+                                        node
+                                    </B>
+                                </FONT>.entrant = 1)
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                set
+                                <FONT COLOR="#000066"><B>node</B></FONT>.p2p_addr.port =
+                                <FONT COLOR="#000066"><B>payload</B></FONT>.my_addr.port;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"> <FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">endif</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                set
+                                <FONT COLOR="#000066"><B>node</B></FONT>.p2p_addr.services =
+                                <FONT COLOR="#000066"><B>payload</B></FONT>.services;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                set
+                                <FONT COLOR="#000066"><B>node</B></FONT>.my_addr =
+                                <FONT COLOR="#000066"><B>payload</B></FONT>.their_addr;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                set
+                                <FONT COLOR="#000066"><B>node</B></FONT>.user_agent =
+                                <FONT COLOR="#000066"><B>payload</B></FONT>.user_agent;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                set
+                                <FONT COLOR="#000066"><B>node</B></FONT>.version = <FONT COLOR="#000066"><B>payload</B></FONT>.proto_ver;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                set
+                                <FONT COLOR="#000066"><B>node</B></FONT>.block_height =
+                                <FONT COLOR="#000066"><B>payload</B></FONT>.last_blk;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><FONT COLOR="#cc0000">node_adx</FONT>.node_log_version_infos	(<FONT COLOR="#000066"><B>node</B></FONT>)</FONT></FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#cc0000">node_adx</FONT>.node_set_bookmark		(<FONT COLOR="#000066"><B>node</B></FONT>.p2p_addr,
+                                one);
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><FONT COLOR="#cc0000">node_adx</FONT>.queue_verack_message	(<FONT COLOR="#000066"><B>node</B></FONT>)</FONT></FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><FONT COLOR="#cc0000">node_adx</FONT>.node_broadcast_addr	(<FONT COLOR="#000066"><B>node</B></FONT>.p2p_addr)</FONT></FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"> <FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">success</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">`</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+            </section>
+            <hr/>
+            <section class="code_panel">
+                <P>
+                    <FONT COLOR="#000000"><FONT FACE="Arial Black, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><SPAN STYLE="font-style: normal"><U><SPAN STYLE="font-weight: normal">Initialization</SPAN></U></SPAN></FONT></FONT></FONT><BR><BR><BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#990099">proc</FONT>
+                                init_node = `
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><FONT COLOR="#cc0000">protocol_adx</FONT>.init_protocol	(configuration)</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#cc0000">block_adx</FONT>.init_blocks	(configuration,
+                                SelfNode.trustedApps)
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><FONT COLOR="#cc0000">node_adx</FONT>.node_init_self	(SelfNode)</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">loadmod(configuration.staking.pos_kernel)</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">configuration.staking.pos_kernel.init_pos(configuration.staking)</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><FONT COLOR="#cc0000">nodix</FONT>.init_staking()</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#cc0000">node_adx</FONT>.node_check_block_index	(checkNum,LastGood)
+                                ?
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#cc0000">nodix</FONT>.truncate_chain_to
+                                (LastGood)
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">endor</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><FONT COLOR="#cc0000">node_adx</FONT>.node_load_block_indexes	()</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#cc0000">block_adx</FONT>.make_genesis_block(configuration.genesis,
+                                genesis_blk)
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                if
+                                (SelfNode.block_height = 0)
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	<FONT COLOR="#cc0000">node_adx</FONT>.node_set_last_block				(genesis_blk)</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	<FONT COLOR="#cc0000">node_adx</FONT>.node_compute_pow_diff_after			(genesis_blk)</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	configuration.staking.pos_kernel.store_blk_staking	(genesis_blk)</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">endif</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                if
+                                (SelfNode.block_height &gt; 1)
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	<FONT COLOR="#cc0000">node_adx</FONT>.node_load_last_blks()</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#cc0000">block_adx</FONT>.get_pow_reward(SelfNode.lastPOWBlk.height,
+                                block_reward)
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                set
+                                SelfNode.pow_reward = block_reward;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                configuration.staking.pos_kernel.load_last_pos_blk(SelfNode.lastPOSBlk)	:
+                                set SelfNode.lastPOSBlk = SelfNode.last_block;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+
+                                configuration.staking.pos_kernel.find_last_pos_block(SelfNode.lastPOSBlk)
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#cc0000">node_adx</FONT>.node_store_last_pos_hash	(SelfNode.lastPOSBlk)
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	endor</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                configuration.staking.pos_kernel.compute_last_pos_diff	(SelfNode.lastPOSBlk,
+                                SelfNode.current_pos_diff) :
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                set SelfNode.current_pos_diff = configuration.staking.limit;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	endor</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                configuration.staking.pos_kernel.stake_get_reward
+                                (SelfNode.lastPOSBlk.height, block_reward)
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                set
+                                SelfNode.pos_reward = block_reward;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">endif</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                sethandler
+                                SelfNode.emitted_queue{ <FONT COLOR="#990000">&quot;cmd=verack&quot;</FONT>
+                                } = <FONT COLOR="#ff0000">on_verack</FONT>;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                sethandler
+                                SelfNode.emitted_queue{ <FONT COLOR="#990000">&quot;cmd=version&quot;</FONT>
+                                } = <FONT COLOR="#ff0000">on_version</FONT>;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                sethandler
+                                SelfNode.emitted_queue{ <FONT COLOR="#990000">&quot;cmd=ping&quot;</FONT>
+                                } = <FONT COLOR="#ff0000">on_ping</FONT>;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                sethandler
+                                SelfNode.emitted_queue{ <FONT COLOR="#990000">&quot;cmd=pong&quot;</FONT>
+                                } = <FONT COLOR="#ff0000">on_pong</FONT>;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                sethandler
+                                SelfNode.emitted_queue{ <FONT COLOR="#990000">&quot;cmd=inv&quot; </FONT>}
+                                = <FONT COLOR="#ff0000">on_inv</FONT>;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                sethandler
+                                SelfNode.emitted_queue{ <FONT COLOR="#990000">&quot;cmd=addr&quot;</FONT>
+                                } = <FONT COLOR="#ff0000">on_addr</FONT>;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                sethandler
+                                SelfNode.emitted_queue{ <FONT COLOR="#990000">
+                                    &quot;cmd=mempool&quot;
+                                </FONT>} = <FONT COLOR="#ff0000">on_mempoo</FONT>l;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                sethandler
+                                SelfNode.emitted_queue{ &quot;<FONT COLOR="#990000">cmd=tx&quot;</FONT>
+                                } = <FONT COLOR="#ff0000">on_tx</FONT>;
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <FONT COLOR="#000000">
+                        <FONT FACE="Consolas, sans-serif">
+                            <FONT SIZE=2 STYLE="font-size: 9pt">
+                                <FONT COLOR="#ff0000">node_adx</FONT>.node_load_bookmark()
+                                :
+                            </FONT>
+                        </FONT>
+                    </FONT>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	<FONT COLOR="#ff0000">node_adx</FONT>.connect_peer_node(configuration.seed_node)</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">endor</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><FONT COLOR="#ff0000">node_adx</FONT>.set_next_check(0)</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">success</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm">
+                    <BR>
+                </P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">`</FONT></FONT></FONT></P>
+            </section>
+
+        </section>
+    </div>
+
+    <div class="container content">
+        <section>
+            <h1>Service configuration</h1>
+            <!--<li><label>http_service</label><span class="doc">Configure the HTTP application server.</span></li>-->
+            <ul>
+                <li><label>port </label><span class="doc"> port used for the http service</span></li>
+                <li><label>addr </label><span class="doc"> ip used for the http service</span></li>
+                <li><label>use thread</label><span class="doc">run service in a separate thread</span></li>
+                <li><label>docroot </label><span class="doc"> base path for http request, relative to exe path</span></li>
+                <li><label>apppath</label><span class="doc"> base path used to access applications</span></li>
+                <li><label>name</label><span class="doc"> service name</span></li>
+                <li><label>indexpage</label><span class="doc"> index page for the service</span></li>
+                <li><label>mimes</label><span class="doc"> mime type association with file extension</span></li>
+                <li><label>defaultmime</label><span class="doc"> mime type used for other files</span></li>
+                <li><label>cacheTime</label><span class="doc"> set the cache time for files</span></li>
+                <li><label>nthreads</label><span class="doc"> number of threads used to serve http requests</span></li>
+                <li><label>maxpost</label><span class="doc"> maximum size of post data in kilobytes</span></li>
+            </ul>
+
+            <div id="serv-conf">
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	(NODE_SERVICE)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;http_service&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT></P>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	{</FONT></FONT></FONT></P>
+                <div class="ident">
+                    <P STYLE="margin-bottom: 0cm">
+                        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;port&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                    16820,
+                                </FONT>
+                            </FONT>
+                        </FONT>
+                    </P>
+                    <P STYLE="margin-bottom: 0cm">
+                        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		(NODE_NET_IP)</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;addr&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;127.0.0.1&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT>
+                    </P>
+                    <P STYLE="margin-bottom: 0cm">
+                        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;useThread&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                    true,
+                                </FONT>
+                            </FONT>
+                        </FONT>
+                    </P>
+                    <P STYLE="margin-bottom: 0cm">
+                        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;docroot&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;web&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT>
+                    </P>
+
+                    <P STYLE="margin-bottom: 0cm">
+                        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;apppath&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;/app/&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT>
+                    </P>
+                    <P STYLE="margin-bottom: 0cm">
+                        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;name&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    &quot;Nodix
+                                    webservice&quot;
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT>
+                    </P>
+                    <P STYLE="margin-bottom: 0cm">
+                        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;indexpage&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;/app/NodixSite/page/index.site&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT>
+                    </P>
+                    <P STYLE="margin-bottom: 0cm">
+                        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;mimes&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                    {
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;js&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;text/javascript&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    ,
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;css&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;text/css&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    ,
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;woff&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;text/css&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    ,
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;woff2&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;text/css&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    ,
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;png&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;image/png&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    ,
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;pdf&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;application/pdf&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    ,
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;gif&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;image/gif&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    ,
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;svg&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;image/svg+xml&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    ,
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;html&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;text/html&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    },
+                                </FONT>
+                            </FONT>
+                        </FONT>
+                    </P>
+                    <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	</FONT></FONT></FONT></P>
+                    <P STYLE="margin-bottom: 0cm">
+                        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;defaultmime&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;text/plain&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">,</FONT></FONT></FONT>
+                    </P>
+                    <P STYLE="margin-bottom: 0cm">
+                        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;cacheTime&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    : 0,
+                                </FONT>
+                            </FONT>
+                        </FONT>
+                    </P>
+                    <P STYLE="margin-bottom: 0cm">
+                        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;nthreads&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                    4,
+                                </FONT>
+                            </FONT>
+                        </FONT>
+                    </P>
+                    <P STYLE="margin-bottom: 0cm">
+                        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;maxpost&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                    1024,
+                                </FONT>
+                            </FONT>
+                        </FONT>
+                    </P>
+                    <P STYLE="margin-bottom: 0cm">
+                        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;modules&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                            <FONT FACE="Consolas, sans-serif">
+                                <FONT SIZE=2 STYLE="font-size: 9pt">
+                                    :
+                                </FONT>
+                            </FONT>
+                        </FONT>
+                    </P>
+                    <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		[</FONT></FONT></FONT></P>
+                    <div class="ident">
+                        <P STYLE="margin-bottom: 0cm">
+                            <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			{</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;base&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        :
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;/jsonrpc&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        ,
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;type&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        :
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;rpc&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        ,
+                                        (NODE_MODULE_DEF)
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;rpc_wallet&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        : {
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;file&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;modz/rpc_wallet.tpo&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">}},</FONT></FONT></FONT>
+                        </P>
+                        <P STYLE="margin-bottom: 0cm">
+                            <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			{</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;base&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        :
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;/pubwal&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        ,
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;allowed_ip&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:[</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;127.0.0.1&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        ]
+                                        ,
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;type&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        :
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;rpc&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        ,
+                                        (NODE_MODULE_DEF)
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;anon_wallet&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        : {
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;file&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;modz/anon_rpc.tpo&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">}},</FONT></FONT></FONT>
+                        </P>
+                        <P STYLE="margin-bottom: 0cm">
+                            <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			{</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;base&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        :
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;/api/&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        ,
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;type&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        :
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;cgi&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        ,
+                                        (NODE_MODULE_DEF)
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;block_explorer&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        : {
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;file&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;modz/block_explorer.tpo&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">}},</FONT></FONT></FONT>
+                        </P>
+                        <P STYLE="margin-bottom: 0cm">
+                            <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">			{</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;base&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        :
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;/siteapi/&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        ,
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;type&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        :
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;cgi&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        ,
+                                        (NODE_MODULE_DEF)
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;site_cgi&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                                <FONT FACE="Consolas, sans-serif">
+                                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                                        : {
+                                    </FONT>
+                                </FONT>
+                            </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;file&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;modz/site_cgi.tpo&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">}}</FONT></FONT></FONT>
+                        </P>
+                    </div>
+                    <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">		]</FONT></FONT></FONT></P>
+                </div>
+                <P STYLE="margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">	}</FONT></FONT></FONT></P>
+                
+
+                </div>
+
+            <hr/>
+            <p>For informations about service modules, see <a href="framework/modules">modules</a> section of framework documentation.</p>
+            <p>For informations on this node's service, see <a href="/nodix.site/services">wallet service page</a></p>
+
+            <p>Informations about this node service</p>
+            <div class="container">
+                    <div class="row">
+                        <div class="col-md-2"><label>service name</label></div><div class="col-md-2"><span id="serv_name"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>running on port</label></div><div class="col-md-2"><span id="serv_port"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>document root</label></div><div class="col-md-2"><span id="serv_root"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>index page </label></div><div class="col-md-2"><span id="index"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><label>default mime type</label></div><div class="col-md-2"><span id="defaultmime"></span></div>
+                    </div>
+                    <div class="row">
+                        <div id="mimes"></div>
+                    </div>
+            </div>
+           
+    </section>
+    </div>
+
+    <!-- END SECTION: Intro -->
+

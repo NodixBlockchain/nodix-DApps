@@ -1,0 +1,578 @@
+<div class="container">
+    <H1>
+        <FONT COLOR="#000000">
+            <FONT SIZE=6 STYLE="font-size: 22pt">
+                Wallet
+                API
+            </FONT>
+        </FONT>
+    </H1>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <FONT COLOR="#000000">
+            <FONT FACE="Times New Roman, serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    The
+                    wallet API is defined in
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#0000ff">
+            <FONT FACE="Times New Roman, serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    <A HREF="/assets/js/keys.js" NAME="keys.js">keys.js</A>
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#000000">
+            <FONT FACE="Times New Roman, serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    ,which
+                    contain the
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#000000">
+            <FONT FACE="Times New Roman, serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    <I>
+                        AccountList
+                    </I>
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#000000"><FONT FACE="Times New Roman, serif"><FONT SIZE=2 STYLE="font-size: 9pt">class.</FONT></FONT></FONT>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <H2 CLASS="western">
+        <FONT COLOR="#000000">Using the AccountList class</FONT>
+    </H2>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#000000">
+            <FONT FACE="Times New Roman, serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    To
+                    use the wallet API, first need to import the keys.js file
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT FACE="Times New Roman, serif">
+            <FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">&lt;</FONT></FONT><FONT COLOR="#800000"><FONT SIZE=2 STYLE="font-size: 9pt">script</FONT></FONT><FONT COLOR="#000000">
+            </FONT><FONT COLOR="#ff0000"><FONT SIZE=2 STYLE="font-size: 9pt">type</FONT></FONT><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">=&quot;text/javascript&quot;</FONT></FONT><FONT COLOR="#000000">
+            </FONT><FONT COLOR="#ff0000"><FONT SIZE=2 STYLE="font-size: 9pt">src</FONT></FONT><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">=&quot;/assets/js/keys.js&quot;&gt;&lt;/</FONT></FONT><FONT COLOR="#800000"><FONT SIZE=2 STYLE="font-size: 9pt">script</FONT></FONT><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;</FONT></FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#000000">
+            <FONT FACE="Times New Roman, serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    And
+                    create a new instance of the <I>AccountList</I> class :
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT FACE="Times New Roman, serif">
+            <FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">&lt;</FONT></FONT><FONT COLOR="#800000"><FONT SIZE=2 STYLE="font-size: 9pt">script</FONT></FONT><FONT COLOR="#000000">
+            </FONT><FONT COLOR="#ff0000"><FONT SIZE=2 STYLE="font-size: 9pt">type</FONT></FONT><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">=&quot;text/javascript&quot;</FONT></FONT><FONT COLOR="#000000">
+            </FONT><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;</FONT></FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT FACE="Times New Roman, serif">
+            <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">MyAccount</FONT></FONT></FONT><FONT COLOR="#000000">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    =
+                </FONT>
+            </FONT><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">new</FONT></FONT><FONT COLOR="#000000">
+            </FONT><FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        new
+                        AccountList('
+                    </FONT>
+                </FONT>
+            </FONT><FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        <I>
+                            Account
+                            list block
+                        </I>
+                    </FONT>
+                </FONT>
+            </FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">','Transaction</FONT></FONT></FONT><FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        <I>
+                            list block
+                        </I>
+                    </FONT>
+                </FONT>
+            </FONT><FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        ',
+                    </FONT>
+                </FONT>
+            </FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><I>Options</I></FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">);</FONT></FONT></FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT FACE="Times New Roman, serif"><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">&lt;/</FONT></FONT><FONT COLOR="#800000"><FONT SIZE=2 STYLE="font-size: 9pt">script</FONT></FONT><FONT COLOR="#0000ff"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;</FONT></FONT></FONT>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT FACE="Times New Roman, serif">
+            <FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        <I>
+                            Options:
+                        </I>
+                    </FONT>
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT FACE="Times New Roman, serif">
+            <FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        {
+                    </FONT>
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#000000">  </FONT><FONT FACE="Times New Roman, serif">
+            <FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">'withSecret'</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">true</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">|</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">false</FONT></FONT></FONT><FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        ,
+                        Show secret key to use private key in the address list
+                    </FONT>
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#000000">  </FONT><FONT FACE="Times New Roman, serif">
+            <FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">'staking'</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">true</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">|</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">false</FONT></FONT></FONT><FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        ,
+                        Get staking informations
+                    </FONT>
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#000000">  </FONT><FONT FACE="Times New Roman, serif">
+            <FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">'newAccnt'</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">:</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">true</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">|</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">false</FONT></FONT></FONT><FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        Show box the create new account
+                    </FONT>
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT FACE="Times New Roman, serif"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">}</FONT></FONT></FONT></FONT>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT FACE="Times New Roman, serif">
+            <FONT COLOR="#000000">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    And
+                    then calling
+                </FONT>
+            </FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><I>AccountList</I></FONT></FONT></FONT><FONT COLOR="#000000">
+            </FONT><FONT COLOR="#000000">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    methods
+                    to fetch and update data on the webpage.
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT FACE="Times New Roman, serif">
+            <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&lt;</FONT></FONT></FONT><FONT COLOR="#844646"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">script</FONT></FONT></FONT><FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        type=
+                    </FONT>
+                </FONT>
+            </FONT><FONT COLOR="#6464b9"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;text/javascript&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        src=
+                    </FONT>
+                </FONT>
+            </FONT><FONT COLOR="#6464b9"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;/assets/js/keys.js&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;&lt;/</FONT></FONT></FONT><FONT COLOR="#844646"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">script</FONT></FONT></FONT><FONT COLOR="#000000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        &gt;
+                    </FONT>
+                </FONT>
+            </FONT><FONT COLOR="#008000">
+                <FONT FACE="Consolas, sans-serif">
+                    <FONT SIZE=2 STYLE="font-size: 9pt">
+                        //
+                        Wallet API
+                    </FONT>
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&lt;</FONT></FONT></FONT><FONT COLOR="#844646"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">script</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    type=
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#6464b9"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;text/javascript&quot;</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    src=
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#6464b9"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&quot;/assets/js/ecdsa_bundle.js&quot;</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;&lt;/</FONT></FONT></FONT><FONT COLOR="#844646"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">script</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    &gt;
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#008000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    //
+                    ECDSA Signature API
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&lt;</FONT></FONT></FONT><FONT COLOR="#800000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">section</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;&lt;</FONT></FONT></FONT><FONT COLOR="#800000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">h2</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#ff0000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">class</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">=&quot;heading-md&quot;&gt;</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    Manage
+                    your wallet
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&lt;/</FONT></FONT></FONT><FONT COLOR="#800000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">h2</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;&lt;</FONT></FONT></FONT><FONT COLOR="#800000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">div</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#ff0000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">id</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">=&quot;account_list&quot;&gt;&lt;/</FONT></FONT></FONT><FONT COLOR="#800000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">div</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;&lt;/</FONT></FONT></FONT><FONT COLOR="#800000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">section</FONT></FONT></FONT><FONT COLOR="#0000ff">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    &gt;
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&lt;</FONT></FONT></FONT><FONT COLOR="#800000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">section</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;&lt;</FONT></FONT></FONT><FONT COLOR="#800000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">h2</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#ff0000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">class</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">=&quot;heading-md&quot;&gt;</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    Manage
+                    your transactions
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&lt;/</FONT></FONT></FONT><FONT COLOR="#800000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">h2</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;&lt;</FONT></FONT></FONT><FONT COLOR="#800000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">div</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#ff0000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">id</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">=&quot;my_wallet&quot;&gt;&lt;/</FONT></FONT></FONT><FONT COLOR="#800000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">div</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;&lt;/</FONT></FONT></FONT><FONT COLOR="#800000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">section</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;</FONT></FONT></FONT>
+    </P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&lt;</FONT></FONT></FONT><FONT COLOR="#800000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">script</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#ff0000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">type</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">=&quot;text/javascript&quot;&gt;</FONT></FONT></FONT>
+    </P>
+    <P STYLE="margin-bottom: 0cm; line-height: 0.4cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">jQuery(document).ready(</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">function</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    () {
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 4cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    lang
+                    =
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">'en'</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">;</FONT></FONT></FONT>
+    </P>
+    <P STYLE="margin-left: 4cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    api_base_url
+                    =
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">''</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">;</FONT></FONT></FONT>
+    </P>
+    <P STYLE="margin-left: 4cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    site_base_url
+                    =
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">'/nodix.site'</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">;</FONT></FONT></FONT>
+    </P>
+    <P STYLE="margin-left: 4cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 4cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    ec
+                    =
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">new</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    EC(
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">'secp256k1'</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">);</FONT></FONT></FONT>
+    </P>
+    <P STYLE="margin-left: 4cm; margin-bottom: 0cm; line-height: 0.4cm">
+        <FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    MyAccount
+                    =
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">new</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    AccountList(
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">'account_list'</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    ,
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">'my_wallet'</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    ,
+                    {
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">'withSecret'</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    :
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">false</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    ,
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">'staking'</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    :
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">false</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    ,
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#a31515"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">'newAccnt'</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    :
+                </FONT>
+            </FONT>
+        </FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">true</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    });
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm; line-height: 0.4cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">});</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm; line-height: 0.4cm"><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&lt;/</FONT></FONT></FONT><FONT COLOR="#800000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">script</FONT></FONT></FONT><FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">&gt;</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm">
+        <FONT COLOR="#0000ff">
+        </FONT><BR>
+    </P>
+    <P STYLE="margin-left: 2cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <H3 CLASS="western">Constructor</H3>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <FONT COLOR="#0000ff"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">constructor</FONT></FONT></FONT><FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    (divName,listName,opts)
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <H3 CLASS="western">Account manipulation</H3>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">setAccounts(accounts,accountName)</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">updateAccounts()</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">find_account(accnt_name)</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">getSelectedAddrs()</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">scan_addr(address)</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">import_keys(label)</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <FONT COLOR="#000000">
+            <FONT FACE="Consolas, sans-serif">
+                <FONT SIZE=2 STYLE="font-size: 9pt">
+                    maketx(amount,
+                    fee, dstAddr)
+                </FONT>
+            </FONT>
+        </FONT>
+    </P>
+    <H3 CLASS="western">Reacting to webpage events</H3>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">accountselected(accnt_name)</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">addr_selected</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">(addr)</FONT></FONT></FONT></P>
+    <H3 CLASS="western">Fetch transaction data for selected addresses</H3>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">fetch_recvs()</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">fetch_spents()</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">fetch_unspents()</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">fetch_staking_unspents()</FONT></FONT></FONT></P>
+    <H3 CLASS="western">Updating HTML layouts</H3>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">update_addrs()</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">update_addrs_select(select_name)</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">update_txs()</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">update_recvs()</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">update_spent()</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">update_unspent()</FONT></FONT></FONT></P>
+    <P STYLE="margin-bottom: 0cm">
+        <BR>
+    </P>
+
+
+    <H3 CLASS="western">Wallet event source</H3>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm"><FONT COLOR="#000000"><FONT FACE="Consolas, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt">seteventsrc = function (in_url = '/newspent_event', handler_sent, handler_recv)</FONT></FONT></FONT></P>
+    <P STYLE="margin-left: 2.1cm; margin-bottom: 0cm">
+        <BR>
+    </P>
+</div>
+
+
+
+
+

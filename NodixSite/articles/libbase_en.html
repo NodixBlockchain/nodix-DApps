@@ -1,0 +1,389 @@
+<style>
+    h4{ color:#000;}
+
+    .functions h5
+    {
+        font-size:0.8em;
+        font-weight:normal;
+    }
+    .type
+    {
+        font-size:1.1em;
+        font-weight:bold;
+    }
+    .func_type
+    {
+        font-size:0.9em;
+        color:#3cafc4
+    }
+
+    #raw_write,#raw_read,#typed_write,#typed_read,#child_write,#child_read,#gen_node,#child_iter,#child_manip,#gen_cnode
+    {
+        display:none;
+    }
+    blockquote {
+      background: #f9f9f9;
+      font-size:0.9em;
+      font-style:italic;
+      border-left: 10px solid #ccc;
+      margin: 1.5em 10px;
+      padding: 0.5em 10px;
+      quotes: "\201C""\201D""\2018""\2019";
+    }
+    blockquote:before {
+      color: #ccc;
+      content: open-quote;
+      font-size: 4em;
+      line-height: 0.1em;
+      margin-right: 0.25em;
+      vertical-align: -0.4em;
+    }
+    blockquote:after {
+      color: #ccc;
+      content: close-quote;
+      font-size: 4em;
+      line-height: 0.1em;
+      margin-right: 0.25em;
+      vertical-align: -0.4em;
+    }
+    blockquote p {
+      display: inline;
+    }
+    p{
+        margin:8px 4px 8px 4px;
+    }
+</style>
+<div class="container">
+    <h1>Distributed dynamic object tree memory model.</h1>
+
+    <div class="row">
+        <div class="col">
+            <p>The libbase framework is based on the <a href="libcon#mem_anchor">memory reference mechanism implemented in libcon</a> to provide lockless atomic reference counted acess to dynamic distributed object with support for multi typed arrays, memory aligned for SIMD operations, and built in primitives for blockchain technologies.</p>
+            <p>All access to distributed objects is made lockless and thread safe with the built-in double buffered write on object childs list, all read only access are lockless, and only blocking when more than one thread modify the list .</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p>Nodix is very similar in design to Emerald, a language made in the early 90's as an attempt to bridge the gap between programing local and distributed Object Oriented applications.</p>
+
+            <p>
+                <a href="http://www.emeraldprogramminglanguage.org/OOPSLA-86-paper.pdf">Object Structure in the Emerald System, Oopsla 1986.</a>
+            </p>
+
+            <blockquote>
+                <h6>2. Emerald Objects</h6>
+                <p>All entities in the Emerald system are objects. This includes small entities, such as Booleans and integers, and large entities, such as directories and compilers.</p>
+                <p>While different objects may be implemented with different techniques, all objects exhibit uniform semantics. An object can be manipulated only through invocation; no external access to an object's data is permitted.</p>
+                <p>Objects can be invoked remotely and can move from node to node. Each Emerald object has four components:</p>
+                <p>1. A name, which uniquely identifies the object within the network.</p>
+                <p>2. A representation, which consists of the data stored in the object. The representation of a programmerdefined object is composed of a collection of references to other objects.</p>
+            </blockquote>
+            <blockquote>
+                <p>Emerald supports concurrency both between objects and within an object. Within the network many objects can execute concurrently. Within a single object, several operation invocations can be in progress simultaneously, and these can execute in parallel with the object's internal process. To control access to variables shared by different operations, the shared variables and the operations manipulating them can be defined within a monitor [10, 16]. Processes synchronize through builtin condition objects. An object's process executes outside of the monitor, but can invoke monitored operations should it need access to shared state. </p>
+            </blockquote>
+            <blockquote>
+                <h6>3. Abstract Types</h6>
+                <p>Central to Emerald is the concept of abstract type. An abstract type defines a collection of operation signatures, that is, operation names and the types of their arguments and results. All identifiers in Emerald are typed: the programmer must declare the abstract type of the objects that an identifier may name. An abstract type is represented by an Emerald object that specifies such a list of signatures.</p>
+                <p>The relationship between abstract types and object implementations is many-to.one in both directions. A single object may conform to many abstract types, and an abstract type may be implemented by many different objects. Although Emerald requires that the abstract type of each identifier be manifest, the type of the object that is to be assigned to an identifier may not be known until run time. In such a case, the conformity check will be performed at run time. However, very often enough information will be available at compile time for conformity to be checked statically.</p>
+            </blockquote>
+            <blockquote>
+                <h6>4. Object Creation</h6>
+                <p>As described above, an identifier in Emerald programs has an abstract type, and an object must conform to that abstract type to be named by the identifier. However, Emerald objects do not require a Class object for their creation. In most object-based systems, the programmer first specifies a class object that defines the structure and behavior of all its instances. The class object also responds to new invocations to make new instances. In contrast, an Emerald object is created by executing an object constructor. An object constructor is an Emerald expression that defines the representation, the operations, and the process of an object. </p>
+            </blockquote>
+            <blockquote>
+                <h6>6. Supporting Multiple implementations</h6>
+                <p>The most important goal of the Emerald design is the support of a uniform object model. The semantics of all objects, whether large or small, local or distributed, should be independent of the implementation technique. This uniformity should hold both for the progranuner who builds objects and types, and for the application that invokes them.  </p>
+            </blockquote>
+            <blockquote>
+                <h6>7. Distribution Support</h6>
+                <p>Emerald is designed for the construction of distributed applications. As previously stated, we believe that objects are an excellent way of structuring such programs because they provide the units of processing and distribution. This belief has been confirmed by our experience with distributed applications in Eden [1-3, 6]. The tendency of many distributed systems is to hide distribution from the programmer. For example, in Xerox RPC [5], remote procedure calls were added to Cedar Mesa. In so far as it was possible, remote procedure calls were designed to be semantically identical to local procedure calls. This is obviously a desirable property and is what makes RPC so attractive; programs can be written and debugged on a single node using local procedures and then easily distributed.</p>
+                <p>Emerald supports the same notion with object invocation. All objects are manipulated through invocation, and all invocations are location independent; it is the responsibility of the run-time system to locate and transfer control to the target object. Remote invocation achieves the same benefits as remote procedure call. </p>
+                <p>While it is crucial that invocation be location independent, it is not necessary that an object's location be invisible. Many applications may choose to ignore distribution, but others may wish to benefit from location dependence. For example, a replication manager may wish to distribute object replicas on different nodes, or two applications may wish to be co-located during periods of high activity. Applications that are concerned with distribution may wish to discover and modify objects' locations, but they still benefit from location-independent invocation.</p>
+            </blockquote>
+            <blockquote>
+                <h6>9. Conclusions </h6>
+                <p>Languages like Smalltalk rely heavily on the concept of Class. However, Classes have at least three functions:they generate instances, they act as a repository for the code of those instances, and (through the inheritance hierarchy) they provide a classification scheme for instances. Emerald allocates these functions to separate mechanisms: objects are created by explicit constructors, code sharing is managed by the kernel, and abstract types provide a classification scheme that is independent of an object's implementation.</p>
+            </blockquote>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <p>Nodix's nodes can conceptually be viewed as Emerald mobile objects defined in json with optional abstract type.</p>
+            <p>Applications create and manipulate distributed objects as a reference to a generic node, and operations on those objects as well specialized constructor are invoked either via interfaces defined in modules (binary or script), or using asynchronous message handling mechanism similar to SmallTalk.</p>
+            <p>Each node is associated with an abstract type, a name, and its data representation, and can also contain a dynamic list of reference to other nodes. This dynamic list can be used both to represent typed element for arrays and list or key/value pairs for objects.</p>
+            <p>Abstract types are represented as an integer, and built-in types have a static mapping between type name and type identifiers.</p>
+            <p>Nodes can be considered as simple type (integer, float, string, hash,vec3, mat3x3, der signature), or typed list of heteroclytes nodes (multi type arrays), or objects.</p>
+            <p>Nodes data is only manipulated using runtime function passing a reference to the node, as well as the type of the input/output value.</p>
+            <p>RPC is achieved using a <a href="modules#RPC">specific module interface</a> bound to json/rpc protocol over http through the node's service configuration, for easy communication with javascript. All RPCs are executed in parallel if the client language support asynchronous http request.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col"><p>The API to create new nodes, access the tree, as well as built in abstract type identifiers are defined in <a href="https://github.com/NodixBlockchain/nodix/blob/master/libbase/include/tree.h">libbase/include/tree.h</a></p></div>
+    </div>
+    <div class="row"><div class="col"><h5>Memory model of distributed objects.</h5><img style="width:80%;" src="/app/NodixSite/file/5B7112618C70978879D822C8F43B3AA30AF7E2E4F53F28F97B697AF49CCD33EF" /></div></div>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-2"><h5>API definition in C</h5></div>
+        <div class="col-md-8">
+            <p>The C api provide the high level semantic to manipulate distributed object.</p>
+            <p>
+                They are divided in two type of operations
+                <ol>
+                    <li>operations affecting leaf node data (simple type mode).<div style="padding-left:8px;font-size:0.8em;margin:4px;">They will always try to convert the node's data to the requested type, or fail if they can't access the value as the requested type.</div></li>
+                    <li>operations affecting the node's child list (object / array mode).<div style="padding-left:8px;font-size:0.8em;margin:4px;">They will always affect a temporary write buffer with exclusive access, so all operation on dynamic arrays and object keys are 'thread atomic', they only appear as a whole when they are fully completed, or fail as a whole without affecting the original node.</div></li>
+                </ol>
+            </p>
+            <p>A generic constructor function is used to create new 'root nodes' associated with a type, and references to it are released manually using the generic libcon api. </p>
+            <p>A specialized destructor is automatically added on nodes to release references on their child lists recursively when their reference count reach zero.</p>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-2"><h5>Simple type node manipulation.</h5></div>
+        <div class="col-md-8">
+            <div class="container">
+                <section>
+                    <p><h4 target="gen_node">General node manipulation</h4></p>
+                    <div id="gen_node">
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int  		    tree_manager_create_node				(<span class="func_type">const char *</span>name,<span class="func_type">unsigned int</span> type,<span class="func_type">mem_zone_ref_ptr</span> ref_ptr);</p><p></p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>const char *  tree_mamanger_get_node_name				(<span class="func_type">mem_zone_ref_const_ptr</span> node_ref);</p><p></p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>unsigned int	tree_mamanger_get_node_type				(<span class="func_type">mem_zone_ref_const_ptr</span> node_ref);</p><p></p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>unsigned int	tree_mamanger_get_node_type_str			(<span class="func_type">const char *</span>name);</p><p></p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_manager_node_dup					(<span class="func_type">mem_zone_ref_ptr</span> new_parent, <span class="func_type">mem_zone_ref_const_ptr</span> src_ref_ptr, <span class="func_type">mem_zone_ref_ptr</span> new_ref_ptr);</p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_manager_node_dup_one				(<span class="func_type">mem_zone_ref_ptr</span> src_ref_ptr, <span class="func_type">mem_zone_ref_ptr</span> new_ref_ptr);</p></div></div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="container">
+                <section>
+                    <h4 target="typed_write">node write functions</h4>
+                    <div class="row">
+                        <div class="col-md-1"></div><div class="col-md-8">
+                            <div id="typed_write">
+                                <table class="table functions">
+                                    <thead><tr><th colspan="2"><h5>tree_manager_write_node_[<span class="type">type</span>]	(<span class="type">mem_zone_ref_ptr</span> node_ref,<span class="func_type">mem_size</span> ofset,<span class="type">type </span>value);</h5></th></tr></thead>
+                                    <tbody>
+                                        <tr><td>uint64_t value</td><td>write the specified 64 bits integer value in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>unsigned int value</td><td>write the specified 32 bits integer value in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>unsigned short value</td><td>write 16 bits integer in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>unsigned char value<td>write 8 bits integer in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>int value</td><td>write the specified 32 bits signed integer value in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>int64_t value</td><td>write the specified 64 bits signed integer value in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>short value</td><td>write the specified 16 bits signed integer value in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>mem_ptr value</td><td>write the specified pointer in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>float value</td><td>write the specified 32 bits float value in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>double value</td><td>write the specified 80 bits double value in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>const hash_t hash</td><td>write the specified 32 bytes (256bits) hash in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>const btc_addr_t addr</td><td>write the specified 34 characters base58 bitcoin public address in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>const struct string *str</td><td>copy the specified string in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>const vec_4uc_t val</td><td>write the 4 specified unsigned char (eg RGBA color) in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>const char *str</td><td>copy the specified C string in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>const_mem_ptr vint</td><td>copy the specified bitcore variable integer binary representation in the node's data at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>unsigned char *sign, size_t sign_len</td><td>write the DER signature in the node's data from the binary representation at the specified ofset, and automatically allocate memory if necessary.</td></tr>
+                                        <tr><td>unsigned int value</td><td>Atomically swap the specified node's data with the specified 32 bits value if the current value is zero and return 1, or return 0 otherwise.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="container">
+                <section>
+                    <h4 target="typed_read">node read functions </h4>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-8">
+                            <div id="typed_read">
+                                <table class="table functions">
+                                    <thead><tr><th colspan="2"><h5>tree_manager_read_node_[<span class="type">type</span>]	(<span class="type">mem_zone_ref_ptr</span> node_ref,<span class="func_type">mem_size</span> ofset,<span class="type">type *</span>value);</h5></th></tr></thead>
+                                    <tbody>
+                                        <tr><td>uint64_t *val</td><td>read the node's data and convert it to a 64 bit unsigned integer.</td></tr>
+                                        <tr><td>unsigned int *val</td><td>read the node's data and convert it to a 32 bit unsigned integer.</td></tr>
+                                        <tr><td>unsigned short *val</td><td>read the node's data and convert it to a 16 bit unsigned integer.</td></tr>
+                                        <tr><td>unsigned char *val</td><td>read the node's data and convert it to a 8 bit unsigned integer.</td></tr>
+                                        <tr><td>int64_t *val</td><td>read the node's data and convert it to a 64 bit signed integer.</td></tr>
+                                        <tr><td>int *val</td><td>read the node's data and convert it to a 32 bit signed integer.</td></tr>
+                                        <tr><td>short *val</td><td>read the node's data and convert it to a 16 bit signed integer.</td></tr>
+                                        <tr><td>mem_ptr *value</td><td>read the node's data and convert it to a memory pointer.</td></tr>
+                                        <tr><td>float *val</td><td>read the node's data and convert it to a 32 bit float.</td></tr>
+                                        <tr><td>double *val</td><td>read the node's data and convert it to a 80 bit double.</td></tr>
+                                        <tr><td>hash_t hash</td><td>read the node's data and convert it to a 256 bit hash.</td></tr>
+                                        <tr><td>btc_addr_t addr</td><td>read the node's data and convert it to a 34 bytes bitcoin public address.</td></tr>
+                                        <tr><td>mem_ptr vstr</td><td>read the node's data and convert it to a bitcoin variable string into the destination memory.</td></tr>
+                                        <tr><td>vec_4uc_t val</td><td>read the node's data and convert it to a 4 bytes vector.</td></tr>
+                                        <tr><td>char *str,unsigned int str_len,unsigned int base</td><td>read the node's data and copy it to C string, of specified size, using the specific radix for conversion from integers data.</td></tr>
+                                        <tr><td>struct string *str,unsigned int base</td><td>read the node's data and copy it to a string, using the specific radix for conversion from integers data.</td></tr>
+                                        <tr><td>unsigned int val</td><td>Evaluate the node's data as 32 unsigned integer and compare it with the given 32 bits integer value.</td></tr>
+                                        <tr><td>unsigned int crc</td><td>compare a given hash to the node's name.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="container">
+                <section>
+                    <h4 target="raw_write">Raw write on nodes data</h4>
+                    <div id="raw_write">
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int 	tree_manager_allocate_node_data		(<span class="func_type">mem_zone_ref_ptr</span> node_ref,<span class="func_type">mem_size</span> data_size);</p><p>Allocate node's data to the specified size.</p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>mem_ptr	tree_manager_expand_node_data_ptr(<span class="func_type">mem_zone_ref_ptr</span> node_ref, <span class="func_type">mem_size</span> ofset, <span class="func_type">mem_size</span> size);</p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int 	tree_manager_write_node_data		(<span class="func_type">mem_zone_ref_ptr</span> node_ref,const_mem_ptr data,<span class="func_type">mem_size</span> ofset,<span class="func_type">mem_size</span> size);</p><p>Write raw binary data in the node's data at speficied ofset</p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int	tree_manager_copy_node_data			(<span class="func_type">mem_zone_ref_ptr</span> dst_node,<span class="func_type">mem_zone_ref_const_ptr</span> src_node);</p><p>copy the raw binary data from source node to destination node.</p></div></div>
+                    </div>
+                </section>
+            </div>
+            <div class="container">
+                <section>
+                    <h4 target="raw_read">raw read on node data</h4>
+                    <div id="raw_read">
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>mem_ptr tree_mamanger_get_node_data_ptr		(<span class="func_type">mem_zone_ref_const_ptr</span> node_ref,<span class="func_type">mem_size</span> ofset);</p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>size_t  tree_mamanger_get_node_data_size		(<span class="func_type">mem_zone_ref_const_ptr</span> node_ref);</p></div></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-2"><h5>List and object node manipulation.</h5></div>
+        <div class="col-md-8">
+            <div class="container">
+                <section>
+                    <h4 target="gen_cnode">General children manipulation</h4>
+                    <div id="gen_cnode">
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_mamanger_get_parent				(<span class="func_type">mem_zone_ref_const_ptr</span> node_ref,<span class="func_type">mem_zone_ref_ptr</span> p_ref);</p><p></p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_manager_get_ancestor_by_type		(<span class="func_type">mem_zone_ref_const_ptr</span> node_ref,unsigned int node_type,<span class="func_type">mem_zone_ref_ptr</span>  p_ref);</p><p></p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>size_t		tree_manager_get_node_num_children		(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref);</p><p></p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_manager_get_child_at				(<span class="func_type">mem_zone_ref_const_ptr</span> parent_ref_ptr	,<span class="func_type">unsigned int</span> index,<span class="func_type">mem_zone_ref_ptr</span> ref_ptr);</p><p></p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_manager_find_child_node			(<span class="func_type">mem_zone_ref_const_ptr</span> parent_ref_ptr	,<span class="func_type">unsigned int</span> crc_name,<span class="func_type">unsigned int</span> type,<span class="func_type">mem_zone_ref_ptr</span> ref_ptr);</p><p></p></div></div>
+
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int  			tree_manager_add_child_node				(<span class="func_type">mem_zone_ref_ptr</span> parent_ref_ptr,<span class="func_type">const char *</span>name,<span class="func_type">unsigned int</span> type,mem_zone_ref *ref_ptr);</p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>unsigned int	tree_manager_node_add_child				(<span class="func_type">mem_zone_ref_ptr</span> parent_ref_ptr,<span class="func_type">mem_zone_ref_const_ptr</span> child_ref_ptr);</p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_manager_copy_children				(<span class="func_type">mem_zone_ref_ptr</span> dest_ref_ptr,<span class="func_type">mem_zone_ref_const_ptr</span> src_ref_ptr);</p></div></div>
+                        <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_manager_copy_children_ref			(<span class="func_type">mem_zone_ref_ptr</span> dest_ref_ptr, <span class="func_type">mem_zone_ref_const_ptr</span> src_ref_ptr);</p></div></div>
+
+                    </div>
+                </section>
+            </div>
+            <div class="container">
+                <section>
+                    <h4 target="child_write">child node write functions</h4>
+                    <div class="row">
+                        <div class="col-md-1"></div><div class="col-md-8">
+                            <div id="child_write">
+                                <table class="table functions">
+                                    <thead><tr><th colspan="2"><h5>tree_manager_set_child_value_[<span class="type">type</span>]	(<span class="type">mem_zone_ref_ptr</span> p_node_ref, <span class="func_type">const char *</span>name, <span class="type">type </span>value);</h5></th></tr></thead>
+                                    <tbody>
+                                        <tr><td> uint64_t value</td><td>write the specified 64 bits integer value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> unsigned int value</td><td>write the specified 32 bits integer value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> unsigned short value</td><td>write the specified 16 bits integer value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> int64_t value</td><td>write the specified signed 64 bits integer value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> int value</td><td>write the specified signed 32 bits integer value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> mem_ptr value</td><td>write the specified pointer value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> float value</td><td>write the specified float value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> double value</td><td>write the specified double value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> const hash_t str</td><td>write the specified 256bit hash value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> const btc_addr_t str</td><td>write the specified 34 bytes btc public address value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> const struct string *str</td><td>write the specified string value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> const_mem_ptr vint</td><td>write the specified bitcore variable integer value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> const vec_4uc_t value</td><td>write the specified 4 bytes vector value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> const char *str</td><td>write the specified C string value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> const struct gfx_rect *rect</td><td>write the specified rect structure in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> float x, float y, float z</td><td>write the specified 3 float vector value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> size_t idx,float x, float y, float z</td><td>write the specified 3 float vector value in the node's child with the specified name at the specified index, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> float *mat3x3</td><td>write the specified 3x3 float matrix in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                        <tr><td> ipv4_t value</td><td>write the specified ip value in the node's child with the specified name, and automatically allocate memory in the node's child if necessary.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="container">
+                <section>
+                    <h4 target="child_read">child node read functions</h4>
+                    <div class="row">
+                        <div class="col-md-1"></div><div class="col-md-8">
+                            <div id="child_read">
+                                <table class="table functions">
+                                    <thead><tr><th colspan="2"><h5>tree_manager_get_child_value_[<span class="type">type</span>]	(<span class="type">mem_zone_ref_const_ptr</span> p_node_ref, unsigned int crc_name, <span class="type">type *</span>value);</h5></th></tr></thead>
+                                    <tbody>
+                                        <tr><td> uint64_t value</td><td>read the a bits integer value from the node's child with the specified name.</td></tr>
+                                        <tr><td> unsigned int value</td><td>read a 32 bits integer value from the node's child with the specified name.</td></tr>
+                                        <tr><td> unsigned short value</td><td>read a 16 bits integer value from the node's child with the specified name.</td></tr>
+                                        <tr><td> int64_t value</td><td>read a signed 64 bits integer value from the node's child with the specified name.</td></tr>
+                                        <tr><td> int value</td><td>read a signed 32 bits integer value from the node's child with the specified name.</td></tr>
+                                        <tr><td> mem_ptr value</td><td>read a pointer value from the node's child with the specified name.</td></tr>
+                                        <tr><td> float value</td><td>read a  float value from the node's child with the specified name.</td></tr>
+                                        <tr><td> const hash_t str</td><td>read a 256bit hash value from the node's child with the specified name.</td></tr>
+                                        <tr><td> const btc_addr_t str</td><td>read a 34 bytes btc public address value from the node's child with the specified name.</td></tr>
+                                        <tr><td> const struct string *str</td><td>read a string value from the node's child with the specified name.</td></tr>
+                                        <tr><td> const vec_4uc_t value</td><td>read a 4 bytes vector value in the node's child with the specified name.</td></tr>
+                                        <tr><td> const char *str</td><td>read a C string value in the node's child with the specified name.</td></tr>
+                                        <tr><td> const struct gfx_rect *rect</td><td>read a rect structure in the node's child with the specified name.</td></tr>
+                                        <tr><td> ipv4_t value</td><td>read a ip value in the node's child with the specified name.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="container">
+                <section>
+                    <h4 target="child_iter">Childs node iteration</h4>
+                    <div class="row">
+                        <div class="col-md-1"></div><div class="col-md-8">
+                            <div class="container " id="child_iter">
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int tree_manager_get_first_child			(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref,	<span class="func_type">mem_zone_ref_ptr</span> child_list, <span class="func_type">mem_zone_ref_ptr</span> *p_node_out_ref);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int tree_manager_get_next_child		    (								   <span class="func_type">mem_zone_ref_ptr</span> child_list, <span class="func_type">mem_zone_ref_ptr</span> *p_node_out_ref);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int tree_manager_get_last_child			(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, <span class="func_type">mem_zone_ref_ptr</span> child_list, <span class="func_type">mem_zone_ref_ptr</span> *p_node_out_ref);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int tree_manager_get_prev_child			(<span class="func_type">mem_zone_ref_const_ptr</span> child_list,<span class="func_type">mem_zone_ref_ptr</span> *p_node_out_ref);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int tree_node_find_child_by_name			(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, <span class="func_type">const char *</span>name, <span class="func_type">mem_zone_ref_ptr</span> p_node_out_ref);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>unsigned int tree_node_list_child_by_type	(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, <span class="func_type">unsigned int</span> type, <span class="func_type">mem_zone_ref_ptr</span> p_node_out_ref, <span class="func_type">unsigned int</span> index);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int tree_node_find_child_by_type_value	(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, <span class="func_type">unsigned int</span> type,<span class="func_type">unsigned int</span> value    ,<span class="func_type">mem_zone_ref_ptr</span> p_node_out_ref);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int tree_node_find_child_by_type			(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, <span class="func_type">unsigned int</span> node_type					,<span class="func_type">mem_zone_ref_ptr</span> p_node_out_ref,<span class="func_type">unsigned int</span> index);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int tree_node_find_child_by_id			(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, <span class="func_type">unsigned int</span> node_id                   ,<span class="func_type">mem_zone_ref_ptr</span> p_node_out_ref);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int tree_find_child_node_by_id_name		(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, <span class="func_type">unsigned int</span> child_type, <span class="func_type">const char *</span>id_name, <span class="func_type">unsigned int</span> id_val, <span class="func_type">mem_zone_ref_ptr</span> out_node);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int tree_find_child_node_idx_by_id		(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, <span class="func_type">unsigned int</span> child_type, <span class="func_type">unsigned int</span> child_id, <span class="func_type">unsigned int</span> *out_idx);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int tree_find_child_node_by_member_name	(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, <span class="func_type">unsigned int</span> child_type, <span class="func_type">unsigned int</span> child_member_type,<span class="func_type">const char *</span>child_member_name,<span class="func_type">mem_zone_ref_ptr</span> out_node);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int tree_find_child_node_by_member_name_hash(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, <span class="func_type">unsigned int</span> child_type, <span class="func_type">const char *</span>child_member_name,hash_t hash, <span class="func_type">mem_zone_ref_ptr</span> out_node);</p></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="container">
+                <section>
+                    <h4 target="child_manip">Advanced children manipulation</h4>
+                    <div class="row">
+                        <div class="col-md-1"></div><div class="col-md-8">
+                            <div id="child_manip">
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_swap_child_node_by_id				(<span class="func_type">mem_zone_ref_ptr</span> p_node_ref,<span class="func_type">unsigned int</span> id_val,<span class="func_type">mem_zone_ref_ptr</span> node);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_manager_swap_child_ref				(<span class="func_type">mem_zone_ref_const_ptr</span> parent_ref_ptr, <span class="func_type">unsigned int</span> crc_name, <span class="func_type">unsigned int</span> type, <span class="func_type">mem_zone_ref_ptr</span> ref_ptr);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>void		    tree_manager_sort_childs				(<span class="func_type">mem_zone_ref_ptr</span> parent_ref_ptr,<span class="func_type">const char *</span>name,<span class="func_type">unsigned int</span> dir);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_manager_list_child_type			(<span class="func_type">mem_zone_ref_ptr</span> child_list, <span class="func_type">unsigned int</span> type, <span class="func_type">unsigned int</span> *index, <span class="func_type">mem_zone_ref_ptr</span> *p_node_out_ref);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_node_eval_i64						(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, <span class="func_type">const char *</span>key, enum op_type op,int64_t ivalue);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_node_keval_i64						(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, const struct key_val *key);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_node_keval_hash					(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, const struct key_val *key);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_node_keval_str						(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, const struct key_val *key);</p></div></div>
+                                <div class="row"><div class="col-md-1"></div><div class="col-md-8"><p>int			tree_node_keval							(<span class="func_type">mem_zone_ref_const_ptr</span> p_node_ref, struct key_val *key);</p></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>

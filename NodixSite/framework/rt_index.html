@@ -1,0 +1,25 @@
+<div class="container">
+    <section>
+        <h1>Nodix Framework</h1>
+
+        <p>Nodix framework is a complete distributed application framework made in C. It's goal is to replace the standard C runtime based on stdio and malloc with thread safe, lockless and garbage collected memory (either based on reference count or mark and sweep garbage collection), as well an API to access the file system and resources on the computer in a portable and secure manner.</p>
+
+        <p>The whole philosophy of the framework is to take full advantage of parallel computing with fast atomic lockless operation on dynamically typed object, avoiding the whole problem of dead locks, providing thread safety through conceptually atomic operations on reference to dynamic object.</p>
+
+        <p>The programming based on lockless atomic operation on monads allow to program object oriented applications with asynchronous event handling, taking full advantage of multi core architecture very easily and transparently.</p>
+        
+        <p>A Nodix application is made of the libcon library and a launcher executable compiled for the host machine, and a series of modules and scripts defining the application functions, network protocols, event handlers, services and interfaces.</p>
+
+        <p>Libbase contain the abstraction layer to manipulate json object as a tree of garbage collected dynamic object to exchange data easily with javascript as well as built in http server, hashing and cryptographic functions, and the script parser.</p>
+
+        <p>The launcher executable role is to initialize system library, load the libbase module, and then load the node script and modules.</p>
+
+        <p>The node module integrate an HTTP/RPC server, as well as scripts to generate webpage with dynamic content from the node state and blockchain. The node also handle the protocol interface with the blockchain P2P network via a message queue.</p>
+
+        <p>All the applications code on top of libcon and launcher exectuable is compiled as system agnostic binary modules which can be loaded and executed on any intel platform.</p>
+
+        <p>You can find more documentation about the different components in the differents sections of this site.</p>
+
+        <img width="80%" src="/app/NodixSite/file/5328B563FCE21EA6AAD57A9F0ED5847E0E5394DF02756C03FF1BE2B90E86F3F7" alt="framework overview" />
+    </section>
+</div>

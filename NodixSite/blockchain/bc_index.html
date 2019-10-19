@@ -1,0 +1,141 @@
+<style>
+    .script_proc {
+        font-size: 12px;
+        font-style: italic;
+        font-family: Consolas;
+        padding-left: 8px;
+        overflow: scroll;
+        word-break: keep-all;
+        word-wrap: normal;
+        display: none;
+    }
+    .tab
+    {
+        width:18px;
+        display:inline-block;
+    }
+     .cond{
+        color:red;
+        font-weight:bolder;
+        font-family:Arial;
+        text-decoration:underline;
+    }
+    .com{
+        color:darkgreen;
+    }
+    .flickity-prev-next-button
+    {
+        display:block;
+    }
+
+    @media screen and (max-width: 800px)
+    {
+        #init_script
+        {
+            font-size:0.6em;
+            word-break:keep-all;
+            overflow:hidden;
+        }
+        .com{
+           font-size:0.8em;
+        }
+        .tab
+        {
+            width:8px;
+            display:inline-block;
+        }
+        .cond{
+            color:red;
+            font-weight:normal;
+            font-family:serif;
+            text-decoration:none;
+        }
+    }
+
+</style>
+<!-- SECTION: Intro -->
+<section>
+    <div class="container">
+        <div class="card">
+            <div class="card-header"><h2>node informations</h2><p class="lead">Below are informations about this node</p></div>
+            <div class="card-body"><div id="node_div"></div></div>
+        </div>
+    </div>
+</section>
+
+<hr />
+
+<section>
+    <div class="container">
+        <div class="card">
+            <div class="card-header"><h2>mining info</h2></div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2"><label>last POW block</label></div><div class="col-md-6"><a class="hash-lnk" id="lastpowblock"></a></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2"><label>POW difficulty</label></div><div class="col-md-6"><span id="currentpowdiff"></span></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2"><label>POW reward</label></div><div class="col-md-6"><span id="powreward"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<hr />
+<section>
+    <div class="container">
+        <div class="card">
+            <div class="card-header"><h2>staking info</h2></div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2"><label>last POS block</label></div><div class="col-md-6"><a class="hash-lnk" id="lastposblock"></a></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2"><label>POS difficulty</label></div><div class="col-md-6"><span id="currentposdiff"></span></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2"><label>POS reward</label></div><div class="col-md-6"><span id="posreward"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<hr />
+<section>
+    <div class="container">
+        <div class="card">
+            <div class="card-header"><h2>Peers</h2></div>
+            <div class="card-body">
+                <div style="padding-left:24px;" id="peer_nodes_div"></div>
+            </div>
+        </div>
+    </div>
+</section>
+<hr />
+<section>
+    <div class="container">
+        <div class="card">
+            <div class="card-header"><h2>Applications</h2></div>
+            <div class="card-body">
+                <div style="padding-left:24px;" id="app_list"></div>
+            </div>
+        </div>
+    </div>
+</section>
+<hr />
+<section>
+    <div class="container">
+        <div class="card">
+            <div class="card-header"><h2>Modules</h2></div>
+            <div class="card-body">
+                <div style="padding-left:24px;" class="accordion" id="node_modules"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+

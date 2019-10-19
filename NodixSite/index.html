@@ -1,0 +1,717 @@
+<style>
+    .pdf {
+        background-image: url("/app/NodixSite/file/2B9F042F6EC84EBEDFFC1BEDACA311B7919F8C38058AFFBD8B8BFB5020698329");
+    }
+
+    .html {
+        background-image: url("/app/NodixSite/file/76F23C4EE4B516C1C3DC3B32DE10826BBBDAD08E53933453677CB37FAC77F487");
+    }
+
+    .wplnk {
+        height: 64px;
+        display: inline-block;
+        background-repeat: no-repeat;
+        background-size: 48px;
+        padding: 18px 0px 0px 64px;
+    }
+
+    .nodix_header {
+        width: 100%;
+        text-align: center;
+    }
+
+        .nodix_header img {
+            height: 40%;
+            max-width: 1024px;
+            display: inline;
+        }
+
+        .nodix_header h1 {
+            display: inline;
+        }
+
+    section {
+        padding-top: 57px;
+    }
+
+    .active {
+        font-weight: bolder;
+    }
+
+    .parallax_hdr {
+        padding: 18px;
+        margin: 0 25px 25px 25px;
+        background-image: url('/app/NodixSite/file/3451EE2BC8A2A619F7E96F39A82906AE16A6D5868DD3FFA9A152C3F274FE8DAA');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+        color: #FFF;
+        border-radius: 24px;
+    }
+
+    .parallax_blk {
+        padding: 50px;
+        margin: 0 25px 25px 25px;
+        background-image: url('/app/NodixSite/file/C6CD2528F6F6F395D8B0E902F1AE19ACA8248C3504F4DF23748E224F98482EFA');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+        color: #FFF;
+        border-radius: 24px;
+    }
+
+    .feature-list {
+        list-style: disc;
+        margin-left: 24px;
+        font-size: 14px;
+        font-family: Arial;
+        font-weight: bold;
+        text-align: left;
+    }
+
+    #opRootLink {
+        color: aqua;
+    }
+
+    .margin-12 {
+        margin: 12px;
+    }
+
+    .node-info {
+        margin: 12px;
+    }
+
+    .hash-input {
+        width: 98%;
+        font-size: 0.6em;
+    }
+
+    .big_p {
+        font-family: Arial;
+        font-size: 18px;
+    }
+
+    h3 {
+        font-family: Arial;
+        font-size: 2.6em;
+        color: rgb(24, 145, 202);
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    svg{
+        width:800px;
+    }
+</style>
+
+<script>
+    function data_finished(values, smin, smax) {
+        var plots = { type: 'scattered', x: [], y: values };
+
+        GeneratedSample = {};
+        GeneratedSample.name = 'generated';
+        GeneratedSample.samplerate = parseInt($('#var_t_scaleFac').val());
+        GeneratedSample.samples = values;
+
+        $('#genPlot').empty();
+
+        // Copy floats
+        for (var i = 0; i < values.length; i++) {
+            plots.x[i] = i;
+        }
+
+        if (typeof Plotly != 'undefined')
+            Plotly.newPlot('genPlot', [plots], {}, {});
+        else
+            $('#genPlot').html('no plotly');
+    }
+
+    function plotGraph() {
+
+        this.parse_inputs.t = { value: 0 };
+
+        $('#inputs').html(this.create_inputs());
+
+        var plots = {
+            type: "sankey",
+            orientation: "h",
+            node: {
+                pad: 15,
+                thickness: 30,
+                line: {
+                    color: "black",
+                    width: 0.5
+                },
+                label: [],
+                color: []
+            },
+
+            link: {
+                source: [],
+                label: [],
+                target: [],
+                value: []
+            }
+        }
+
+        make_plotly_diag(plots, null, this.parse_tree[0]);
+
+
+        var layout = {
+            title: "Abstract synthax tree",
+            font: {
+                size: 10
+            }
+        }
+
+        if (typeof Plotly != 'undefined')
+            Plotly.newPlot(this.graphDiv, [plots], layout, {});
+        else
+            this.graphDiv.innerHTML = 'no plotly';
+
+    }
+    function tx_finished() {
+        MyComposer.opRootHash.value = MyComposer.parse_tree[0].txid;
+        MyComposer.opRootLink.href = site_base_url + '/play/' + MyComposer.parse_tree[0].txid;
+        MyComposer.opRootLink.innerHTML = 'play link';
+    }
+
+
+    function on_new_block(event) {
+        var block = JSON.parse(event.data);
+
+        SelfNode.block_height = block.height;
+        SelfNode.last_block = block.blkHash;
+
+        if (typeof block["blk pos"] == 'string')
+            SelfNode.lastPOSBlk = block.blkHash;
+        else
+            SelfNode.lastPOWBlk = block.blkHash;
+
+        MyNode.updateBlockInfos();
+
+    }
+</script>
+
+
+<div class="nodix_header text-center" id="pageTop">
+    <div class="view jarallax parallax_hdr z-depth-2" data-jarallax data-speed="0.4">
+        <table style="width:100%">
+            <tr>
+                <td class="text-right align-middle" style="width:50%"><img alt="nodix-logo" src="/app/NodixSite/file/C4E61FB36A56833316404BBFF986C9290C14FFB030663780412C7E5F05AB9D9C" /></td>
+                <td class="text-left align-middle"><h1>NODIX</h1></td>
+            </tr>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <h2>Distributed HTML5 web applications based on blockchain</h2>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="container text-center">
+        <h3>Decentralize everything !</h3>
+    </div>
+</div>
+
+<section id="features">
+    <div class="container">
+        <div class="row">
+            <div class="col-md text-center">
+
+                <div class="card card-cascade wide margin-12">
+
+                    <!-- Card image -->
+                    <div class="view view-cascade gradient-card-header blue-gradient">
+                        <i class="fa fa-cubes fa-3x"></i>
+                        <h2 class="card-header-title mb-3">Scalability</h2>
+                    </div>
+
+                    <!-- Card content -->
+                    <div class="card-body card-body-cascade text-center">
+
+                        <ul class="feature-list">
+                            <li><p>Distribute data, layouts, and code on the blockchain.</p></li>
+                            <li><p>Lockless architecture for multi core.</p></li>
+                            <li><p>Portable binary modules for distributed processing.</p></li>
+                            <li><p>Access application data in HTML5 apps.</p></li>
+                        </ul>
+                    </div>
+                    <!-- Card content -->
+                </div>
+            </div>
+            <div class="col-md text-center">
+
+                <div class="card card-cascade wide margin-12">
+
+                    <!-- Card image -->
+                    <div class="view view-cascade gradient-card-header blue-gradient">
+
+                        <i class="fa fa-lock fa-3x"></i>
+                        <h2 class="card-header-title mb-3">security</h2>
+                    </div>
+
+                    <!-- Card content -->
+                    <div class="card-body card-body-cascade text-center">
+                        <ul class="feature-list">
+                            <li><p>HTML5 wallet with in browser cryptography.</p></li>
+                            <li><p>Secure C runtime with garbage collection.</p></li>
+                            <li><p>Signed Application data stored on blockchain.</p></li>
+                            <li><p>Diffie Hellman key exchange for private data.</p></li>
+                        </ul>
+                    </div>
+                    <!-- Card content -->
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md text-center">
+
+                <div class="card card-cascade wide margin-12">
+
+                    <!-- Card image -->
+                    <div class="view view-cascade gradient-card-header blue-gradient">
+
+                        <i class="fa fa-user fa-3x"></i>
+                        <h2 class="card-header-title mb-3">Customisation</h2>
+
+
+                    </div>
+
+                    <!-- Card content -->
+                    <div class="card-body card-body-cascade text-center">
+
+                        <ul class="feature-list">
+                            <li><p>Blockchain parameters defined via simple script.</p></li>
+                            <li><p>Fully featured HTTP application server with JSON/RPC.</p></li>
+                            <li><p>Script language to generate HTML5/JS front end.</p></li>
+                            <li><p>Create new application via HTML5 user interface.</p></li>
+                        </ul>
+                    </div>
+                    <!-- Card content -->
+                </div>
+            </div>
+            <div class="col-md">
+
+                <div class="card card-cascade wide margin-12  text-center">
+
+                    <!-- Card image -->
+                    <div class="view view-cascade gradient-card-header blue-gradient">
+
+
+                        <i class="fa fa-rocket fa-3x"></i>
+                        <h2 class="card-header-title mb-3">Perfomance</h2>
+
+                    </div>
+
+                    <!-- Card content -->
+                    <div class="card-body card-body-cascade">
+
+                        <ul class="feature-list">
+                            <li><p>Low memory footprint, and ressources uses.</p></li>
+                            <li><p>Portable binary module suporting SIMD and SSE.</p></li>
+                            <li><p>Full runtime in C with efficient memory management.</p></li>
+                            <li><p>Lockless access to global data between threads / cores.</p></li>
+                        </ul>
+                    </div>
+                    <!-- Card content -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section id="page_content" name="page_content">
+
+    <section id="authority-model">
+        <div class="view jarallax parallax_blk z-depth-2" data-jarallax data-speed="0.4" id="authority-model">
+            <div class="container" style="text-align:center;">
+                <div class="row mt-5">
+                    <div class="col-md-12 wow fadeIn mb-3">
+                        <h2>blockchain governance model</h2>
+                        <p>Decentralize auhtority on data property and token emissions using peer 2 peer transactions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row"><div class="col text-center"><h4>Representation of decentralized data creation and property transfer using cryptographic signatures.</h4></div></div>
+            <div class="row"><div class="col text-center"><a href="/app/NodixSite/file/B928CA223F1103779E4B73874608CDEB74E717337CE86BC5F71CC5D9BD48B86F" data-rel="lightcase" title="Representation of decentralized data creation and property transfer using cryptographic signatures." class="lightcase-fullScreenMode"><img alt="cryptographic_transaction" src="/app/NodixSite/file/AD332438467723F6A90F7A8767B3E04CED883D29B630486F6E2B0DE2FC08AA22" class="img-fluid"></a></div></div>
+            <div class="row"><div class="col text-center"><p class="big_p">Object creation and token emission are ruled by blockchain policy.</p></div><div class="col text-center"><p class="big_p">Property transfer use a reference to an object and prove its owership using digital signature.</p></div></div>
+            <hr />
+            <div class="row"><div class="col text-center"><a href="/app/NodixSite/file/686A65679BB009888C4A63C730EDBBA09071E2DE4A749E982EC1D1E66DCB9AA8"  data-rel="lightcase" title="Representation of decentralized data creation and property transfer using cryptographic signatures." class="lightcase-fullScreenMode"><img style="width:90%;" alt="centralized app model" src="/app/NodixSite/file/686A65679BB009888C4A63C730EDBBA09071E2DE4A749E982EC1D1E66DCB9AA8" /></a></div></div>
+            <div class="row"><div class="col text-center"><p class="big_p">Blockchain state affected by a transaction is confirmed when the transaction is included in a block.</p></div></div>
+            <div class="row"><div class="col text-center"><h4>Block emitting nodes select new transactions to be included in the next block.</h4></div></div>
+            <div class="row">
+                <div class="col text-left">
+                    <ol>
+                        <li>proof of work (miners). Roll a nonce in header with merkkle root of transactions until the computed hash match difficulty.</li>
+                        <li>proof of stake(token owners). Roll time in transaction referencing a stake amount until the hash match weigthed difficulty.</li>
+                        <li>proof of authority(private chain). Provide proof of trusted authority ( signature, domain, network address).</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="row"><div class="col text-center"> <a href="/app/NodixSite/file/75FE3FF8C7A8C3B8D3F3CCFE33FAFEF53C72A663D09FC8C6F5ED4DA3BA4FF011" data-rel="lightcase" title="Representation of decentralized data creation and property transfer using cryptographic signatures." class="lightcase-fullScreenMode"><img style="width:90%;" alt="blockchain-blocks" src="/app/NodixSite/file/75FE3FF8C7A8C3B8D3F3CCFE33FAFEF53C72A663D09FC8C6F5ED4DA3BA4FF011" /></a></div></div>
+
+            <div class="row"><div class="col text-center"><p class="big_p">Block difficulty is adjusted with each new blocks to keep constant time between blocks.</p></div></div>
+            <div class="row"><div class="col text-center"><p class="big_p">Nodes keep synchronizing on the longest chain, which contain the more 'proofs' .</p></div></div>
+
+        </div>
+
+        <div class="view jarallax parallax_blk z-depth-2" data-jarallax data-speed="0.4" id="application-assets">
+            <div class="container" style="text-align:center;">
+                <div class="row mt-5">
+                    <div class="col-md-12 wow fadeIn mb-3">
+                        <h2>Remove intermediates between users and blockchain</h2>
+                        <p>Full application stack including mobile compliant HTML5 front end can be stored on the blockchain using cryptographic signatures.</p>
+                        <p>Exploit asymetric cryptography for applications management of user data and permissions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col text-center">
+                    <h2>Application definitions and permissions based on cryptographic signature</h2>
+                    <p>Blockchain can be used to store hierarchised data with permissions based on ownership proven by cryptographic signature.</p>
+                    <p>
+                        Applications are created with initial configuration and permissions associated with the master key,
+                        which allow to add new types definitions used to represent object access on the blockchain,
+                        store HTML5 layouts and scripts to generate web pages with dynamic data,
+                        and define complex access schemes based on type definitions, smart contracts and asymetric cryptography.
+                    </p>
+                    <a target="_blank" href="apps">Tutorial on application management via the wallet interface</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center"><img style="width:90%;" alt="blockchain_application_model" src="/app/NodixSite/file/29BB40BD53F651D8913CCC1436BFA8D301A0C4F16F297E0CFA837BC3B8A7EA5A" /></div>
+            </div>
+
+            <hr />
+            <div class="row"><div class="col text-center"><h2>Blockchain environment "Full Stack" from cpu cores to HTML5 applications.</h2></div></div>
+            <div class="row">
+                <div class="col text-left">
+                    <div class="card card-cascade wide margin-12">
+                        <div class="view view-cascade gradient-card-header blue-gradient"><h4>Safe portable binary code</h4></div>
+                        <div class="card-body"><ol><li>Multi thread managed memory with garbage collection.</li><li>Dynamic typing and reactive functional programming (events, generic procedure, continuations ) .</li><li>Portable binary modules for data and code encapsulation.</li><li>Interoperable with formats and protocols for the web (HTML5, RPC-JSON, HTTP), parallelization of asynchronous client calls.</li></ol></div>
+                    </div>
+                </div>
+                <div class="col text-left">
+                    <div class="card card-cascade wide margin-12">
+                        <div class="view view-cascade gradient-card-header blue-gradient"><h4>Sandboxed script</h4></div>
+                        <div class="card-body"><ol><li>Script interpreter with sandboxed mannaged memory with garbage collection.</li><li>Oriented toward web programming ( generation of web pages, dynamic data sources, event sources )</li><li>Interoperable with binary modules for parallelization and maximum performances.</li></ol></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row"><div class="col text-center"><h4>Easily develop and deploy portables secures distributed applications based on blockchain technology. <a class="waves-effect waves-light" href="#Documentation">Documentation </a></h4></div></div>
+        </div>
+</section>
+    <section id="functional-programming">
+        <div class="view jarallax parallax_blk z-depth-2" data-jarallax data-speed="0.4">
+            <div class="container" style="text-align:center;">
+                <div class="row mt-5">
+                    <div class="col-md-12 wow fadeIn mb-3">
+                        <h2>Directed Acyclic Graph and functional composition</h2>
+                        <p>Exploit blockchain D.A.G. structure to represent functional composition, using inputs and hyper parameters from objects stored on the blockchain.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="container">
+            <div class="row"><div class="col"><img style="width:90%;" alt="functional-programming" src="/app/NodixSite/file/75DC08CC3481AD5924E35C99E9934977712C1AF016131EED0EB1BA41D1E61B0C" /></div></div>
+            <div class="row"><div class="col"><ul><li>Distributed scientific computation</li><li>Distributed multimedia applications</li><li>Neural networks</li><li>Smart grids</li></ul></div></div>
+            <div class="row">
+                <div class="col">
+                    <div class="container" id="AST"></div>
+                    <div class="container">
+                        <div class="card mb-3 bg-primary">
+                            <div class="card-header"><h2>Generated sample</h2><div id="inputs"></div></div>
+                            <div class="card-body"><div id="genPlot"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr />
+
+    <section id="apps">
+        <div class="view jarallax parallax_blk z-depth-2" data-jarallax data-speed="0.4">
+            <div class="container" style="text-align:center;">
+                <div class="row mt-5">
+                    <div class="col-md-12 wow fadeIn mb-3">
+                        <h2>Boostrap your own blockchain in minutes</h2>
+                        <p><a style="color:#4cff00" href="/app/NodixSite/page/index.site/configuration">Simple configuration files</a>, and modules for wallet and blockexplorer with simple customisable HTML5 layouts.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container flex-center text-center">
+            <div class="row">
+                <div class="col-md flex-center text-center">
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top" src="/app/NodixSite/file/E4ADB8266D5C550EB79FA2FB4984D57F1CC7D24070EA0B49F869F1C5B038B28D" alt="HTML5 Wallet">
+                        <div class="card-body">
+                            <h5 class="card-title">HTML5 wallet</h5>
+                            <p class="card-text">online wallet.</p>
+                            <a href="/nodix.site/wallet" class="btn btn-primary">Try it now !</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md flex-center text-center">
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top" src="/app/NodixSite/file/97D1C74DAEF3A6B7F366C609078C24E70F9C84C93298765FB72BF1FD269B1B2C" alt="Block explorer">
+                        <div class="card-body">
+                            <h5 class="card-title">HTML5 block explorer</h5>
+                            <p class="card-text">block explorer.</p>
+                            <a href="/nodix.site/blocks" class="btn btn-primary">Try it now !</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-100" style="height:12px;"></div>
+                <div class="col-md flex-center text-center">
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top" src="/app/NodixSite/file/43EE8BBF641C504815BFA3AADCC8AA10B4DA528F12BF8F6BD773C5964E3CA781" alt="raytrace">
+                        <div class="card-body">
+                            <h5 class="card-title">distributed raytracing</h5>
+                            <p class="card-text"> Try out distributed raytracing with vectorial data stored on the blockchain and webGL front end.</p>
+                            <a href="/app/raytrace/page/raytrace.site/index" class="btn btn-primary">Try it now !</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md flex-center text-center">
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top" src="/app/NodixSite/file/13606D114EA68488FD217A416ACF17AA3F15EF418D538539B3D813A173006496" alt="raytrace">
+                        <div class="card-body">
+                            <h5 class="card-title">decentralized social media</h5>
+                            <p class="card-text">  Try out blog content stored on the network and crypted private messages.</p>
+                            <a href="/app/blog/page/blog.site/index" class="btn btn-primary">Try it now !</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-100" style="height:12px;"></div>
+                <div class="col-md flex-center text-center">
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top" src="/app/NodixSite/file/0E76D0EC3833BA5488038B275EAA12AE8E7A9EECD6DBB1E6F18457B63D5D5BB6" alt="raytrace">
+                        <div class="card-body">
+                            <h5 class="card-title">decentralized audio card game</h5>
+                            <p class="card-text">  Try decentralised game of 3D card with audio generation.</p>
+                            <a href="/app/Cards/page/cards.site/index" class="btn btn-primary">Try it now !</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr />
+
+    <section id="net-info">
+        <div class="view jarallax parallax_blk z-depth-2" data-jarallax data-speed="0.4">
+            <div class="container" style="text-align:center;">
+                <div class="row mt-5">
+                    <div class="col-md-12 wow fadeIn mb-3">
+                        <h2>Network informations</h2>
+                        <p>Below are informations about the network.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col node-info">
+                    <div class="card">
+                        <div class="card-header"><h2>mining info</h2></div>
+                        <div class="card-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-2"><label>last POW block</label></div><div class="col-md"><a class="hash-lnk" onclick="MyBlocks.selectBlock(SelfNode.lastPOWBlk); return false;" id="lastpowblock"></a></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2"><label>POW difficulty</label></div><div class="col-md"><span id="currentpowdiff"></span></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2"><label>POW reward</label></div><div class="col-md-4"><span id="powreward"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col node-info">
+                    <div class="card">
+                        <div class="card-header"><h2>staking info</h2></div>
+                        <div class="card-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-2"><label>last POS block</label></div><div class="col-md"><a class="hash-lnk" onclick="MyBlocks.selectBlock(SelfNode.lastPOSBlk); return false;" id="lastposblock"></a></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2"><label>POS difficulty</label></div><div class="col-md"><span id="currentposdiff"></span></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2"><label>POS reward</label></div><div class="col-md-4"><span id="posreward"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col node-info">
+                    <div class="card">
+                        <div class="card-header"><h2>This node</h2></div>
+                        <div class="card-body">
+                            <div id="node_div"></div>
+                            <div id="node_block_lag"></div><div><span id="node_time_lag"></span>&nbsp;behind</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col node-info">
+
+                    <div class="card">
+                        <div class="card-header"><h2>Peers</h2></div>
+                        <div class="card-body">
+                            <div id="peer_nodes_div"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr />
+
+    <section id="download">
+        <div class="view jarallax parallax_blk z-depth-2" data-jarallax data-speed="0.4">
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col">
+                        <h2>Fullnode binaries</h2>
+                        <a href="/app/NodixSite/page/index.site/download" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Download</a>
+                    </div>
+                    <div class="col">
+                        <h2>Source on github</h2>
+                        <a href="https://github.com/NodixBlockchain/nodix" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Sources</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr />
+
+    <section id="Documentation">
+        <div class="container">
+            <div class="row flex-center text-center">
+                <h2>Whitepaper</h2>
+            </div>
+            <div class="row flex-center text-center">
+                <div class="col   ">
+                    <a class="wplnk pdf" href="http://nodix.eu/site/whitepaper/nodix-whitepaper.pdf">Whitepaper PDF version</a><br />
+                    <a class="wplnk html" href="http://nodix.eu/site/whitepaper/html/nodix-whitepaper.html">Whitepaper HTML version</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row  justify-content-center">
+                <div class="col-md flex-center text-center">
+                    <div class="card" style="width: 18rem;margin:12px;">
+                        <img class="card-img-top" src="/app/NodixSite/file/F4F34B3208975B74442BF13BD8FE062CFB18CCC002DD0B3CC87CE36AD7BEA903" alt="Node informations">
+                        <div class="card-body">
+                            <h5 class="card-title">Node informations</h5>
+                            <p class="card-text">Information on the node</p>
+                            <a href="/app/NodixSite/page/index.site/blockchain/" class="btn btn-primary">Go!</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md flex-center text-center">
+                    <div class="card" style="width: 18rem;margin:12px;">
+                        <img class="card-img-top" src="/app/NodixSite/file/BEF4FA54A62FBF4716883558515817A4EA1FBF3560994A8E053316BC5BAB7806" alt="Node informations">
+                        <div class="card-body">
+                            <h5 class="card-title">Nodix framework internal</h5>
+                            <p class="card-text">Information on the inside</p>
+                            <a href="/app/NodixSite/page/index.site/framework/" class="btn btn-primary">Go!</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md flex-center text-center">
+                    <div class="card" style="width: 18rem;margin:12px;">
+                        <img class="card-img-top" src="/app/NodixSite/file/5B14A6E87BCAB38D0F12E35FE4C122ABD433AC68BDA286C08E86B5DE1719F0D1" alt="Nodix framework">
+                        <div class="card-body">
+                            <h5 class="card-title">HTML API</h5>
+                            <p class="card-text">HTML5 Webapp framework</p>
+                            <a href="/app/NodixSite/page/index.site/webapp/" class="btn btn-primary">Go!</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="crew">
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container container-fluid">
+                <div class="row  justify-content-center">
+                    <h2>The Team</h2>
+                </div>
+                <hr />
+                <div class="row  justify-content-center">
+                    <div class="col-md-auto flex-center text-center">
+                        <div class="card" style="width: 18rem;">
+                            <img class="card-img-top" src="/app/NodixSite/file/C57C308FA3848A0CB1B465FFB276339DB852B13EBE6BB5158DCC1869B2950E8D" alt="Antoine Bentue Ferrer Photo">
+                            <div class="card-body">
+                                <h5 class="card-title">Antoine bentue-ferrer</h5>
+                                <p class="card-text">I have been programming various things since i'm teen, programmed video games in turbo pascal in the 90's, and participated in various underground cyber culture like demo scene and electronic music, and programmed OGG/OGM streaming plugin for browsers.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="socmed">
+      <div class="view jarallax parallax_blk z-depth-2" data-jarallax data-speed="0.4">
+          <div class="container text-center">
+                <div class="row  justify-content-center">
+                    <h2>Social network</h2>
+                </div>
+                <hr />
+                <div class="row  justify-content-center">
+                    <div class="col-md-auto flex-center text-center">
+                        <button type="button" class="btn-floating btn-fb waves-effect waves-light" onclick="window.open('https://www.facebook.com/a.bentueferrer/');">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                    </div>
+                    <div class="col-md-auto flex-center text-center">
+                        <a type="button" class="btn-floating btn-email waves-effect waves-light" href="mailto:a.bentue-ferrer@nodix.eu">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="modal fade" id="blockmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" style="width:800px;">
+                    <div class="modal-header"><h3 style="display: inline;">block&nbsp;<br /><span id="blockhash"></span></h3><button type="button" class="close" data-dismiss="modal" style="vertical-align:top;" aria-hidden="true">×</button> </div>
+                    <div class="modal-body"><section id="lastblock"></section></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>

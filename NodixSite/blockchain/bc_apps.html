@@ -1,0 +1,230 @@
+<style>
+    .script_proc {
+        font-size: 12px;
+        font-style: italic;
+        font-family: Consolas;
+        padding-left: 8px;
+        overflow: scroll;
+        word-break: keep-all;
+        word-wrap: normal;
+        display: none;
+    }
+    .tab
+    {
+        width:18px;
+        display:inline-block;
+    }
+    .cond{
+        color:red;
+        font-weight:bolder;
+        font-family:Arial;
+        text-decoration:underline;
+    }
+    .com{
+        color:darkgreen;
+    }
+    #json-conf-div p {
+        margin: 0px;
+        border: 0px;
+        padding: 0px;
+        line-height: 12px;
+    }
+    #node-obj p {
+        margin: 0px;
+        border: 0px;
+        padding: 0px;
+        line-height: 12px;
+    }
+    #serv-conf p {
+        margin: 0px;
+        border: 0px;
+        padding: 0px;
+        line-height: 12px;
+    }
+    .ident{
+        padding-left:12px;
+    }
+    .doc
+    {
+        font-weight:normal;
+        padding-left:8px;
+    }
+
+    @media screen and (max-width: 640px)
+    {
+        section img {
+            width: 90%;
+        }
+
+        #init_script
+        {
+            font-size:0.6em;
+            word-break:keep-all;
+            overflow:hidden;
+        }
+        .com{
+           font-size:0.8em;
+        }
+        .tab
+        {
+            width:8px;
+            display:inline-block;
+        }
+        .cond{
+            color:red;
+            font-weight:normal;
+            font-family:serif;
+            text-decoration:none;
+        }
+    }
+    section{
+        padding-top:54px;
+    }
+    #AppContent{
+        height: 100%;
+    }
+</style>
+
+<div  class="container">
+    <div class="row">
+        <div class="col-lg-10 col-md-12">
+                <section id="introduction">
+                    <h1>Nodix application managment</h1>
+                    <!-- SECTION: AppRoot -->
+                    <p>Applications can be managed via the applications <a href="/nodix.site/applications">configuration page</a> from the nodix wallet.</p>
+                    <p>For more informations about the javascript API, see the <a href="webapp/walletrpc">html wallet documentation page</a>.</p>
+                    <p>For more informations about the script language, and how to use layouts, objects and files into an HTML5 webapp see <a href="framework/script">script documentation</a>.</p>
+                    <p>For more informations about the type system, refer to the <a href="/site/whitepaper/html/nodix-whitepaper.html#page_18">whitepaper</a>, section 4.3 Application types.</p>
+                </section>
+                <section id="step1">
+                    <h2>Step 1</h2>
+                    <h3>Create application root</h3>
+
+                    <p>First, select your account in the drop down button.</p>
+                    <img src="/app/NodixSite/file/900078259BCE7AFF5ABC0422C06B8E6794A0A27623EAF0329E59996945A89F5E" alt="accounts" />
+
+                    <p>Then select the address to use as application root. Fees to create new applications on the blockchain will be sent to this address.</p>
+                    <img src="/app/NodixSite/file/940026361B7AE826940635186D2A8150AAF3EC138604ACF0C2B9D152FF37EC25" alt="app root" />
+
+                    <p>Application root needs to be only created once for a blockchain.</p>
+                </section>
+                <!-- END SECTION: AppRoot -->
+                <!-- SECTION: App -->
+                <section id="step2">
+                    <h2>Step 2</h2>
+                    <h3>Create the application</h3>
+
+                    <p>Enter the secret key for the addresses to use as the application master address, and enough balance to pay the fees.</p>
+                    <img src="/app/NodixSite/file/94C2FE0D3C3559F91C66354CB308FA1C81CB3F7A5310A653F41FC3696675D301" alt="new app" />
+
+                    <p>Set the application name, and transactions fees, then press <span style="font-weight:bold;">create app</span> button.</p>
+                    <img src="/app/NodixSite/file/B1CFE3F43E10F3F190CE72EA23E1859D547AFEC8BDC5B12EFD8F0F9170FB803F" alt="new app" />
+
+                    <p>The transaction details should show up, then press <span style="font-weight:bold;">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
+                    <img src="/app/NodixSite/file/E46CAD58C139C4DB4879E8D8914270920ED4B77CAB8201E5CBEED2761E8A800F" alt="new app tx" />
+
+                    <p>Once the transaction will be confirmed, the application should show up on the <a href="/nodix.site/applications">applications page</a>.</p>
+                    <img src="/app/NodixSite/file/2C481AB6D4B4AC2077B6347783ABAED8C80AEA8AC75BA5E1E0A2A98C1E5CE083" alt="app list" />
+                </section>
+                <!-- END SECTION: App -->
+                <!-- SECTION: AppTypes -->
+                <section id="step3">
+                    <h2>Step 3</h2>
+                    <h3>Create data types</h3>
+
+                    <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key for the application master address.</p>
+                    <img src="/app/NodixSite/file/0D27F5D716D65F6839E8234E2A29689505C293B0C1ADD3479898862B89933B04" alt="app type account" />
+
+                    <p>Enter a name and id for the type, then add the keys with their name, type and indexing attribute and press the <span style="font-weight:bold">new type</span> button.</p>
+                    <img src="/app/NodixSite/file/964B0011CAC7CCDBFB8922208C3F8C5B93D9173035FD1FBAC0C776132FA5EE54" alt="app type" />
+
+                    <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
+                    <img src="/app/NodixSite/file/23B1E947C36BF794149C8C2218FBEFF0F56CFD4AE291C77EB7A7DAC1F4178DDD" alt="app type tx" />
+                </section>
+                <!-- END SECTION: AppTypes -->
+                <!-- SECTION: AppObjs -->
+                <section id="step4">
+                    <h2>Step 4</h2>
+                    <h3>Add new objects</h3>
+
+                    <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key that will be used to sign the object.</p>
+                    <img src="/app/NodixSite/file/4BC268295FF171302CF59FFDA506B6CA45C9C6CEFC348813DED43C5C32426B56" alt="app object account" />
+
+                    <p>Select the address in the dropdown menu, and enter the values for the keys in the fields, then press the <span style="font-weight:bold">new obj</span> button.</p>
+                    <img src="/app/NodixSite/file/4A079A4FE30507CA25EEFC7B4A7D372DBEEC195D77330DC68E11CC1CBCABF06A" alt="app object" />
+
+                    <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
+                    <img src="/app/NodixSite/file/9AE57D501C9F5AA6F076B51677E1868781AF1B66A70740530EDF05BC264CA0DB" alt="app object" />
+                </section>
+                <!-- END SECTION: AppTypes -->
+                <!-- SECTION: AppMods -->
+                <section id="step5">
+                    <h2>Step 5</h2>
+                    <h3>Add html layout</h3>
+
+                    <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key for the application master address.</p>
+                    <img src="/app/NodixSite/file/0D27F5D716D65F6839E8234E2A29689505C293B0C1ADD3479898862B89933B04" alt="app layout account" />
+
+                    <p>Select a file using the <span style="font-weight:bold">Pick a file</span> button, and press <span style="font-weight:bold">send</span>.</p>
+                    <img src="/app/NodixSite/file/B7D667B21CCDF2447C135D402D7F798AA1BDE93DA93FB3475C42CFC811C6CA6D" alt="app layout" />
+
+                    <p>The informations about the layout should then appear. Press <span style="font-weight:bold">create layout tx</span> button.</p>
+                    <img src="/app/NodixSite/file/59B32A5CB8A611138062F7C37574D417522B15D4CD9F389699955F9D1EC23B08" alt="app layout" />
+
+                    <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
+                    <img src="/app/NodixSite/file/968B4912AC5335A3B30C9F9D263FB7CDDC50ECB9113B297CE710C81FEFEB7631" alt="app layout tx" />
+                </section>
+                <!-- SECTION: AppMods -->
+                <section id="step6">
+                    <h2>Step 6</h2>
+                    <h3>Add scripts and modules</h3>
+
+                    <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key for the application master address.</p>
+                    <img src="/app/NodixSite/file/0D27F5D716D65F6839E8234E2A29689505C293B0C1ADD3479898862B89933B04" alt="app mod account" />
+
+                    <p>Select a file using the <span style="font-weight:bold">Pick a file</span> button, and press <span style="font-weight:bold">send</span>.</p>
+                    <img src="/app/NodixSite/file/B7051D689E9C6116B9D64666F26BD1ABF15E67C89F30746651D3D14A0F7BFBE1" alt="app module" />
+
+                    <p>The informations about the module should then appear. Press<span style="font-weight:bold">create module tx</span>button.</p>
+                    <img src="/app/NodixSite/file/D25A808690DB668671681AC095293D5F720F0F98051D442790C1E2496B1BD128" alt="app module" />
+
+                    <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
+                    <img src="/app/NodixSite/file/0FF47CBFAC9F6F9FE036FDDBEBD6A1CE37136C279F8FCE0646DAE2448EA49720" alt="app module tx" />
+                </section>
+                <!-- END SECTION: AppMods -->
+                <!-- SECTION: AppMods -->
+                <section id="step7">
+                    <h2>Step 7</h2>
+                    <h3>Add application files</h3>
+
+                    <p>Open the page of the application from the <a href="/nodix.site/applications">applications page</a>, and select the account and key that will be used to sign the file.</p>
+                    <img src="/app/NodixSite/file/4BC268295FF171302CF59FFDA506B6CA45C9C6CEFC348813DED43C5C32426B56" alt="app file account" />
+
+                    <p>Select a file using the <span style="font-weight:bold">Pick a file</span> button, and press <span style="font-weight:bold">send</span>.</p>
+                    <img src="/app/NodixSite/file/0B9F423730A906A5E1EFD8D640395F588912E1E7FD89195294D478596514FED6" alt="app file" />
+
+                    <p>The informations about the file should then appear. Press <span style="font-weight:bold">create file tx</span> button.</p>
+                    <img src="/app/NodixSite/file/8E76E8A2B740FDCAF5778B249FC8ACD961922BBF109E25360C72E7484D7796C7" alt="app file" />
+
+                    <p>Then the transaction should show up, press <span style="font-weight:bold">sign &amp; send</span> button to sign the transaction and broadcast it.</p>
+                    <img src="/app/NodixSite/file/F44576F625B88FBFB4C61A63BD17972BF38626E140F572B43E7C65E2FF68AE25" alt="app file tx" />
+                </section>
+                <!-- END SECTION: AppMods -->
+        </div>
+        <div class="col-md-2">
+            <nav id="sidebar" class="sticky" style="position: fixed; top: 120px; width: 249.109px; z-index: 2;">
+                <ul class="nav nav-pills default-pills smooth-scroll">
+                    <li class="nav-item"><a class="nav-link" href="#introduction">Introduction</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#step1">Create application root</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#step2">Create the application</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#step3">Create data types</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#step4">Add new objects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#step5">Add html layout</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#step6">Add scripts and modules</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#step7">Add application files</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
