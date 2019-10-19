@@ -55,7 +55,7 @@ http://127.0.0.1/raytrace/raytrace_local.site
 
 ## Nodix web site
 
-demo : http://nodix.eu/index.site
+demo : http://nodix.eu/app/NodixSite/page/index.site/index
 
 ### Generation of dynamic web pages from blockchain data
 
