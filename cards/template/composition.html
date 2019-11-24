@@ -1,0 +1,314 @@
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<script type="text/javascript">
+
+    var audioCtcx;
+
+    var WaveFileObj = null;
+    var GeneratedSample = null;
+
+    var SamplesList = [];
+
+
+    function tx_finished()
+    {
+        MyComposer.opRootHash.value = MyComposer.parse_tree[0].txid;
+        MyComposer.opRootLink.href = '/nodix.site/play/' + MyComposer.parse_tree[0].txid;
+        MyComposer.opRootLink.innerHTML = 'play link';
+
+       
+    }
+
+    function data_finished(values, smin, smax) {
+        var plots = { type: 'scattered', x: [], y: values };
+
+        GeneratedSample = {};
+        GeneratedSample.name = 'generated';
+        GeneratedSample.samplerate = parseInt($('#var_t_scaleFac').val());
+        GeneratedSample.samples = values;
+
+        $('#genPlot').empty();
+        $('#playGenBtn').prop('disabled', false);
+
+        // Copy floats
+        for (var i = 0; i < values.length; i++) {
+            plots.x[i] = i;
+        }
+
+        if (typeof Plotly != 'undefined')
+            Plotly.newPlot('genPlot', [plots], {}, {});
+        else
+            $('#genPlot').html('no plotly');
+    }
+
+    function plotGraph() {
+
+        this.parse_inputs.t = { value: 0 };
+
+        $('#inputs').html(this.create_inputs());
+
+        var plots = {
+            type: "sankey",
+            orientation: "h",
+            node: {
+                pad: 15,
+                thickness: 30,
+                line: {
+                    color: "black",
+                    width: 0.5
+                },
+                label: [],
+                color: []
+            },
+
+            link: {
+                source: [],
+                label: [],
+                target: [],
+                value: []
+            }
+        }
+
+        make_plotly_diag(plots, null, this.parse_tree[0]);
+
+
+        var layout = {
+            title: "Abstract synthax tree",
+            font: {
+                size: 10
+            }
+        }
+
+        if (typeof Plotly != 'undefined')
+            Plotly.newPlot(this.graphDiv, [plots], layout, {});
+        else
+            this.graphDiv.innerHTML = 'no plotly';
+
+    }
+
+
+    function WaveFileTxsDone(txid)
+    {
+        WaveFileObj.txid = txid;
+        SamplesList.push(txid);
+        update_sample_list();
+    }
+
+    function encodeSample(MySample) {
+
+        var encSample = { name: MySample.name, samplerate: MySample.samplerate };
+
+        encSample.left = [];
+        var u8samples = new Uint8Array(MySample.left.length * 4);
+        for (var n = 0; n < MySample.left.length; n++) {
+            var arr = longToByteArray(MySample.left[n]);
+
+            u8samples[n * 4 + 0] = arr[0];
+            u8samples[n * 4 + 1] = arr[1];
+            u8samples[n * 4 + 2] = arr[2];
+            u8samples[n * 4 + 3] = arr[3];
+        }
+        encSample.left__b64__ = Uint8ToBase64(u8samples);
+
+        encSample.right = [];
+        var u8samples = new Uint8Array(MySample.left.length * 4);
+        for (var n = 0; n < MySample.left.length; n++) {
+            var arr = longToByteArray(MySample.left[n]);
+
+            u8samples[n * 4 + 0] = arr[0];
+            u8samples[n * 4 + 1] = arr[1];
+            u8samples[n * 4 + 2] = arr[2];
+            u8samples[n * 4 + 3] = arr[3];
+        }
+        encSample.right__b64__ = Uint8ToBase64(u8samples);
+        return encSample;
+    }
+
+    function plotSample() {
+
+        $('#samplePlot').empty();
+
+        if ((typeof WaveFileObj.samples != 'array') && (typeof WaveFileObj.samples != 'object'))
+            return;
+
+        var plots = { x: [], y: WaveFileObj.samples };
+       
+        for (var i = 0; i < WaveFileObj.samples.length; i++) {
+            plots.x[i] = i;
+        }
+        plots.type = 'scattered';
+        
+        if (typeof Plotly != 'undefined')
+            Plotly.newPlot('samplePlot', [plots], {}, {});
+        else
+            $('#samplePlot').html('no plotly');
+
+    }
+
+
+    function updateSample(objId)
+    {
+        $('#sampleRate').html(WaveFileObj.samplerate);
+        $('#sampleName').html(WaveFileObj.name);
+        $('#sampleNum').html(WaveFileObj.left.length);
+        $('#sampleTime').html(Math.floor((WaveFileObj.left.length * 1000) / WaveFileObj.samplerate));
+        $('#sampleId').html(objId);
+
+        WaveFileObj.samples = new Array(WaveFileObj.left.length);
+
+        for (var i = 0; i < WaveFileObj.left.length; i++) {
+            var f = parseFloat(WaveFileObj.left[i]);
+
+            if (isNaN(f))
+                f = 0.0;
+
+            WaveFileObj.samples[i] = (f / 32768.0) - 1.0;
+        }
+
+        $('#playSample').prop('disabled', false);
+
+        plotSample();
+       
+    }
+
+    function load_sample(objId)
+    {
+         $('#samplePlot').html('<img width="80%" src="/assets/img/loading.gif" />');
+
+         rpc_call('loadobj', [my_app.appName, objId], function (data) {
+
+             $('#new_sample').css('display', 'none');
+
+             WaveFileObj = data.result.obj;
+             updateSample(objId);
+
+         });
+     }
+
+     function update_sample_list()
+     {
+         $('#sampleList').empty();
+         for (var n = 0; n < SamplesList.length; n++)
+         {
+             $('#sampleList').append('<div objId =' + SamplesList[n] + ' onclick="load_sample( $(this).attr(\'objId\')); " >' + SamplesList[n] + '</div>');
+         }
+     }
+
+</script>
+
+<style>
+    h2{
+        color:white;
+    }
+
+    #objHash
+    {
+        font-size:0.4em;
+    }
+
+    #new_sample
+    {
+        display:none;
+    }
+    #sampleFileError
+    {
+        color:red;
+    }
+
+    #opRootLink{
+        color:white;
+        font-weight:bold;
+    }
+
+    .graph_args {
+        padding-left:14px;
+    }
+    .graph_op{
+        padding:4px;
+        background-color:black;
+        color:white;
+        margin:2px;
+        border:1px solid #888;
+    }
+    .graph_func{
+        padding:4px;
+        background-color:black;
+        color:white;
+        margin:2px;
+        border:1px solid #888;
+    }
+    .graph_val
+    {
+        background-color:white;
+        color:black;
+        font-weight:bold;
+        text-align:right;
+    }
+    .graph_var
+    {
+        background-color:white;
+        color:black;
+        font-weight:bold;
+        text-align:right;
+    }
+    label{
+        color:#000;
+        font-weight:bold;
+    }
+    #expression
+    {
+        width:100%;
+        font-size:0.8em;
+        font-family:'monospace';
+    }
+</style>
+<div class="container">
+    <div id="addresses"></div>
+</div>
+ 
+<div class="container">
+    <h2>Expression processor</h2>
+    <div class="jumbotron">
+
+        <div class="container">
+            <div class="card mb-3 bg-primary">
+                <div class="card-header">
+                    <h2>Sample list</h2>
+
+                    <div class="container">
+                        <div class="row"><div class="col-md-2">txid : </div><div class="col"><div id="sampleId"></div></div></div>
+                        <div class="row"><div class="col-md-2">name : </div><div class="col"><div id="sampleName"></div></div></div>
+                        <div class="row"><div class="col-md-2">length ms : </div><div class="col"><div id="sampleTime"></div></div></div>
+                        <div class="row"><div class="col-md-2">n samples : </div><div class="col"><div id="sampleNum"></div></div></div>
+                        <div class="row"><div class="col-md-2">samplerate : </div><div class="col"><div id="sampleRate"></div></div></div>
+                        <div id="new_sample"><div class="row"><div class="col"><button class="btn btn-secondary" onclick="MyApps.create_app_obj(6, my_app.appAddr, encodeSample(WaveFileObj), 0, function (data) { signtxinputs_promise(data.result.transaction.txid, data.result.transaction.txsin, function (signHash) { WaveFileTxsDone(signHash); }); });" >create sample tx</button><span id="app_error"></span></div></div></div>
+                    </div>
+                </div>
+                <div class="card-body text-center">
+                    <div id="samplePlot"></div>
+                    <button class="btn btn-secondary" onclick="var audioCtx = new AudioContext(); MyAudio.playSample(audioCtx, WaveFileObj);" id="playSample" disabled="disabled" >play</button>
+                    <div id="sampleList"></div>
+                </div>
+                <div class="card-footer">
+                    <form method="POST" enctype="multipart/form-data">
+                        <label for="sampleFile">Upload sample</label><input type="file" id="sampleFile" name="sampleFile" value="upload" /><input type="submit" value="upload" />
+                        <span id="sampleFileError"></span>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="container" id="AST"></div>
+
+        <div class="container">
+            <div class="card mb-3 bg-primary">
+                <div class="card-header">
+                    <h2>Generated sample</h2>
+                    <div id="inputs"></div>
+                </div>
+                <div class="card-body"><div id="genPlot"></div></div>
+               <div class="card-footer"><button class="btn btn-secondary" onclick="var audioCtx = new AudioContext(); MyAudio.playSample(audioCtx, GeneratedSample);" id="playGenBtn" disabled="disabled">play</button></div>
+           </div>
+        </div>
+    </div>
+</div>

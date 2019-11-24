@@ -807,7 +807,7 @@
             
 
         if (g.scene.objects.length > 0) {
-            getMaterial(g.scene.objects[0].surfaces[0].material_id).reflect = 0.8;
+            getMaterial(g.scene.objects[0].surfaces[0].material_id).reflect = 0.1;
             compute_biNorms(g.scene.objects[0]);
             $('#objName').html(g.scene.objects[0].name);
             splitSurface(g.scene.objects[0], 0, 5000);

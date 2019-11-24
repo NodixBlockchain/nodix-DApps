@@ -34,11 +34,30 @@ let NODE_GFX_STR floor_tex = "10200DAC06FDF2B4B44C3324D5DB83FDCD4B2E0B51C31391D7
 
 let NODE_BITCORE_HASH cubemap = "F8D686F84A98033F8E26E4A29502E00ACCB33E24E4A3213D8AADFDAC997E428D"
 
+let NODE_BITCORE_VSTR CardApp =  "Cards" 
+
+let NODE_GFX_OBJECT mysample = `{}`
+
+let NODE_BITCORE_VSTR sampleFileError = ""
+let NODE_BITCORE_VSTR objFileError = ""
+let NODE_BITCORE_VSTR errorStrMax = ") max "
+
+let NODE_GFX_BINT maxSampleSize = 550000
+
+
+let NODE_GFX_BINT has_app_root = 0
+let NODE_GFX_BINT root_app_fees = 0
+let NODE_GFX_BINT app_found = 0
+let NODE_BITCORE_HASH root_app_hash = 0
+let NODE_BITCORE_WALLET_ADDR root_app_addr = 0
+
+
 page index(account_name) = `
 	
 	push scripts,"/assets/js/blocks.js"	
 	push scripts,"/assets/js/ecdsa_bundle.js"
 	push scripts,"/assets/js/jsSHA-2.2.0/src/sha_dev.js"
+	push scripts,"/assets/js/ripmd160.js"
 	push scripts,"/assets/js/keys.js"
 	push scripts,"/assets/js/apps.js"
 
@@ -118,6 +137,7 @@ page newobj= `
 	push scripts,"/assets/js/blocks.js"	
 	push scripts,"/assets/js/ecdsa_bundle.js"
 	push scripts,"/assets/js/jsSHA-2.2.0/src/sha_dev.js"
+	push scripts,"/assets/js/ripmd160.js"
 	push scripts,"/assets/js/keys.js"
 	push scripts,"/assets/js/apps.js"
 
@@ -132,7 +152,18 @@ page newobj= `
 	card_tracer.tracer_load_cubemap(myscene,cubemap)
 
 	if(formvars.objfile.size > 0)
-		card_tracer.read_objfile(formvars.objfile, myscene)
+
+		if(formvars.objfile.size < maxSampleSize)
+			card_tracer.read_objfile(formvars.objfile, myscene) : set objFileError = "error reading file "; endor
+		endif
+
+		if(formvars.objfile.size > maxSampleSize)
+			set objFileError = "file too big (";
+			add objFileError, formvars.objfile.size; 
+			add objFileError, errorStrMax;
+			add objFileError, maxSampleSize;
+		endif
+
 	endif
 	
 	html_head  "Cards - upload new object" 
@@ -154,6 +185,8 @@ page newobj= `
 				var ref=$(this).attr('href');
 				$(this).attr('href',site_base_url+'/'+ref);
 			});
+
+			$('#objFileError').html('%objFileError%');
 
 			ec = new EC('secp256k1');
 
@@ -193,6 +226,7 @@ page newcard(objhash) = `
 	push scripts,"/assets/js/blocks.js"	
 	push scripts,"/assets/js/ecdsa_bundle.js"
 	push scripts,"/assets/js/jsSHA-2.2.0/src/sha_dev.js"
+	push scripts,"/assets/js/ripmd160.js"
 	push scripts,"/assets/js/keys.js"
 	push scripts,"/assets/js/apps.js"
 
@@ -348,6 +382,158 @@ page viewobj(hash) = `
 	
 	end_js
 
+	html_layout "footer.html"
+
+`
+
+
+page sequence = `
+
+	push scripts,"/assets/js/webAudio.js"
+	push scripts,"/assets/js/composer.js"
+
+	html_head "NodiX Sequencer" 
+	html_layout "header.html"
+	html_layout "sequence.html"
+	html_scripts
+
+
+	html_js
+	jQuery(document).ready(function() 
+	{
+		
+		lang			='en';
+		api_base_url	='';
+		site_base_url	= '%baseAppURL%';
+
+		Composer.prototype.graphDone = myGraphDone;
+	
+		makeChannel("chan1", TreeHashes[0]);
+		makeChannel("chan2", TreeHashes[1]);
+		updatechannels();
+
+		makeNotes(2);
+
+		MyAudio	= new webAudio();
+	
+	});
+	end_js
+
+	
+	html_layout "footer.html"
+
+`
+
+page compose(graphHash) = `
+
+	push stylesheets,"/assets/css/plugins/blocks.css"
+	push scripts,"/assets/js/blocks.js"
+	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/jsSHA-2.2.0/src/sha_dev.js"
+	push scripts,"/assets/js/ripmd160.js"
+	push scripts,"/assets/js/keys.js"
+	push scripts,"/assets/js/apps.js"
+	push scripts,"/assets/js/webAudio.js"
+	push scripts,"/assets/js/composer.js"
+
+	set has_app_root = 0;
+	node_adx.node_get_root_app	(root_app_hash) ? set has_app_root = 1; endor
+
+	if(has_app_root = 1)
+		node_adx.node_get_root_app_addr(root_app_addr)
+		node_adx.node_get_root_app_fee(root_app_fees)
+	endif
+
+	set sampleFileError = "&nbsp;";
+	
+	node_adx.node_get_app(CardApp,my_app) ? 
+
+		if(formvars.sampleFile.size)
+
+			if(formvars.sampleFile.size < maxSampleSize)
+				node_adx.read_wave_file(formvars.sampleFile, mysample) : set sampleFileError = "error reading file "; endor
+			endif
+
+			if(formvars.sampleFile.size > maxSampleSize)
+				set sampleFileError = "file too big (";
+				add sampleFileError, formvars.sampleFile.size; 
+				add sampleFileError, errorStrMax;
+				add sampleFileError, maxSampleSize;
+			endif
+		
+		endif
+
+	endor
+
+	node_adx.node_list_accounts	(node_accounts)
+
+
+	html_head "NodiX Composition" 
+	html_layout "header.html"
+	html_layout "composition.html"
+	html_scripts
+
+	html_var formvars.sampleFile;
+	html_var mysample;
+	html_var graphHash;
+	html_var my_app;
+	html_var has_app_root;
+	html_var root_app_hash;
+	html_var root_app_addr;
+	html_var root_app_fees;
+
+	html_js
+	jQuery(document).ready(function() 
+	{
+		
+		lang			='en';
+		api_base_url	='';
+		site_base_url	= '%baseAppURL%';
+	
+		ec				= new EC('secp256k1');
+		MyAccount		= new AccountList	('addresses',null,{'withSecret':true,'newAccnt':false,'shownull':true});
+		MyAccount.setAccounts (%node_accounts%,'%account_name%');
+
+		MyApps			=	new Applications();
+		MyApps.setApp		(my_app,null,null);
+
+		MyComposer		=	new Composer('AST', '{Cards.9E195C79CCF638E29E3D91B5075D3A971789C6CF1AA525FB7E8213702B62DD3A.left}[t * {Cards.9E195C79CCF638E29E3D91B5075D3A971789C6CF1AA525FB7E8213702B62DD3A.samplerate}] * (cos( sqrFac * sqrt(t * 1000)) ) ' , {createTx:true});
+		Composer.prototype.graphDone = plotGraph;
+
+
+		if(graphHash != '')
+			MyComposer.load_tree(graphHash, plotGraph);
+
+		rpc_call('get_type_obj_list', ["%CardApp%", 0x1e000006], function (data) 
+		{
+			if (!data.error) {
+				SamplesList	=	data.result.objs;
+				update_sample_list();
+			}
+			else {
+				$('#sampleList').html('no samples');
+			}
+		});
+		
+		if(typeof mysample.name == 'string')
+		{
+			 WaveFileObj = mysample;
+             updateSample('none');
+			 
+
+			$('#new_sample').css('display','block');
+		}
+		else
+			$('#new_sample').css('display','none');
+
+		$('#sampleFileError').html('%sampleFileError%');
+
+		MyAudio	= new webAudio();
+	
+	});
+	end_js
+
+	
 	html_layout "footer.html"
 
 `

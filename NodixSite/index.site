@@ -35,7 +35,6 @@ let NODE_GFX_BINT root_app_fees = 0
 let NODE_GFX_STR appName	= "NodixSite"
 let NODE_GFX_STR baseAppURL = "/app/NodixSite/page/index.site"
 
-let NODE_GFX_STR ga_id = "UA-149611054-1"
 
 let NODE_GFX_STR ga_script_url = ""
 
@@ -237,29 +236,19 @@ page index = `
 	 push scripts,"/assets/js/composer.js"
 	 push scripts,"https://cdn.plot.ly/plotly-latest.min.js"
 
-	 
-	set ga_id = "UA-149611054-1";
-	if (service_port = 16820)
-		set ga_id = "UA-149611054-2";
-	endif
-
-	set ga_script_url = "https://www.googletagmanager.com/gtag/js?id=";
-	add ga_script_url , ga_id;
-
-	push scripts, ga_script_url
-
-
+	
 	set metas.description = "Home Page";
 
 
 	html_head "NODIX BLOCKHAIN HOME PAGE" 
 	html_layout "menu.html"
+
 	html_layout "index.html"
 	html_scripts
+
 	html_var SelfNode;
 
 	html_js
-	 
 	
 		
 	 $(document).ready(function () 
@@ -291,19 +280,9 @@ page index = `
 	end_js
 
 
-
-	html_js
-
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-	  gtag('config', '%ga_id%');
-
-	end_js
-
-
 	html_layout "footer.html"
 `
+
 
 page blockchain = `
 	
@@ -326,19 +305,12 @@ page blockchain = `
 	push scripts,"/assets/js/apps.js"
 
 
-	set ga_id = "UA-149611054-1";
-	if (service_port = 16820)
-		set ga_id = "UA-149611054-2";
-	endif
-
-	set ga_script_url = "https://www.googletagmanager.com/gtag/js?id=";
-	add ga_script_url , ga_id;
-
-	push scripts, ga_script_url
-
 	html_head "NODIX BLOCKCHAIN" 
 	html_layout "bc_menu.html" 
+	
+	html_tree  section(node_card(SelfNode))
 	html_layout "bc_index.html"
+	
 
 	html_scripts
 
@@ -390,24 +362,11 @@ page blockchain = `
 		
 		MyNode.fill_module_def_html (nodix_mod_def);
 		MyNode.fill_module_def_html (stake_mod_def);
-		
-		
 
-
-		$('.tab').each( function (idx) { var left = parseInt($(this).position().left); $(this).width((24-(left % 24)) + 'px'); });
 	});
 	end_js
 
 	
-	html_js
-
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-	  gtag('config', '%ga_id%');
-
-	end_js
-
 	html_layout "bc_footer.html"
 `
 
@@ -415,16 +374,6 @@ page configuration  = `
 	
 	push scripts,"/assets/js/blocks.js"
 	push scripts,"/assets/js/node.js"
-
-	set ga_id = "UA-149611054-1";
-	if (service_port = 16820)
-		set ga_id = "UA-149611054-2";
-	endif
-
-	set ga_script_url = "https://www.googletagmanager.com/gtag/js?id=";
-	add ga_script_url , ga_id;
-
-	push scripts, ga_script_url
 
 
 	set metas.description = "blockchain configuration";
@@ -471,15 +420,6 @@ page configuration  = `
 	end_js
 
 	
-	html_js
-
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-	  gtag('config', '%ga_id%');
-
-	end_js
-
 	html_layout "bc_footer.html"
 `
 
@@ -488,16 +428,6 @@ page apps  = `
 	
 	push scripts,"/assets/js/blocks.js"
 	push scripts,"/assets/js/node.js"
-
-	set ga_id = "UA-149611054-1";
-	if (service_port = 16820)
-		set ga_id = "UA-149611054-2";
-	endif
-
-	set ga_script_url = "https://www.googletagmanager.com/gtag/js?id=";
-	add ga_script_url , ga_id;
-
-	push scripts, ga_script_url
 
 
 	set metas.description = "decentralized applications";
@@ -530,14 +460,6 @@ page apps  = `
 	end_js
 
 	
-	html_js
-
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-	  gtag('config', '%ga_id%');
-
-	end_js
 
 	html_layout "bc_footer.html"
 `
@@ -545,16 +467,6 @@ page apps  = `
 
 page dapps  = `
 	
-
-	set ga_id = "UA-149611054-1";
-	if (service_port = 16820)
-		set ga_id = "UA-149611054-2";
-	endif
-
-	set ga_script_url = "https://www.googletagmanager.com/gtag/js?id=";
-	add ga_script_url , ga_id;
-
-	push scripts, ga_script_url
 
 	html_head "NODIX DApps" 
 	html_layout "bc_menu.html" 
@@ -583,15 +495,6 @@ page dapps  = `
 	end_js
 
 	
-	html_js
-
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-	  gtag('config', '%ga_id%');
-
-	end_js
-
 	html_layout "bc_footer.html"
 `
 
@@ -600,15 +503,6 @@ page blockexplorer = `
 
 	push scripts,"/assets/js/node.js"
 	
-	set ga_id = "UA-149611054-1";
-	if (service_port = 16820)
-		set ga_id = "UA-149611054-2";
-	endif
-
-	set ga_script_url = "https://www.googletagmanager.com/gtag/js?id=";
-	add ga_script_url , ga_id;
-
-	push scripts, ga_script_url
 
 	set metas.description = "BLOCK EXPLORER API DOCUMENTATION";
 
@@ -660,15 +554,6 @@ page blockexplorer = `
 	end_js
 
 	
-	html_js
-
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-	  gtag('config', '%ga_id%');
-
-	end_js
-
 	html_layout "bc_footer.html"
 `
 
@@ -678,16 +563,6 @@ page wallet = `
 	push scripts,"/assets/js/ecdsa_bundle.js"
 	push scripts,"/assets/js/keys.js"
 
-
-	set ga_id = "UA-149611054-1";
-	if (service_port = 16820)
-		set ga_id = "UA-149611054-2";
-	endif
-
-	set ga_script_url = "https://www.googletagmanager.com/gtag/js?id=";
-	add ga_script_url , ga_id;
-
-	push scripts, ga_script_url
 
 	set metas.description = "WALLET API DOCUMENTATION";
 
@@ -740,29 +615,11 @@ page wallet = `
 	end_js
 
 	
-	html_js
-
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-	  gtag('config', '%ga_id%');
-
-	end_js
-
 	html_layout "bc_footer.html"
 `
 
 page download = `
 	
-	set ga_id = "UA-149611054-1";
-	if (service_port = 16820)
-		set ga_id = "UA-149611054-2";
-	endif
-
-	set ga_script_url = "https://www.googletagmanager.com/gtag/js?id=";
-	add ga_script_url , ga_id;
-
-	push scripts, ga_script_url
 
 	set metas.description = "DOWNLOAD NODIX FULLNODE";
 
@@ -781,15 +638,6 @@ page download = `
 	end_js
 
 	
-	html_js
-
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-	  gtag('config', '%ga_id%');
-
-	end_js
-
 	html_layout "bc_footer.html"
 
 `
@@ -797,15 +645,7 @@ page download = `
 page getcoins = `
 	
 
-	set ga_id = "UA-149611054-1";
-	if (service_port = 16820)
-		set ga_id = "UA-149611054-2";
-	endif
 
-	set ga_script_url = "https://www.googletagmanager.com/gtag/js?id=";
-	add ga_script_url , ga_id;
-
-	push scripts, ga_script_url
 
 	set metas.description = "NODIX GET COINS";
 
@@ -823,15 +663,6 @@ page getcoins = `
 	end_js
 
 	
-	html_js
-
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-	  gtag('config', '%ga_id%');
-
-	end_js
-
 	html_layout "bc_footer.html"
 
 `
@@ -839,16 +670,6 @@ page getcoins = `
 page framework(page) = `
 	
 	push scripts,"/assets/js/blocks.js"
-
-	set ga_id = "UA-149611054-1";
-	if (service_port = 16820)
-		set ga_id = "UA-149611054-2";
-	endif
-
-	set ga_script_url = "https://www.googletagmanager.com/gtag/js?id=";
-	add ga_script_url , ga_id;
-
-	push scripts, ga_script_url
 
 	set metas.description = "NODIX FRAMEWORK DOCUMENTATION";
 
@@ -911,15 +732,6 @@ page framework(page) = `
 	end_js
 
 	
-	html_js
-
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-	  gtag('config', '%ga_id%');
-
-	end_js
-
 	html_layout "rt_footer.html"
 `
 
@@ -927,15 +739,6 @@ page framework(page) = `
 
 page webapp(page) = `
 
-	set ga_id = "UA-149611054-1";
-	if (service_port = 16820)
-		set ga_id = "UA-149611054-2";
-	endif
-
-	set ga_script_url = "https://www.googletagmanager.com/gtag/js?id=";
-	add ga_script_url , ga_id;
-
-	push scripts, ga_script_url
 
 	set metas.description = "NODIX HTML5 WEB API DOCUMENTATION";
 
@@ -987,14 +790,5 @@ page webapp(page) = `
 	end_js
 
 	
-	html_js
-
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-	  gtag('config', '%ga_id%');
-
-	end_js
-
 	html_layout "footer.html"
 `

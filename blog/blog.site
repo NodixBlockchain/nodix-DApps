@@ -6,14 +6,15 @@ let NODE_JSON_ARRAY stylesheets = `[
 	"/assets/css/blocks.css",
 	"/assets/css/font-awesome.min.css",
 	"/assets/css/mdb.min.css",
+	"https://materialdesignicons.com/cdn/2.0.46/css/materialdesignicons.min.css",
 	"/assets/css/custom.css",
 	"/app/blog/file/58E1C17A6B1B5762FD460EE021E0643891983DBC9FB4134967EF15077BE37B93"
 ]`
 
-let NODE_JSON_ARRAY scripts = `["/assets/js/jquery-3.3.1.min.js","/assets/plugins/jquery/jquery-cookies.js","/assets/js/popper.min.js", "/assets/js/bootstrap.min.js" ,"/assets/js/mdb.min.js","/assets/js/custom.js","/assets/js/app.js","/app/blog/file/9605D99FA7ADEB7C679114D5FC7DCCDBD8F01FEC9A260BA1105C09DB4509AAB7"]`
+let NODE_JSON_ARRAY scripts = `["/assets/js/jquery-3.3.1.min.js","/assets/plugins/jquery/jquery-cookies.js","/assets/js/popper.min.js", "/assets/js/bootstrap.min.js" ,"/assets/js/mdb.min.js","/assets/js/ripmd160.js","/assets/js/custom.js","/assets/js/app.js","/app/blog/file/9605D99FA7ADEB7C679114D5FC7DCCDBD8F01FEC9A260BA1105C09DB4509AAB7"]`
 
 let NODE_MODULE_DEF node_adx = ` {"file" : "modz/node_adx.tpo"} `
-let NODE_MODULE_DEF blog = ` {"file" : "apps/blog/modz/blog.tpo"} `
+let NODE_MODULE_DEF blog = ` {"file" : "modz/blog.tpo"} `
 
 
 let NODE_GFX_INT ncats = 0
@@ -138,6 +139,11 @@ page viewcat(cat_id,first) = `
 `
 
 page viewpost(post_id) = `
+	
+	 push scripts,"/assets/js/ecdsa_bundle.js"
+	 push scripts,"/assets/js/jsSHA-2.2.0/src/sha_dev.js"
+	 push scripts,"/assets/js/ripmd160.js"
+	 push scripts,"/assets/js/keys.js"
 
 	 blog.blog_get_post		(post_id,post)
 	 blog.blog_get_cats		(cats,first)
@@ -160,11 +166,14 @@ page viewpost(post_id) = `
 	 {
 
 		base_site_url ='%baseAppURL%';
+		ec	= new EC('secp256k1');
 
 		$('.blog-nav').each( function () {
 			var ref=$(this).attr('href');
 			$(this).attr('href','%baseAppURL%/'+ref);
 		});
+
+		var contentHash = post.content; /* reverse(sha256(strtoHexString(post.content_data.toString()))); */
 
 
 		$('#title').html(post.title);
@@ -173,7 +182,29 @@ page viewpost(post_id) = `
 			$('#postAddr').html(post.poster);
 		else
 			$('#postAddr').html(post.poster_addr);
+
 		$('#post').html(post.content_data);
+		$('#signature').html(post.signature);
+		$('#pubkey').html(post.pubkey);
+		$('#content-addr').html(pk2addr(post.pubkey));
+		$('#content-hash').html(contentHash);
+
+		if(ec.verify(contentHash,post.signature,post.pubkey,'hex'))
+		{
+		 $('#content-verify').addClass('mdi-lock verified');
+		 $('#content-verify').html('verified');
+		 $('#content-verify').css('color','green');
+		}
+		else
+		{
+			$('#content-verify').html('signature error');
+			$('#content-verify').addClass('mdi-lock-open');
+			$('#content-verify').css('color','red');
+		}
+			
+
+
+		 
 
 		update_cats(cats,'cats');
 		
@@ -216,6 +247,8 @@ page dopost(account_name) = `
 	
 	push scripts,"/assets/js/tinymce/tinymce.min.js"
 	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/jsSHA-2.2.0/src/sha_dev.js"
+	push scripts,"/assets/js/ripmd160.js"
 	push scripts,"/assets/js/blocks.js"
 	push scripts,"/assets/js/apps.js"
 	push scripts,"/assets/js/keys.js"
@@ -298,6 +331,8 @@ page dopost(account_name) = `
 page register() = `
 
 	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/jsSHA-2.2.0/src/sha_dev.js"
+	push scripts,"/assets/js/ripmd160.js"
 	push scripts,"/assets/js/blocks.js"
 	push scripts,"/assets/js/keys.js"
 	push scripts,"/assets/js/apps.js"
@@ -346,6 +381,8 @@ page message(dstAddr) = `
 
 	push scripts,"/assets/js/tinymce/tinymce.min.js"
 	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/jsSHA-2.2.0/src/sha_dev.js"
+	push scripts,"/assets/js/ripmd160.js"
 	push scripts,"/assets/js/blocks.js"
 	push scripts,"/assets/js/keys.js"
 	push scripts,"/assets/js/apps.js"
@@ -414,6 +451,8 @@ page mymessages(accountName, firstMsg) = `
 	
 	push scripts,"/assets/js/tinymce/tinymce.min.js"
 	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/jsSHA-2.2.0/src/sha_dev.js"
+	push scripts,"/assets/js/ripmd160.js"
 	push scripts,"/assets/js/blocks.js"
 	push scripts,"/assets/js/keys.js"
 	push scripts,"/assets/js/apps.js"
@@ -488,6 +527,8 @@ page accounts(firstAccount) = `
 	
 	push scripts,"/assets/js/tinymce/tinymce.min.js"
 	push scripts,"/assets/js/ecdsa_bundle.js"
+	push scripts,"/assets/js/jsSHA-2.2.0/src/sha_dev.js"
+	push scripts,"/assets/js/ripmd160.js"
 	push scripts,"/assets/js/blocks.js"
 	push scripts,"/assets/js/keys.js"
 	push scripts,"/assets/js/apps.js"
