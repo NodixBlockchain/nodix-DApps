@@ -2,7 +2,7 @@
 
 ## Blog and social media Dapp
 
-demo : http://nodix.eu:16820/app/blog/page/blog.site
+demo : http://nodix.eu/app/blog/page/blog.site
 
 ### Access to blockchain data
 
@@ -19,7 +19,7 @@ implement the view in MVC stack.
 
 ## Raytracer
 
-demo : http://nodix.eu:16820/app/raytrace/page/raytrace.site
+demo : http://nodix.eu/app/raytrace/page/raytrace.site
 
 ### Access to blockchain data
 
@@ -48,14 +48,14 @@ Copy the raytrace folder to nodix/export/web, and remove the modules folder.
 
 Open the page 
 
-http://127.0.0.1:16820/raytrace/raytrace_local.site
+http://127.0.0.1/raytrace/raytrace_local.site
 
 
 
 
 ## Nodix web site
 
-demo : http://nodix.eu:16820/index.site
+demo : http://nodix.eu/app/NodixSite/page/index.site/index
 
 ### Generation of dynamic web pages from blockchain data
 
